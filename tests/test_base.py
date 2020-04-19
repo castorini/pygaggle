@@ -9,7 +9,8 @@ from urllib.request import urlretrieve
 from pyserini.pyclass import JSimpleSearcherResult
 from pyserini.search import pysearch
 
-from pygaggle.rerank import to_texts, Text, IdentityReranker, Query, Reranker
+from pygaggle.rerank import to_texts, Text, Query, Reranker
+from pygaggle.lib import IdentityReranker
 
 
 class TestSearch(unittest.TestCase):

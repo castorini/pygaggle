@@ -62,17 +62,6 @@ class Reranker:
         pass
 
 
-class IdentityReranker(Reranker):
-    """A reranker that simply returns a clone of the input list of texts.
-    """
-
-    def rerank(self, query: Query, texts: List[Text]):
-        output = []
-        for text in texts:
-            output.append(Text(text.contents, text.raw, text.score))
-        return output
-
-
 def to_texts(hits: List[JSimpleSearcherResult]):
     """Converts hits from Pyserini into a list of texts.
 
