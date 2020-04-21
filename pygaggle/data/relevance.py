@@ -28,7 +28,10 @@ class LuceneDocumentLoader:
 
     @lru_cache(maxsize=1024)
     def load_document(self, id: str) -> str:
-        article = json.loads(self.searcher.doc(id).lucene_document().get('raw'))
+        try:
+            article = json.loads(self.searcher.doc(id).lucene_document().get('raw'))
+        except json.decoder.JSONDecodeError:
+            raise ValueError('article not found')
         ref_entries = article['ref_entries'].values()
         text = '\n'.join(x['text'] for x in chain(article['abstract'], article['body_text'], ref_entries))
         return text

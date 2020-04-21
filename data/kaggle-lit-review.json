@@ -4,7 +4,8 @@
       "name":"Incubation period",
       "sub_categories":[
         {
-          "name":"What is the incubation period of the virus?",
+          "nq_name":"What is the incubation period of the virus?",
+          "kq_name":"Incubation period of the virus",
           "answers":[
             {
               "id":"wuclekt6",
@@ -19,7 +20,7 @@
             {
               "id":"ragcpbl6",
               "title":"Evolving epidemiology of novel coronavirus diseases 2019 and possible interruption of local transmission outside Hubei Province in China: a descriptive and modeling study",
-              "exact_answer":"5·2 days"
+              "exact_answer":"mean incubation period of 5.2 days"
             },
             {
               "id":"n0uwy77g",
@@ -134,7 +135,8 @@
           ]
         },
         {
-          "name":"Length of viral shedding after illness onset",
+          "nq_name":"What is the length of viral shedding after illness onset?",
+          "kq_name":"Length of viral shedding after illness onset",
           "answers":[
             {
               "id":"bg0cw5s6",
@@ -144,17 +146,18 @@
             {
               "id":"r5a46n9a",
               "title":"Viral Kinetics and Antibody Responses in Patients with COVID-19",
-              "exact_answer":"12 (3-38), 19 (5-37), and 18 (7-26) days in nasopharyngeal swabs, sputum and stools, respectively"
+              "exact_answer":"2 days (range, 3-38 ) in nasopharyngeal swabs, 19 days (range, 5-37) in sputum and 18 days (range, 7-26) in stools"
             },
             {
               "id":"k36rymkv",
               "title":"Clinical course and risk factors for mortality of adult inpatients with COVID-19 in Wuhan, China: a retrospective cohort study",
-              "exact_answer":"20·0 days (IQR 17·0–24·0)"
+              "exact_answer":"20·0 days (IQR 17·0-24·0)"
             }
           ]
         },
         {
-          "name":"Incubation period across different age groups",
+          "nq_name":"What is the incubation period across different age groups?",
+          "kq_name":"Incubation period across different age groups",
           "answers":[
             {
               "id":"giabjjnz",
@@ -179,7 +182,8 @@
       "name":"Asymptomatic shedding",
       "sub_categories":[
         {
-          "name":"Proportion of patients who were asymptomatic",
+          "nq_name":"What is the proportion of patients who were asymptomatic?",
+          "kq_name":"Proportion of patients who were asymptomatic",
           "answers":[
             {
               "id":"bmsmegbs",
@@ -239,7 +243,8 @@
           ]
         },
         {
-          "name":"Proportion of pediatric patients who were asymptomatic",
+          "nq_name":"What is the proportion of pediatric patients who were asymptomatic?",
+          "kq_name":"Proportion of pediatric patients who were asymptomatic",
           "answers":[
             {
               "id":"xsgxd5sy",
@@ -254,12 +259,12 @@
             {
               "id":"7w1bhaz6",
               "title":"High incidence of asymptomatic SARS-CoV-2 infection, Chongqing, China",
-              "exact_answer":"(28.6%) in children group under 14, next in elder group over 70 (27.3%)"
+              "exact_answer":"28.6%"
             },
             {
               "id":"jvhrp51s",
               "title":"Title: The clinical and epidemiological features and hints of 82 confirmed COVID-19 pediatric cases aged 0-16 in Wuhan, China",
-              "exact_answer":"8 (9.76%)"
+              "exact_answer":"8 no symptoms"
             },
             {
               "id":"j58f1lwa",
@@ -274,7 +279,8 @@
           ]
         },
         {
-          "name":"Asymptomatic transmission during incubation",
+          "nq_name":"What is the asymptomatic transmission during incubation?",
+          "kq_name":"Asymptomatic transmission during incubation",
           "answers":[
             {
               "id":"eflwztji",
@@ -309,7 +315,8 @@
       "name":"Persistence of sources",
       "sub_categories":[
         {
-          "name":"Length of viral shedding in stool",
+          "nq_name":"What is the length of viral shedding in stool?",
+          "kq_name":"Length of viral shedding in stool",
           "answers":[
             {
               "id":"k86ljbxu",
@@ -334,7 +341,8 @@
           ]
         },
         {
-          "name":"Length of viral shedding from nasopharynx",
+          "nq_name":"What is the length of viral shedding from the nasopharynx?",
+          "kq_name":"Length of viral shedding from nasopharynx",
           "answers":[
             {
               "id":"1fyag5x3",
@@ -349,7 +357,8 @@
           ]
         },
         {
-          "name":"Length of viral shedding in urine",
+          "nq_name":"What is the length of viral shedding in urine?",
+          "kq_name":"Length of viral shedding in urine",
           "answers":[
             {
               "id":"1fyag5x3",
@@ -359,7 +368,8 @@
           ]
         },
         {
-          "name":"Length of viral shedding in blood",
+          "nq_name":"What is the length of viral shedding in blood?",
+          "kq_name":"Length of viral shedding in blood",
           "answers":[
             {
               "id":"ac4aesoa",
@@ -369,7 +379,8 @@
           ]
         },
         {
-          "name":"Prevalence of viral shedding in blood",
+          "nq_name":"What is the prevalence of viral shedding in blood?",
+          "kq_name":"Prevalence of viral shedding in blood",
           "answers":[
             {
               "id":"r5a46n9a",
@@ -384,7 +395,8 @@
       "name":"Diagnostics",
       "sub_categories":[
         {
-          "name":"Sensitivity and specificity of COVID-19 tests",
+          "nq_name":"What is the sensitivity and specificity of COVID-19 tests?",
+          "kq_name":"Sensitivity and specificity of COVID-19 tests",
           "answers":[
             {
               "id":"9p7hqk1u",
@@ -432,14 +444,9 @@
               "exact_answer":"Broad screening for respiratory pathogens revealed a high rate of influenza virus infections, accounting for 28.5% of all suspected cases of SARS-CoV-2 infection"
             },
             {
-              "id":"8gncbgot",
-              "title":"Potential Rapid Diagnostics, Vaccine and Therapeutics for 2019 Novel Coronavirus (2019-nCoV): A Systematic Review",
-              "exact_answer":"E gene and RdRp gene assays produced the best result (5.2 and 3.8 copies per reaction at 95% detection probability, respectively)"
-            },
-            {
               "id":"chln5r8w",
               "title":"Diagnosis of the Coronavirus disease (COVID-19): rRT-PCR or CT?",
-              "exact_answer":"Sensitivity of CT examinations was 97.2% at presentation, whereas first round rRT-PCR sensitivity was 84.6%"
+              "exact_answer":"sensitivity was therefore 97.2%"
             },
             {
               "id":"s7uqawbd",
@@ -450,6 +457,68 @@
               "id":"<missing>",
               "title":"Detection of 2019 novel coronavirus (2019-nCoV) by real-time RT-PCR",
               "exact_answer":"All assays were highly sensitive, with best results obtained for the E gene and RdRp gene assays (5.2 and 3.8 copies per reaction at 95% detection probability, respectively)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"Seasonality",
+      "sub_categories":[
+        {
+          "nq_name":"How does humidity affect the transmission of COVID-19?",
+          "kq_name":"Effects of humidity on the transmission of COVID-19",
+          "answers":[
+            {
+              "id":"6anr4xdw",
+              "title":"Effects of temperature variation and humidity on the death of COVID-19 in Wuhan, China",
+              "exact_answer":"both per 1 unit increase of temperature and absolute humidity were related to the decreased COVID-19 death counts"
+            },
+            {
+              "id":"qz2joxys",
+              "title":"Role of temperature and humidity in the modulation of the doubling time of COVID-19 cases",
+              "exact_answer":"doubling time correlates positively with temperature and inversely with humidity, suggesting that a decrease in the rate of progression of COVID-19 with the arrival of spring and summer in the north hemisphere"
+            },
+            {
+              "id":"fcaeoyxd",
+              "title":"Title: Climate Affects Global Patterns Of Covid-19 Early Outbreak Dynamics",
+              "exact_answer":"humidity strongly impact the variation of the growth rate of Covid-19 cases across the globe"
+            }
+          ]
+        },
+        {
+          "nq_name":"How does seasonality effect the transmission of COVID-19?",
+          "kq_name":"Effects of seasonality on the transmission of COVID-19",
+          "answers":[
+            {
+              "id":"f4hj35dr",
+              "title":"Projecting the transmission dynamics of SARS-CoV-2 through the post-pandemic period",
+              "exact_answer":"Winter/spring establishments favored longer-lasting outbreaks with shorter peaks (Fig 3A) , while autumn/winter establishments led to more acute outbreaks (Fig 3B) "
+            },
+            {
+              "id":"zxx7tikz",
+              "title":"Susceptible supply limits the role of climate in the COVID-19 pandemic",
+              "exact_answer":"summer temperatures will not substantially limit pandemic growth"
+            },
+            {
+              "id":"f3qeoyvf",
+              "title":"Title: Modeling the Corona Virus Outbreak in IRAN",
+              "exact_answer":"available data is too small to identify seasonal patterns and make predictable variation in value"
+            },
+            {
+              "id":"okvu49y3",
+              "title":"Application of the ARIMA model on the COVID- 2019 epidemic dataset",
+              "exact_answer":"prevalence and incidence of COVID-2019 are not influenced by the seasonality"
+            },
+            {
+              "id":"3p2dl8yf",
+              "title":"Potential impact of seasonal forcing on a SARS-CoV-2 pandemic",
+              "exact_answer":"seasonal variation might slow down a pandemic"
+            },
+            {
+              "id":"x4qdiln9",
+              "title":"A spatial model of CoVID-19 transmission in England and Wales: early spread and peak timing",
+              "exact_answer":"Seasonal changes in transmission rate could shift the timing of the peak into winter months"
             }
           ]
         }

@@ -22,6 +22,7 @@ class KaggleEvaluationOptions(BaseModel):
     method: str
     batch_size: int
     device: str
+    split: str
     metrics: List[str]
     model_name: Optional[str]
 
@@ -72,6 +73,7 @@ def main():
     apb.add_opts(opt('--dataset', type=Path, default='data/kaggle-lit-review.json'),
                  opt('--method', required=True, type=str, choices=METHOD_CHOICES),
                  opt('--model-name', type=str),
+                 opt('--split', type=str, default='nq', choices=('nq', 'kq')),
                  opt('--batch-size', '-bsz', type=int, default=96),
                  opt('--device', type=str, default='cuda:0'),
                  opt('--metrics', type=str, nargs='+', default=metric_names(), choices=metric_names()))
@@ -79,7 +81,7 @@ def main():
 
     options = KaggleEvaluationOptions(**vars(args))
     ds = LitReviewDataset.from_file(str(options.dataset))
-    examples = ds.to_senticized_dataset(SETTINGS.cord19_index_path)
+    examples = ds.to_senticized_dataset(SETTINGS.cord19_index_path, split=options.split)
     construct_map = dict(transformer=construct_transformer, bm25=construct_bm25, t5=construct_t5)
     reranker = construct_map[options.method](options)
     evaluator = RerankerEvaluator(reranker, options.metrics)
@@ -87,7 +89,7 @@ def main():
     stdout = []
     for metric in evaluator.evaluate(examples):
         logging.info(f'{metric.name:<{width}}{metric.value:.5}')
-        stdout.append(f'{metric.name.title()}\t{metric.value}')
+        stdout.append(f'{metric.name}\t{metric.value}')
     print('\n'.join(stdout))
 
 

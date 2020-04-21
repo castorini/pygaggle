@@ -23,7 +23,8 @@ class LitReviewAnswer(BaseModel):
 
 
 class LitReviewSubcategory(BaseModel):
-    name: str
+    nq_name: str
+    kq_name: str
     answers: List[LitReviewAnswer]
 
 
@@ -40,23 +41,26 @@ class LitReviewDataset(BaseModel):
         with open(filename) as f:
             return cls(**json.load(f))
 
-    @property
-    def query_answer_pairs(self):
-        return ((subcat.name, ans) for cat in self.categories
+    def query_answer_pairs(self, split: str = 'nq'):
+        return ((subcat.nq_name if split == 'nq' else subcat.kq_name, ans) for cat in self.categories
                 for subcat in cat.sub_categories
                 for ans in subcat.answers)
 
-    def to_senticized_dataset(self, index_path: str) -> List[RelevanceExample]:
+    def to_senticized_dataset(self, index_path: str, split: str = 'nq') -> List[RelevanceExample]:
         loader = LuceneDocumentLoader(index_path)
         tokenizer = SpacySenticizer()
         example_map = OrderedDict()
         rel_map = OrderedDict()
-        for query, document in self.query_answer_pairs:
+        for query, document in self.query_answer_pairs(split=split):
             if document.id == MISSING_ID:
                 logging.warning(f'Skipping {document.title} (missing ID)')
                 continue
             key = (query, document.id)
-            example_map.setdefault(key, tokenizer(loader.load_document(document.id)))
+            try:
+                example_map.setdefault(key, tokenizer(loader.load_document(document.id)))
+            except ValueError:
+                logging.warning(f'Skipping {document.id} (article not found)')
+                continue
             sents = example_map[key]
             rel_map.setdefault(key, [False] * len(sents))
             for idx, s in enumerate(sents):
