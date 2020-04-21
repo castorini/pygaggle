@@ -43,6 +43,18 @@ class SpecialTokensCleaner:
 
 
 class LongBatchEncoder:
+    """Encodes batches of documents that are longer than the maximum sequence length by striding a window across
+    the sequence dimension.
+    
+    Parameters
+    ----------
+    encoder : nn.Module
+        The encoder module, such as `BertModel`.
+    tokenizer : BatchTokenizer
+        The batch tokenizer to use.
+    max_seq_length : int
+        The maximum sequence length, typically 512.
+    """
     def __init__(self,
                  encoder: nn.Module,
                  tokenizer: BatchTokenizer,
