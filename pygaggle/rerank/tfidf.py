@@ -27,7 +27,8 @@ class TfIdfReranker(Reranker):
         query_words_lower = {x.lower() for x in query_words}
         sentences_lower = [[w.lower() for w in sent] for sent in sentences]
         sentence_sets = list(map(set, sentences_lower))
-        idfs = {w: math.log(len(sentence_sets) / (1 + int(w in sentence_sets))) for w in query_words_lower}
+        idfs = {w: math.log(len(sentence_sets) / (1 + sum(int(w in sent) for sent in sentence_sets)))
+                for w in query_words_lower}
         mean_len = np.mean(list(map(len, sentences)))
         d_len = len(sentences)
         texts = deepcopy(texts)
