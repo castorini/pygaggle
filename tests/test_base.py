@@ -10,7 +10,7 @@ from pyserini.pyclass import JSimpleSearcherResult
 from pyserini.search import pysearch
 
 from pygaggle.rerank import to_texts, Text, Query, Reranker
-from pygaggle.lib import IdentityReranker
+from pygaggle.rerank import IdentityReranker
 
 
 class TestSearch(unittest.TestCase):
