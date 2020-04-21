@@ -2,6 +2,7 @@ from collections import OrderedDict
 from typing import List
 import abc
 
+from sklearn.metrics import recall_score
 from tqdm import tqdm
 import numpy as np
 
@@ -13,7 +14,7 @@ __all__ = ['RerankerEvaluator', 'metric_names']
 METRIC_MAP = OrderedDict()
 
 
-class Metric:
+class MetricAccumulator:
     name: str = None
 
     def accumulate(self, scores: List[float], gold: List[RelevanceExample]):
@@ -24,7 +25,7 @@ class Metric:
         return
 
 
-class MeanMetric(Metric):
+class MeanAccumulator(MetricAccumulator):
     def __init__(self):
         self.scores = []
 
@@ -54,19 +55,18 @@ def truncated_rels(scores: List[float], top_k: int) -> np.ndarray:
 
 
 @register_metric('recall')
-class RecallMetric(MeanMetric):
+class RecallAccumulator(MeanAccumulator):
     top_k = None
 
     def accumulate(self, scores: List[float], gold: RelevanceExample):
         score_rels = truncated_rels(scores, self.top_k)
         gold_rels = np.array(gold.labels, dtype=int)
-        sum_gold = gold_rels.sum()
-        score = (score_rels & gold_rels).sum() / sum_gold if sum_gold else 1
+        score = recall_score(gold_rels, score_rels, zero_division=1)
         self.scores.append(score)
 
 
 @register_metric('precision')
-class PrecisionMetric(MeanMetric):
+class PrecisionAccumulator(MeanAccumulator):
     top_k = None
 
     def accumulate(self, scores: List[float], gold: RelevanceExample):
@@ -76,12 +76,12 @@ class PrecisionMetric(MeanMetric):
 
 
 @register_metric('recall@1')
-class RecallAt1Metric(RecallMetric):
+class RecallAt1Metric(RecallAccumulator):
     top_k = 1
 
 
 @register_metric('precision@1')
-class PrecisionAt1Metric(PrecisionMetric):
+class PrecisionAt1Metric(PrecisionAccumulator):
     top_k = 1
 
 
@@ -94,7 +94,7 @@ class RerankerEvaluator:
         self.metrics = [METRIC_MAP[name] for name in metric_names]
         self.use_tqdm = use_tqdm
 
-    def evaluate(self, examples: List[RelevanceExample]) -> List[Metric]:
+    def evaluate(self, examples: List[RelevanceExample]) -> List[MetricAccumulator]:
         metrics = [cls() for cls in self.metrics]
         for example in tqdm(examples, disable=not self.use_tqdm):
             scores = [x.score for x in self.reranker.rerank(example.query, example.documents)]

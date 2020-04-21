@@ -7,15 +7,14 @@ from transformers import AutoModel, AutoTokenizer
 import torch
 
 from .args import ArgumentParserBuilder, opt
-from pygaggle.rerank import TransformerReranker, InnerProductMatrixProvider, Reranker, T5Reranker, TfIdfReranker
-from pygaggle.model import SimpleBatchTokenizer, CachedT5ModelLoader, T5BatchTokenizer, SpacyWordTokenizer, \
-    RerankerEvaluator, metric_names
+from pygaggle.rerank import TransformerReranker, InnerProductMatrixProvider, Reranker, T5Reranker, Bm25Reranker
+from pygaggle.model import SimpleBatchTokenizer, CachedT5ModelLoader, T5BatchTokenizer, RerankerEvaluator, metric_names
 from pygaggle.data import LitReviewDataset
 from pygaggle.settings import Settings
 
 
 SETTINGS = Settings()
-METHOD_CHOICES = ('transformer', 'tfidf', 't5')
+METHOD_CHOICES = ('transformer', 'bm25', 't5')
 
 
 class KaggleEvaluationOptions(BaseModel):
@@ -25,7 +24,6 @@ class KaggleEvaluationOptions(BaseModel):
     device: str
     metrics: List[str]
     model_name: Optional[str]
-    word_tokenizer: Optional[str]
 
     @validator('dataset')
     def dataset_exists(cls, v: Path):
@@ -41,12 +39,6 @@ class KaggleEvaluationOptions(BaseModel):
             return SETTINGS.t5_model_type
         if v == 'biobert':
             return 'monologg/biobert_v1.1_pubmed'
-        return v
-
-    @validator('word_tokenizer')
-    def word_tokenizer_sane(cls, v: Optional[str], values, **kwargs):
-        if values['method'] == 'tfidf' and v is None:
-            raise ValueError('word tokenizer must be specified for tf-idf')
         return v
 
 
@@ -71,8 +63,8 @@ def construct_transformer(options: KaggleEvaluationOptions) -> Reranker:
     return TransformerReranker(model, tokenizer, provider)
 
 
-def construct_tfidf(_: KaggleEvaluationOptions) -> Reranker:
-    return TfIdfReranker(SpacyWordTokenizer())
+def construct_bm25(_: KaggleEvaluationOptions) -> Reranker:
+    return Bm25Reranker(index_path=SETTINGS.cord19_index_path)
 
 
 def main():
@@ -82,14 +74,13 @@ def main():
                  opt('--model-name', type=str),
                  opt('--batch-size', '-bsz', type=int, default=96),
                  opt('--device', type=str, default='cuda:0'),
-                 opt('--word-tokenizer', '-wt', type=str, default='spacy', choices=('spacy',)),
                  opt('--metrics', type=str, nargs='+', default=metric_names(), choices=metric_names()))
     args = apb.parser.parse_args()
 
     options = KaggleEvaluationOptions(**vars(args))
     ds = LitReviewDataset.from_file(str(options.dataset))
     examples = ds.to_senticized_dataset(SETTINGS.cord19_index_path)
-    construct_map = dict(transformer=construct_transformer, tfidf=construct_tfidf, t5=construct_t5)
+    construct_map = dict(transformer=construct_transformer, bm25=construct_bm25, t5=construct_t5)
     reranker = construct_map[options.method](options)
     evaluator = RerankerEvaluator(reranker, options.metrics)
     width = max(map(len, args.metrics)) + 1

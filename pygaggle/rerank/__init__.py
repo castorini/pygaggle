@@ -1,5 +1,4 @@
 from .base import *
-from .identity import *
 from .similarity import *
-from .tfidf import *
+from .bm25 import *
 from .transformer import *

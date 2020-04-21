@@ -1,4 +1,4 @@
-from typing import List, Union, Optional
+from typing import List, Union, Optional, Mapping, Any
 import abc
 
 from pyserini.pyclass import JSimpleSearcherResult
@@ -30,17 +30,16 @@ class Text:
     ----------
     text : str
         The text to be reranked.
-    raw : Optional[str]
-        The raw representation of the text to be ranked. For example, the ```raw``` might be a JSON object containing
-        the ```contents``` as well as additional metadata data and other annotations.
+    raw : Mapping[str, Any]
+        Additional metadata and other annotations.
     score : Optional[float]
         The score of the text. For example, the score might be the BM25 score from an initial retrieval stage.
     """
 
-    def __init__(self, text: str, raw: Optional[str] = None, score: Optional[float] = 0):
+    def __init__(self, text: str, raw: Mapping[str, Any] = None, score: Optional[float] = 0):
         self.text = text
         if raw is None:
-            raw = text
+            raw = dict()
         self.raw = raw
         self.score = score
 

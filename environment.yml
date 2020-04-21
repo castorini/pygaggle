@@ -85,8 +85,10 @@ dependencies:
     - rsa==4.0
     - s3transfer==0.3.3
     - sacremoses==0.0.41
+    - scikit-learn==0.22.2.post1
     - scipy==1.4.1
     - sentencepiece==0.1.85
+    - sklearn==0.0
     - spacy==2.2.4
     - srsly==1.0.2
     - tensorboard==2.1.1

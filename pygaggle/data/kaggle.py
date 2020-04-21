@@ -65,5 +65,5 @@ class LitReviewDataset(BaseModel):
         for (_, doc_id), rels in rel_map.items():
             if not any(rels):
                 logging.warning(f'{doc_id} has no relevant answers')
-        return [RelevanceExample(Query(query), list(map(Text, sents)), rels)
-                for ((query, _), sents), (_, rels) in zip(example_map.items(), rel_map.items())]
+        return [RelevanceExample(Query(query), list(map(lambda s: Text(s, dict(docid=docid)), sents)), rels)
+                for ((query, docid), sents), (_, rels) in zip(example_map.items(), rel_map.items())]
