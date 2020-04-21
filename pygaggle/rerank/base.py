@@ -1,6 +1,13 @@
-from typing import List
+from typing import List, Union, Optional
+import abc
 
 from pyserini.pyclass import JSimpleSearcherResult
+
+
+__all__ = ['Query', 'Text', 'Reranker', 'to_texts', 'TextType']
+
+
+TextType = Union['Query', 'Text']
 
 
 class Query:
@@ -21,17 +28,19 @@ class Text:
 
     Parameters
     ----------
-    contents : str
+    text : str
         The text to be reranked.
-    raw : str
+    raw : Optional[str]
         The raw representation of the text to be ranked. For example, the ```raw``` might be a JSON object containing
         the ```contents``` as well as additional metadata data and other annotations.
-    score : float
+    score : Optional[float]
         The score of the text. For example, the score might be the BM25 score from an initial retrieval stage.
     """
 
-    def __init__(self, contents: str, raw: str, score: float):
-        self.contents = contents
+    def __init__(self, text: str, raw: Optional[str] = None, score: Optional[float] = 0):
+        self.text = text
+        if raw is None:
+            raw = text
         self.raw = raw
         self.score = score
 
@@ -40,11 +49,8 @@ class Reranker:
     """Class representing a reranker. A reranker takes a list texts and returns a list of texts non-destructively
     (i.e., does not alter the original input list of texts).
     """
-
-    def __init__(self):
-        pass
-
-    def rerank(self, query: Query, texts: List[Text]):
+    @abc.abstractmethod
+    def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
         """Reranks a list of texts with respect to a query.
 
          Parameters
@@ -62,7 +68,7 @@ class Reranker:
         pass
 
 
-def to_texts(hits: List[JSimpleSearcherResult]):
+def to_texts(hits: List[JSimpleSearcherResult]) -> List[Text]:
     """Converts hits from Pyserini into a list of texts.
 
      Parameters
