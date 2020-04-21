@@ -4,7 +4,7 @@ A gaggle of CORD-19 rerankers.
 
 ## Installation
 
-1. `conda env create -f environment.yml`
+1. `conda env create -f environment.yml && conda activate pygaggle`
 
 2. Install [PyTorch 1.4+](http://pytorch.org/).
 
