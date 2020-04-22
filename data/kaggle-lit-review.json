@@ -454,6 +454,80 @@
           ]
         }
       ]
+    },
+    {
+      "name":"Hypertension",
+      "sub_categories":[
+        {
+          "nq_name":"What is the RR for severe infection in COVID-19 patients with hypertension?",
+          "kq_name":"RR for severe infection in COVID-19 patients with hypertension",
+          "answers":[
+            {
+              "id":"4mnmaky6",
+              "title":"The relationship of COVID-19 severity with cardiovascular disease and its traditional risk factors: A systematic review and meta-analysis",
+              "exact_answer":"hypertension (10 studies; 2.74 [2.12-3.54])"
+            },
+            {
+              "id":"yx8b2moc",
+              "title":"Incidence, clinical characteristics and prognostic factor of patients with COVID-19: a systematic review and meta-analysis Running title: Predictors of clinical prognosis of COVID-19",
+              "exact_answer":"hypertension (RR = 4.48; 95% CI"
+            }
+          ]
+        },
+        {
+          "nq_name":"What is the HR for severe infection in COVID-19 patients with hypertension?",
+          "kq_name":"HR for severe infection in COVID-19 patients with hypertension",
+          "answers":[
+            {
+              "id":"7s9ot4vq",
+              "title":"Comorbidity and its impact on 1,590 patients with COVID-19 in China: A Nationwide Analysis",
+              "exact_answer":"hypertension (HR 1.58, 95%CI 1.07-2.32)"
+            }
+          ]
+        },
+        {
+          "nq_name":"What is the OR for severe infection in COVID-19 patients with hypertension?",
+          "kq_name":"OR for severe infection in COVID-19 patients with hypertension",
+          "answers":[
+            {
+              "id":"0trra374",
+              "title":"Risk factors for severity and mortality in adult COVID-19 inpatients in Wuhan Risk factors for severity and mortality in adult COVID-19 1 inpatients in Wuhan",
+              "exact_answer":"292 hypertension (OR 2.0; 95% CI 1.3-3.2)"
+            },
+            {
+              "id":"k65501xp",
+              "title":"The Use of Adjuvant Therapy in Preventing Progression to Severe Pneumonia in Patients with Coronavirus Disease 2019: A Multicenter Data Analysis",
+              "exact_answer":"[OR], 2.07; 95% CI, 1.07 to 4.00) for developing severe pneumonia"
+            },
+            {
+              "id":"v6frcc5r",
+              "title":"Effects of hypertension, diabetes and coronary heart disease on COVID-19 diseases severity: a systematic review and meta-analysis",
+              "exact_answer":"There were significant correlations between COVID-19 severity and hypertension [OR=2.3 [95% CI (1.76, 3.00), P<0.01]"
+            },
+            {
+              "id":"vof63qat",
+              "title":"Systematic review and meta-analysis of predictive symptoms and comorbidities for severe COVID-19 infection",
+              "exact_answer":"hypertension (1.97, 95% CI 1.40 -2.77)"
+            },
+            {
+              "id":"o56j4qio",
+              "title":"Prevalence of comorbidities in the novel Wuhan coronavirus (COVID-19) infection: a systematic review and meta-analysis Prevalence of comorbidities in the Novel Wuhan Coronavirus (COVID-19) infection: a systematic review and meta-analysis",
+              "exact_answer":"the pooled odds ratio of hypertension, respiratory system disease, cardiovascular disease in severe patients were (OR 2.36, 95% CI: 1.46-3.83) ,(OR 2.46, 95% CI: 1.76-3.44) and (OR 3.42, 95% CI: 1.88-6.22)respectively"
+            }
+          ]
+        },
+        {
+          "nq_name":"What is the mortality rate for COVID-19 patients with hypertension?",
+          "kq_name":"Mortality rate for COVID-19 patients with hypertension",
+          "answers":[
+            {
+              "id": "r0r1kvkp",
+              "title": "Development and external validation of a prognostic multivariable model on admission for hospitalized patients with COVID-19",
+              "exact_answer": "Patients with hypertension, showed a significantly higher mortality rate (p<0·001)."
+            }
+          ]
+        }
+      ]
     }
   ]
 }
