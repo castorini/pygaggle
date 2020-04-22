@@ -523,6 +523,101 @@
           ]
         }
       ]
+    },
+    {
+      "category":"Physical science",
+      "sub_categories": [
+          {
+              "name":"What percentage of ethanol deactivates covid-19?",
+              "answers": [
+                  {
+                      "id":"c1n994j6",
+                      "title":"Efficient inactivation of SARS-CoV-2 by WHO-recommended hand rub formulations and alcohols",
+                      "exact_answer":"WHO 21 formulation I, based on 85 % ethanol, efficiently inactivated the virus with reduction 22 factors"
+                  },
+                  {
+                      "id":"c1n994j6",
+                      "title":"Efficient inactivation of SARS-CoV-2 by WHO-recommended hand rub formulations and alcohols",
+                      "exact_answer":"Both alcohols, ethanol (Fig. 9 2A) and 2-propanol ( Fig. 2B) were able to reduce viral titers in 30 s exposure"
+                  },
+                  {
+                      "id":"c1n994j6",
+                      "title":"Efficient inactivation of SARS-CoV-2 by WHO-recommended hand rub formulations and alcohols",
+                      "exact_answer":"minimal concentration of 30 % ethanol or 2-propanol is sufficient for viral 12 inactivation"
+                  }
+              ]
+          },
+          {
+              "name":"What is the temperature used for deactiving COVID-19?",
+              "answers":[
+                  {
+                      "id":"dm1wkpnv",
+                      "title":"Can N95 respirators be reused after disinfection? And for how many times?",
+                      "exact_answer":"heating (dry or in the presence humidity) <100 °C can preserve the filtration characteristics of a pristine N95 respirator"
+                  },
+                  {
+                      "id":"d48u5w0h",
+                      "title":"Rapid evidence summary on SARS-CoV-2 survivorship and disinfection, and a reusable PPE protocol using a double-hit process",
+                      "exact_answer":"We also recommend heat treatment at 60°C for 90 minutes to treat PPE."
+                  }
+              ]
+          },
+          {
+              "name":"What is the UVGI intensity used for deactivating COVID-19?",
+              "answers":[
+                  {
+                      "id":"dm1wkpnv",
+                      "title":"Can N95 respirators be reused after disinfection? And for how many times?",
+                      "exact_answer":"The UVGI (254 nm, 17 mW/cm 2 ) sterilizer cabinet used in these tests does not have enough dose to damage the respirators within a reasonable number of treatment cycles and may be considered for disinfection, with doses smaller than 1000 J/cm 2"
+                  },
+                  {
+                      "id":"d48u5w0h",
+                      "title":"Rapid evidence summary on SARS-CoV-2 survivorship and disinfection, and a reusable PPE protocol using a double-hit process",
+                      "exact_answer":"The applied UVC dose should be at least 1,000 mJ/cm 2 , but we recommend an initial conservative dose of 2,000 mJ/cm 2 [applied to each side of N95 FFRs, i.e. wearer-facing and outer sides]"
+                  }
+              ]
+          },
+          {
+              "name":"Decontamination using steam",
+              "answers":[
+                  {
+                      "id":"dm1wkpnv",
+                      "title":"Can N95 respirators be reused after disinfection? And for how many times?",
+                      "exact_answer":"Using steam to disinfect requires caution, as the treatments may seem to be suitable, but prolonged treatment may leave the user with unsuitable protection"
+                  }
+              ]
+          },
+          {
+              "name":"Decontamination using alcohol",
+              "answers":[
+                  {
+                      "id":"dm1wkpnv",
+                      "title":"Can N95 respirators be reused after disinfection? And for how many times?",
+                      "exact_answer":"we advise against using certain liquid contact, such as alcohol solutions, chlorine-based solutions, or soaps to clean the respirator, as this will lead to a degradation in the static charge that is necessary for the FFR to meet the N95 standard"
+                  }
+              ]
+          },
+          {
+              "name":"Decontamination using soaps",
+              "answers":[
+                  {
+                      "id":"dm1wkpnv",
+                      "title":"Can N95 respirators be reused after disinfection? And for how many times?",
+                      "exact_answer":"we advise against using certain liquid contact, such as alcohol solutions, chlorine-based solutions, or soaps to clean the respirator, as this will lead to a degradation in the static charge that is necessary for the FFR to meet the N95 standard"
+                  }
+              ]
+          },
+          {
+              "name":"Decontamination using chlorine-based solutions",
+              "answers":[
+                  {
+                      "id":"dm1wkpnv",
+                      "title":"Can N95 respirators be reused after disinfection? And for how many times?",
+                      "exact_answer":"we advise against using certain liquid contact, such as alcohol solutions, chlorine-based solutions, or soaps to clean the respirator, as this will lead to a degradation in the static charge that is necessary for the FFR to meet the N95 standard"
+                  }
+              ]
+          }
+      ]
     }
   ]
 }
