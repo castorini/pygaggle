@@ -1,7 +1,7 @@
 from copy import deepcopy
 from typing import List
 
-from transformers import T5ForConditionalGeneration, PreTrainedModel
+from transformers import T5ForConditionalGeneration, PreTrainedModel, PreTrainedTokenizer
 import torch
 
 from pygaggle.model import greedy_decode, QueryDocumentBatchTokenizer, BatchTokenizer,\
@@ -9,7 +9,10 @@ from pygaggle.model import greedy_decode, QueryDocumentBatchTokenizer, BatchToke
 from pygaggle.rerank import Reranker, Query, Text, SimilarityMatrixProvider
 
 
-__all__ = ['T5Reranker', 'TransformerReranker']
+__all__ = ['T5Reranker',
+           'UnsupervisedTransformerReranker',
+           'SequenceClassificationTransformerReranker',
+           'QuestionAnsweringTransformerReranker']
 
 
 class T5Reranker(Reranker):
@@ -39,7 +42,7 @@ class T5Reranker(Reranker):
         return texts
 
 
-class TransformerReranker(Reranker):
+class UnsupervisedTransformerReranker(Reranker):
     methods = dict(max=lambda x: x.max().item(),
                    mean=lambda x: x.mean().item(),
                    absmean=lambda x: x.abs().mean().item(),
@@ -72,4 +75,54 @@ class TransformerReranker(Reranker):
             matrix = self.sim_matrix_provider.compute_matrix(encoded_query, enc_doc)
             score = self.methods[self.method](matrix)
             text.score = score
+        return texts
+
+
+class SequenceClassificationTransformerReranker(Reranker):
+    def __init__(self,
+                 model: PreTrainedModel,
+                 tokenizer: PreTrainedTokenizer):
+        self.tokenizer = tokenizer
+        self.model = model
+        self.device = next(model.parameters()).device
+
+    @torch.no_grad()
+    def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
+        texts = deepcopy(texts)
+        for text in texts:
+            ret = self.tokenizer.encode_plus(query.text, text.text, max_length=512, return_tensors='pt')
+            input_ids = ret['input_ids'].to(self.device)
+            output, = self.model(input_ids)
+            if output.size(1) > 1:
+                text.score = torch.nn.functional.log_softmax(output, 1)[0, -1].item()
+            else:
+                text.score = output.item()
+        return texts
+
+
+class QuestionAnsweringTransformerReranker(Reranker):
+    def __init__(self, model: PreTrainedModel, tokenizer: PreTrainedTokenizer):
+        self.tokenizer = tokenizer
+        self.model = model
+        self.device = next(model.parameters()).device
+
+    @torch.no_grad()
+    def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
+        texts = deepcopy(texts)
+        for text in texts:
+            ret = self.tokenizer.encode_plus(query.text,
+                                             text.text,
+                                             max_length=512,
+                                             return_tensors='pt',
+                                             return_token_type_ids=True)
+            input_ids = ret['input_ids'].to(self.device)
+            tt_ids = ret['token_type_ids'].to(self.device)
+            start_scores, end_scores = self.model(input_ids, token_type_ids=tt_ids)
+            start_scores = start_scores[0]
+            end_scores = end_scores[0]
+            start_scores[(1 - tt_ids[0]).bool()] = -5000
+            end_scores[(1 - tt_ids[0]).bool()] = -5000
+            smax_val, smax_idx = start_scores.max(0)
+            emax_val, emax_idx = end_scores.max(0)
+            text.score = max(smax_val.item(), emax_val.item())
         return texts

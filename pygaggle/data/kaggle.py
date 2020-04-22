@@ -58,8 +58,8 @@ class LitReviewDataset(BaseModel):
             key = (query, document.id)
             try:
                 example_map.setdefault(key, tokenizer(loader.load_document(document.id)))
-            except ValueError:
-                logging.warning(f'Skipping {document.id} (article not found)')
+            except ValueError as e:
+                logging.warning(f'Skipping {document.id} ({e})')
                 continue
             sents = example_map[key]
             rel_map.setdefault(key, [False] * len(sents))
