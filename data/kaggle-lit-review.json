@@ -466,6 +466,37 @@
       "name":"Seasonality",
       "sub_categories":[
         {
+          "nq_name":"How does temperature affect the transmission of COVID-19?",
+          "kq_name":"Effects of temperature on the transmission of COVID-19",
+          "answers":[
+            {
+              "id": "r141na6j",
+              "title": "Eco-epidemiological assessment of the COVID-19 epidemic in China",
+              "exact_answer": "Adjusted incidence rate ratios suggested brighter, warmer and drier conditions were associated with lower incidence"
+            },
+            {
+              "id": "mdyojac2",
+              "title": "Climate effect on COVID-19 spread rate: an online surveillance tool",
+              "exact_answer": "a plausible negative correlation between warmer climate and COVID-19 spread rate"
+            },
+            {
+              "id": "vc2eheb6",
+              "title": "Causal empirical estimates suggest COVID-19 transmission rates are highly seasonal",
+              "exact_answer": "a 1 • C increase in local temperature reduces new COVID-19 cases per 1 million people by 13%, with a 95% confidence interval of [-21%, -4%]"
+            },
+            {
+              "id": "fcaeoyxd",
+              "title": "Climate affects global patterns of COVID-19 early outbreak dynamics",
+              "exact_answer": "Temperature and humidity strongly impact the variation of the growth rate of Covid-19 cases across the globe"
+            },
+            {
+              "id": "drzphrqj",
+              "title": "Preliminary evidence that higher temperatures are associated with lower incidence of COVID-19, for cases reported globally up to 29th February 2020",
+              "exact_answer": "higher average temperature was strongly associated with lower COVID-19 incidence for temperatures of 1°C and higher"
+            }
+          ]
+        },
+        {
           "nq_name":"How does humidity affect the transmission of COVID-19?",
           "kq_name":"Effects of humidity on the transmission of COVID-19",
           "answers":[
@@ -519,6 +550,16 @@
               "id":"x4qdiln9",
               "title":"A spatial model of CoVID-19 transmission in England and Wales: early spread and peak timing",
               "exact_answer":"Seasonal changes in transmission rate could shift the timing of the peak into winter months"
+            },
+            {
+              "id": "f4hj35dr",
+              "title": "Projecting the transmission dynamics of SARS-CoV-2 through the post-pandemic period",
+              "exact_answer": "HCoV-OC43 and HCoV-HKU1 cause annual wintertime outbreaks of respiratory illness in temperate regions (9, 10), suggesting that wintertime climate and host behaviors may facilitate transmission, as is true for influenza"
+            },
+            {
+              "id": "nzat41wu",
+              "title": "Social distancing strategies for curbing the COVID-19 epidemic",
+              "exact_answer": "If SARS-Cov-2 transmission is similarly subject to seasonal forcing, summer outbreaks would naturally have lower peaks than winter outbreaks"
             }
           ]
         }
