@@ -35,6 +35,7 @@ class LitReviewCategory(BaseModel):
 
 
 class LitReviewDataset(BaseModel):
+    version: str
     categories: List[LitReviewCategory]
 
     @classmethod
