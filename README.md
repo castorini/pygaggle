@@ -35,3 +35,5 @@ If this is undesirable, set the environment variable `CORD19_INDEX_PATH` to the 
 ### Supervised Methods
 
 **T5 (MARCO)**: `python -um pygaggle.run.evaluate_kaggle_highlighter --method t5`
+
+Instructions for our other MARCO and SQuAD models coming soon.
