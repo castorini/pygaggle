@@ -1,9 +1,10 @@
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from typing import List
 import json
 import logging
 
 from pydantic import BaseModel
+import numpy as np
 
 from .relevance import RelevanceExample, Cord19DocumentLoader
 from pygaggle.model.tokenize import SpacySenticizer
@@ -69,8 +70,18 @@ class LitReviewDataset(BaseModel):
             for idx, s in enumerate(sents):
                 if document.exact_answer in s:
                     rel_map[key][idx] = True
+        mean_stats = defaultdict(list)
         for (_, doc_id), rels in rel_map.items():
+            int_rels = np.array(list(map(int, rels)))
+            p = int_rels.sum()
+            mean_stats['Average spans'].append(p)
+            mean_stats['Random P@1'].append(np.mean(int_rels))
+            n = len(int_rels) - p
+            N = len(int_rels)
+            mean_stats['Random R@3'].append(1 - (n * (n - 1) * (n - 2)) / (N * (N - 1) * (N - 2)))
             if not any(rels):
                 logging.warning(f'{doc_id} has no relevant answers')
+        for k, v in mean_stats.items():
+            logging.info(f'{k}: {np.mean(v)}')
         return [RelevanceExample(Query(query), list(map(lambda s: Text(s, dict(docid=docid)), sents)), rels)
                 for ((query, docid), sents), (_, rels) in zip(example_map.items(), rel_map.items())]
