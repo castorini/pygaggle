@@ -21,7 +21,7 @@ reqs = [
 
 setuptools.setup(
     name='pygaggle',
-    version='0.0.1.dev8',
+    version='0.0.1',
     author='PyGaggle Gaggle',
     author_email='r33tang@uwaterloo.ca',
     description='A gaggle of rerankers for CovidQA and CORD-19',
@@ -32,7 +32,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     classifiers=[
         'Programming Language :: Python :: 3',
-        'License :: OSI Approved :: Apache 2.0 License',
+        'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
     ],
     python_requires='>=3.7',
