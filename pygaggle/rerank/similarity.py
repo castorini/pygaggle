@@ -5,7 +5,7 @@ import torch
 from pygaggle.model import SingleEncoderOutput
 
 
-__all__ = ['SimilarityMatrixProvider', 'InnerProductMatrixProvider']
+__all__ = ['SimilarityMatrixProvider', 'CosineSimilarityMatrixProvider']
 
 
 class SimilarityMatrixProvider:
@@ -16,7 +16,7 @@ class SimilarityMatrixProvider:
         pass
 
 
-class InnerProductMatrixProvider(SimilarityMatrixProvider):
+class CosineSimilarityMatrixProvider(SimilarityMatrixProvider):
     @torch.no_grad()
     def compute_matrix(self, encoded_query: SingleEncoderOutput, encoded_document: SingleEncoderOutput) -> torch.Tensor:
         query_repr = encoded_query.encoder_output

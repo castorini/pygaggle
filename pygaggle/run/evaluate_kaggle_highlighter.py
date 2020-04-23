@@ -8,7 +8,7 @@ from transformers import AutoModel, AutoTokenizer, AutoModelForSequenceClassific
 import torch
 
 from .args import ArgumentParserBuilder, opt
-from pygaggle.rerank import UnsupervisedTransformerReranker, InnerProductMatrixProvider, Reranker, T5Reranker, \
+from pygaggle.rerank import UnsupervisedTransformerReranker, CosineSimilarityMatrixProvider, Reranker, T5Reranker, \
     Bm25Reranker, SequenceClassificationTransformerReranker, QuestionAnsweringTransformerReranker, RandomReranker
 from pygaggle.model import SimpleBatchTokenizer, CachedT5ModelLoader, T5BatchTokenizer, RerankerEvaluator, metric_names
 from pygaggle.data import LitReviewDataset
@@ -75,7 +75,7 @@ def construct_transformer(options: KaggleEvaluationOptions) -> Reranker:
     tokenizer = SimpleBatchTokenizer(AutoTokenizer.from_pretrained(options.tokenizer_name,
                                                                    do_lower_case=options.do_lower_case),
                                      options.batch_size)
-    provider = InnerProductMatrixProvider()
+    provider = CosineSimilarityMatrixProvider()
     return UnsupervisedTransformerReranker(model, tokenizer, provider)
 
 
