@@ -6,8 +6,8 @@ from sklearn.metrics import recall_score
 from tqdm import tqdm
 import numpy as np
 
-from pygaggle.data import RelevanceExample
-from pygaggle.rerank import Reranker
+from pygaggle.data.kaggle import RelevanceExample
+from pygaggle.rerank.base import Reranker
 
 
 __all__ = ['RerankerEvaluator', 'metric_names']

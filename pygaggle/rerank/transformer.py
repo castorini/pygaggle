@@ -4,9 +4,10 @@ from typing import List
 from transformers import T5ForConditionalGeneration, PreTrainedModel, PreTrainedTokenizer, BertForQuestionAnswering
 import torch
 
+from .base import Reranker, Query, Text
+from .similarity import SimilarityMatrixProvider
 from pygaggle.model import greedy_decode, QueryDocumentBatchTokenizer, BatchTokenizer,\
     QueryDocumentBatch, LongBatchEncoder, SpecialTokensCleaner
-from pygaggle.rerank import Reranker, Query, Text, SimilarityMatrixProvider
 
 
 __all__ = ['T5Reranker',

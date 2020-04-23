@@ -6,7 +6,7 @@ from spacy.lang.en import English
 from transformers import PreTrainedTokenizer
 import torch
 
-from pygaggle.rerank import Query, Text, TextType
+from pygaggle.rerank.base import Query, Text, TextType
 
 
 __all__ = ['BatchTokenizer',

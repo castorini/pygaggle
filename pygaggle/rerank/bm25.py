@@ -7,7 +7,7 @@ from pyserini.analysis.pyanalysis import get_lucene_analyzer, Analyzer
 from pyserini.index.pyutils import IndexReaderUtils
 import numpy as np
 
-from pygaggle.rerank import Reranker, Query, Text
+from .base import Reranker, Query, Text
 
 
 __all__ = ['Bm25Reranker']

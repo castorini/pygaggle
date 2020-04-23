@@ -2,8 +2,7 @@ from copy import deepcopy
 from typing import List
 import random
 
-from . import Query, Text
-from .base import Reranker
+from .base import Query, Text, Reranker
 
 
 __all__ = ['RandomReranker']

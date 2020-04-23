@@ -8,8 +8,12 @@ from transformers import AutoModel, AutoTokenizer, AutoModelForSequenceClassific
 import torch
 
 from .args import ArgumentParserBuilder, opt
-from pygaggle.rerank import UnsupervisedTransformerReranker, CosineSimilarityMatrixProvider, Reranker, T5Reranker, \
-    Bm25Reranker, SequenceClassificationTransformerReranker, QuestionAnsweringTransformerReranker, RandomReranker
+from pygaggle.rerank.base import Reranker
+from pygaggle.rerank.bm25 import Bm25Reranker
+from pygaggle.rerank.transformer import UnsupervisedTransformerReranker, T5Reranker, \
+    SequenceClassificationTransformerReranker, QuestionAnsweringTransformerReranker
+from pygaggle.rerank.random import RandomReranker
+from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
 from pygaggle.model import SimpleBatchTokenizer, CachedT5ModelLoader, T5BatchTokenizer, RerankerEvaluator, metric_names
 from pygaggle.data import LitReviewDataset
 from pygaggle.settings import Settings

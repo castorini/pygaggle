@@ -9,7 +9,7 @@ import numpy as np
 
 from .relevance import RelevanceExample, Cord19DocumentLoader
 from pygaggle.model.tokenize import SpacySenticizer
-from pygaggle.rerank import Query, Text
+from pygaggle.rerank.base import Query, Text
 
 
 __all__ = ['MISSING_ID', 'LitReviewCategory', 'LitReviewAnswer', 'LitReviewDataset', 'LitReviewSubcategory']
