@@ -119,7 +119,7 @@ def construct_bm25(_: KaggleEvaluationOptions) -> Reranker:
 
 def main():
     apb = ArgumentParserBuilder()
-    apb.add_opts(opt('--dataset', type=Path, default='data/kaggle-lit-review.json'),
+    apb.add_opts(opt('--dataset', type=Path, default='data/kaggle-lit-review-0.1.json'),
                  opt('--method', required=True, type=str, choices=METHOD_CHOICES),
                  opt('--model-name', type=str),
                  opt('--split', type=str, default='nq', choices=('nq', 'kq')),

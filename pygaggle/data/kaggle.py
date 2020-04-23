@@ -4,6 +4,7 @@ import json
 import logging
 
 from pydantic import BaseModel
+import scipy.special as sp
 import numpy as np
 
 from .relevance import RelevanceExample, Cord19DocumentLoader
@@ -80,6 +81,11 @@ class LitReviewDataset(BaseModel):
             n = len(int_rels) - p
             N = len(int_rels)
             mean_stats['Random R@3'].append(1 - (n * (n - 1) * (n - 2)) / (N * (N - 1) * (N - 2)))
+            denom = np.array([sp.comb(N, i) for i in range(1, n + 1)])
+            numer = np.array([sp.comb(n, i) / (n - i + 1) for i in range(1, n + 1)])
+            rr = 1 / np.arange(1, n + 1)
+            rmrr = np.sum(numer * rr / denom)
+            mean_stats['Random MRR'].append(rmrr)
             if not any(rels):
                 logging.warning(f'{doc_id} has no relevant answers')
         for k, v in mean_stats.items():
