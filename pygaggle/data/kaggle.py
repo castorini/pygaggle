@@ -5,7 +5,7 @@ import logging
 
 from pydantic import BaseModel
 
-from .relevance import RelevanceExample, LuceneDocumentLoader
+from .relevance import RelevanceExample, Cord19DocumentLoader
 from pygaggle.model.tokenize import SpacySenticizer
 from pygaggle.rerank import Query, Text
 
@@ -46,8 +46,10 @@ class LitReviewDataset(BaseModel):
                 for subcat in cat.sub_categories
                 for ans in subcat.answers)
 
-    def to_senticized_dataset(self, index_path: str, split: str = 'nq') -> List[RelevanceExample]:
-        loader = LuceneDocumentLoader(index_path)
+    def to_senticized_dataset(self,
+                              index_path: str,
+                              split: str = 'nq') -> List[RelevanceExample]:
+        loader = Cord19DocumentLoader(index_path)
         tokenizer = SpacySenticizer()
         example_map = OrderedDict()
         rel_map = OrderedDict()
@@ -57,7 +59,8 @@ class LitReviewDataset(BaseModel):
                 continue
             key = (query, document.id)
             try:
-                example_map.setdefault(key, tokenizer(loader.load_document(document.id)))
+                doc = loader.load_document(document.id)
+                example_map.setdefault(key, tokenizer(doc.all_text))
             except ValueError as e:
                 logging.warning(f'Skipping {document.id} ({e})')
                 continue

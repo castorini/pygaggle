@@ -1,7 +1,7 @@
 from copy import deepcopy
 from typing import List
 
-from transformers import T5ForConditionalGeneration, PreTrainedModel, PreTrainedTokenizer
+from transformers import T5ForConditionalGeneration, PreTrainedModel, PreTrainedTokenizer, BertForQuestionAnswering
 import torch
 
 from pygaggle.model import greedy_decode, QueryDocumentBatchTokenizer, BatchTokenizer,\
@@ -35,8 +35,8 @@ class T5Reranker(Reranker):
 
             # 6136 and 1176 are the indexes of the tokens false and true in T5.
             batch_scores = batch_scores[:, [6136, 1176]]
-            batch_log_probs = torch.nn.functional.log_softmax(batch_scores, dim=1)
-            batch_log_probs = batch_log_probs[:, 1].tolist()
+            batch_scores = torch.nn.functional.log_softmax(batch_scores, dim=1)
+            batch_log_probs = batch_scores[:, 1].tolist()
             for doc, score in zip(batch.documents, batch_log_probs):
                 doc.score = score
         return texts
@@ -53,7 +53,8 @@ class UnsupervisedTransformerReranker(Reranker):
                  tokenizer: BatchTokenizer,
                  sim_matrix_provider: SimilarityMatrixProvider,
                  method: str = 'max',
-                 clean_special: bool = True):
+                 clean_special: bool = True,
+                 argmax_only: bool = False):
         assert method in self.methods, 'inappropriate scoring method'
         self.model = model
         self.tokenizer = tokenizer
@@ -63,18 +64,25 @@ class UnsupervisedTransformerReranker(Reranker):
         self.clean_special = clean_special
         self.cleaner = SpecialTokensCleaner(tokenizer.tokenizer)
         self.device = next(self.model.parameters(), None).device
+        self.argmax_only = argmax_only
 
     @torch.no_grad()
     def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
         encoded_query = self.encoder.encode_single(query)
         encoded_documents = self.encoder.encode(texts)
         texts = deepcopy(texts)
+        max_score = None
         for enc_doc, text in zip(encoded_documents, texts):
             if self.clean_special:
                 enc_doc = self.cleaner.clean(enc_doc)
             matrix = self.sim_matrix_provider.compute_matrix(encoded_query, enc_doc)
-            score = self.methods[self.method](matrix)
+            score = self.methods[self.method](matrix) if matrix.size(1) > 0 else -10000
             text.score = score
+            max_score = score if max_score is None else max(max_score, score)
+        if self.argmax_only:
+            for text in texts:
+                if text.score != max_score:
+                    text.score = max_score - 10000
         return texts
 
 
@@ -90,9 +98,14 @@ class SequenceClassificationTransformerReranker(Reranker):
     def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
         texts = deepcopy(texts)
         for text in texts:
-            ret = self.tokenizer.encode_plus(query.text, text.text, max_length=512, return_tensors='pt')
+            ret = self.tokenizer.encode_plus(query.text,
+                                             text.text,
+                                             max_length=512,
+                                             return_token_type_ids=True,
+                                             return_tensors='pt')
             input_ids = ret['input_ids'].to(self.device)
-            output, = self.model(input_ids)
+            tt_ids = ret['token_type_ids'].to(self.device)
+            output, = self.model(input_ids, token_type_ids=tt_ids)
             if output.size(1) > 1:
                 text.score = torch.nn.functional.log_softmax(output, 1)[0, -1].item()
             else:

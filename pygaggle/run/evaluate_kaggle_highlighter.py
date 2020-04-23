@@ -3,20 +3,20 @@ from pathlib import Path
 import logging
 
 from pydantic import BaseModel, validator
-from transformers import AutoModel, AutoTokenizer, AutoModelForSequenceClassification, AutoModelForQuestionAnswering,\
-    BertForQuestionAnswering
+from transformers import AutoModel, AutoTokenizer, AutoModelForSequenceClassification, BertForQuestionAnswering, \
+    BertForSequenceClassification
 import torch
 
 from .args import ArgumentParserBuilder, opt
 from pygaggle.rerank import UnsupervisedTransformerReranker, InnerProductMatrixProvider, Reranker, T5Reranker, \
-    Bm25Reranker, SequenceClassificationTransformerReranker, QuestionAnsweringTransformerReranker
+    Bm25Reranker, SequenceClassificationTransformerReranker, QuestionAnsweringTransformerReranker, RandomReranker
 from pygaggle.model import SimpleBatchTokenizer, CachedT5ModelLoader, T5BatchTokenizer, RerankerEvaluator, metric_names
 from pygaggle.data import LitReviewDataset
 from pygaggle.settings import Settings
 
 
 SETTINGS = Settings()
-METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer', 'qa_transformer')
+METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer', 'qa_transformer', 'random')
 
 
 class KaggleEvaluationOptions(BaseModel):
@@ -25,6 +25,7 @@ class KaggleEvaluationOptions(BaseModel):
     batch_size: int
     device: str
     split: str
+    do_lower_case: bool
     metrics: List[str]
     model_name: Optional[str]
     tokenizer_name: Optional[str]
@@ -60,7 +61,7 @@ def construct_t5(options: KaggleEvaluationOptions) -> Reranker:
                                  SETTINGS.flush_cache)
     device = torch.device(options.device)
     model = loader.load().to(device).eval()
-    tokenizer = AutoTokenizer.from_pretrained(options.model_name)
+    tokenizer = AutoTokenizer.from_pretrained(options.model_name, do_lower_case=options.do_lower_case)
     tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
     return T5Reranker(model, tokenizer)
 
@@ -71,29 +72,34 @@ def construct_transformer(options: KaggleEvaluationOptions) -> Reranker:
         model = AutoModel.from_pretrained(options.model_name).to(device).eval()
     except OSError:
         model = AutoModel.from_pretrained(options.model_name, from_tf=True).to(device).eval()
-    tokenizer = SimpleBatchTokenizer(AutoTokenizer.from_pretrained(options.tokenizer_name), options.batch_size)
+    tokenizer = SimpleBatchTokenizer(AutoTokenizer.from_pretrained(options.tokenizer_name,
+                                                                   do_lower_case=options.do_lower_case),
+                                     options.batch_size)
     provider = InnerProductMatrixProvider()
     return UnsupervisedTransformerReranker(model, tokenizer, provider)
 
 
-def construct_classification_transformer(cls, reranker_cls):
-    def construct(options: KaggleEvaluationOptions) -> Reranker:
+def construct_seq_class_transformer(options: KaggleEvaluationOptions) -> Reranker:
+    try:
+        model = AutoModelForSequenceClassification.from_pretrained(options.model_name)
+    except OSError:
         try:
-            model = cls.from_pretrained(options.model_name)
-        except OSError:
-            model = cls.from_pretrained(options.model_name, from_tf=True)
-        device = torch.device(options.device)
-        model = model.to(device).eval()
-        tokenizer = AutoTokenizer.from_pretrained(options.tokenizer_name)
-        return reranker_cls(model, tokenizer)
-    return construct
-
-
-construct_seq_class_transformer = construct_classification_transformer(AutoModelForSequenceClassification,
-                                                                       SequenceClassificationTransformerReranker)
+            model = AutoModelForSequenceClassification.from_pretrained(options.model_name, from_tf=True)
+        except AttributeError:
+            # Hotfix for BioBERT MS MARCO. Refactor.
+            BertForSequenceClassification.bias = torch.nn.Parameter(torch.zeros(2))
+            BertForSequenceClassification.weight = torch.nn.Parameter(torch.zeros(2, 768))
+            model = BertForSequenceClassification.from_pretrained(options.model_name, from_tf=True)
+            model.classifier.weight = BertForSequenceClassification.weight
+            model.classifier.bias = BertForSequenceClassification.bias
+    device = torch.device(options.device)
+    model = model.to(device).eval()
+    tokenizer = AutoTokenizer.from_pretrained(options.tokenizer_name, do_lower_case=options.do_lower_case)
+    return SequenceClassificationTransformerReranker(model, tokenizer)
 
 
 def construct_qa_transformer(options: KaggleEvaluationOptions) -> Reranker:
+    # We load a sequence classification model first -- again, as a workaround. Refactor.
     try:
         model = AutoModelForSequenceClassification.from_pretrained(options.model_name)
     except OSError:
@@ -103,7 +109,7 @@ def construct_qa_transformer(options: KaggleEvaluationOptions) -> Reranker:
     fixed_model.bert = model.bert
     device = torch.device(options.device)
     model = fixed_model.to(device).eval()
-    tokenizer = AutoTokenizer.from_pretrained(options.tokenizer_name)
+    tokenizer = AutoTokenizer.from_pretrained(options.tokenizer_name, do_lower_case=options.do_lower_case)
     return QuestionAnsweringTransformerReranker(model, tokenizer)
 
 
@@ -120,6 +126,7 @@ def main():
                  opt('--batch-size', '-bsz', type=int, default=96),
                  opt('--device', type=str, default='cuda:0'),
                  opt('--tokenizer-name', type=str),
+                 opt('--do-lower-case', action='store_true'),
                  opt('--metrics', type=str, nargs='+', default=metric_names(), choices=metric_names()))
     args = apb.parser.parse_args()
     options = KaggleEvaluationOptions(**vars(args))
@@ -129,7 +136,8 @@ def main():
                          bm25=construct_bm25,
                          t5=construct_t5,
                          seq_class_transformer=construct_seq_class_transformer,
-                         qa_transformer=construct_qa_transformer)
+                         qa_transformer=construct_qa_transformer,
+                         random=lambda _: RandomReranker())
     reranker = construct_map[options.method](options)
     evaluator = RerankerEvaluator(reranker, options.metrics)
     width = max(map(len, args.metrics)) + 1
