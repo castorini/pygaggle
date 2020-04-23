@@ -7,7 +7,7 @@ from pyserini.analysis.pyanalysis import get_lucene_analyzer, Analyzer
 from pyserini.index.pyutils import IndexReaderUtils
 import numpy as np
 
-from pygaggle.rerank import Reranker, Query, Text
+from .base import Reranker, Query, Text
 
 
 __all__ = ['Bm25Reranker']
@@ -45,5 +45,7 @@ class Bm25Reranker(Reranker):
                 idfs = {w: self.index_utils.compute_bm25_term_weight(text.raw['docid'], w) for w in tf}
             score = sum(idfs[w] * tf[w] * (self.k1 + 1) /
                         (tf[w] + self.k1 * (1 - self.b + self.b * (d_len / mean_len))) for w in tf)
+            if np.isnan(score):
+                score = 0
             text.score = score
         return texts

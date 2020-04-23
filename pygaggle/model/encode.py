@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 
 from .tokenize import BatchTokenizer
-from pygaggle.rerank import TextType
+from pygaggle.rerank.base import TextType
 
 
 __all__ = ['LongBatchEncoder', 'EncoderOutputBatch', 'SingleEncoderOutput', 'SpecialTokensCleaner']
