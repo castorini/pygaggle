@@ -28,11 +28,6 @@
               "exact_answer":"4 (3-7) days"
             },
             {
-              "id":"<missing>",
-              "title":"Early Transmission Dynamics in Wuhan, China, of Novel Coronavirus–Infected Pneumonia",
-              "exact_answer":"5.2 days (95% confidence interval [CI], 4.1 to 7.0)"
-            },
-            {
               "id":"x23ej29m",
               "title":"Clinical features and obstetric and neonatal outcomes of pregnant patients with COVID-19 in Wuhan, China: a retrospective, single-centre, descriptive study",
               "exact_answer":"5 days (range 2-9 days)"
@@ -139,11 +134,6 @@
           "kq_name":"Length of viral shedding after illness onset",
           "answers":[
             {
-              "id":"<missing>",
-              "title":"Factors associated with prolonged viral shedding and impact of Lopinavir/Ritonavir treatment in patients with SARS-CoV-2 infection",
-              "exact_answer":"23 days (IQR, 18-32 days)"
-            },
-            {
               "id":"r5a46n9a",
               "title":"Viral Kinetics and Antibody Responses in Patients with COVID-19",
               "exact_answer":"2 days (range, 3-38 ) in nasopharyngeal swabs, 19 days (range, 5-37) in sputum and 18 days (range, 7-26) in stools"
@@ -191,11 +181,6 @@
               "exact_answer":"21.7%"
             },
             {
-              "id":"<missing>",
-              "title":"Modes of contact and risk of transmission in COVID-19 among close contacts",
-              "exact_answer":"6.2%"
-            },
-            {
               "id":"7w1bhaz6",
               "title":"High incidence of asymptomatic SARS-CoV-2 infection, Chongqing, China",
               "exact_answer":"19%"
@@ -204,16 +189,6 @@
               "id":"xsqgrd5l",
               "title":"High transmissibility of COVID-19 near symptom onset",
               "exact_answer":"there were 32 laboratory-confirmed COVID-19 patients, including five household/family clusters and four asymptomatic patients"
-            },
-            {
-              "id":"<missing>",
-              "title":"Non-severe vs severe symptomatic COVID-19: 104 cases from the outbreak on the cruise ship “Diamond Princess” in Japan",
-              "exact_answer":"76 and 28 patients were classified as non-severe (asymptomatic, mild)"
-            },
-            {
-              "id":"<missing>",
-              "title":"Epidemiological characteristics of 2019 novel coronavirus family clustering in Zhejiang Province",
-              "exact_answer":"54 asymptomatic infected cases"
             },
             {
               "id":"56zhxd6e",
@@ -234,11 +209,6 @@
               "id":"k3f7ohzg",
               "title":"Characteristics of COVID-19 infection in Beijing",
               "exact_answer":"13 (5.0%) asymptomatic cases"
-            },
-            {
-              "id":"<missing>",
-              "title":"Estimation of the asymptomatic ratio of novel coronavirus infections (COVID-19)",
-              "exact_answer":"the asymptomatic ratio at 41.6%"
             }
           ]
         },
@@ -414,16 +384,6 @@
               "exact_answer":"The areas under the ROC curves of IgM and IgG were 0.988 and 1.000, respectively."
             },
             {
-              "id":"<missing>",
-              "title":"Molecular immune pathogenesis and diagnosis of COVID-19",
-              "exact_answer":"RT-qPCR can only achieve a sensitivity of 50% to 79%, depending on the protocol used the sample type and number of clinical specimens collected"
-            },
-            {
-              "id":"<missing>",
-              "title":"Molecular immune pathogenesis and diagnosis of COVID-19",
-              "exact_answer":"The sensitivity of SARS-CoV N-based IgG ELISA (94.7%) is significantly higher than that of SARS-CoV S-based IgG ELISA (58.9%)"
-            },
-            {
               "id":"py38bel4",
               "title":"Clinical significance of IgM and IgG test for diagnosis of highly suspected COVID-19 infection",
               "exact_answer":"The positive detection rate of combination of IgM and IgG for patients with COVID-19 negative and positive nucleic acid test was 72.73% and 87.50%."
@@ -439,11 +399,6 @@
               "exact_answer":"colorimetric LAMP assay showed 100% agreement with the RT-qPCR results across a range of C q values"
             },
             {
-              "id":"<missing>",
-              "title":"Differential diagnosis of illness in patients under investigation for the novel coronavirus (SARS-CoV-2), Italy, February 2020",
-              "exact_answer":"Broad screening for respiratory pathogens revealed a high rate of influenza virus infections, accounting for 28.5% of all suspected cases of SARS-CoV-2 infection"
-            },
-            {
               "id":"chln5r8w",
               "title":"Diagnosis of the Coronavirus disease (COVID-19): rRT-PCR or CT?",
               "exact_answer":"sensitivity was therefore 97.2%"
@@ -452,11 +407,6 @@
               "id":"s7uqawbd",
               "title":"Rapid colorimetric detection of COVID-19 coronavirus using a reverse tran- scriptional loop-mediated isothermal amplification (RT-LAMP) diagnostic plat- form: iLACO",
               "exact_answer":"iLACO is very sensitive, and as low as 10 copies of ORF1ab gene were detected successfully"
-            },
-            {
-              "id":"<missing>",
-              "title":"Detection of 2019 novel coronavirus (2019-nCoV) by real-time RT-PCR",
-              "exact_answer":"All assays were highly sensitive, with best results obtained for the E gene and RdRp gene assays (5.2 and 3.8 copies per reaction at 95% detection probability, respectively)"
             }
           ]
         }
@@ -773,7 +723,8 @@
           ]
         }
       ]
-    }, {
+    },
+    {
       "name":"Hypertension",
       "sub_categories":[
         {
@@ -808,16 +759,6 @@
           "kq_name":"OR for severe infection in COVID-19 patients with hypertension",
           "answers":[
             {
-              "id":"<missing>",
-              "title":"Journal Pre-proof Risk factors for severity and mortality in adult COVID-19 inpatients in Wuhan Risk factors for severity and mortality in adult COVID-19 1 inpatients in Wuhan",
-              "exact_answer":"292 hypertension (OR 2.0; 95% CI 1.3-3.2)"
-            },
-            {
-              "id":"<missing>",
-              "title":"The Use of Adjuvant Therapy in Preventing Progression to Severe Pneumonia in Patients with Coronavirus Disease 2019: A Multicenter Data Analysis",
-              "exact_answer":"[OR], 2.07; 95% CI, 1.07 to 4.00) for developing severe pneumonia"
-            },
-            {
               "id":"v6frcc5r",
               "title":"Effects of hypertension, diabetes and coronary heart disease on COVID-19 diseases severity: a systematic review and meta-analysis",
               "exact_answer":"There were significant correlations between COVID-19 severity and hypertension [OR=2.3 [95% CI (1.76, 3.00), P<0.01]"
@@ -839,78 +780,82 @@
           "kq_name":"Mortality rate for COVID-19 patients with hypertension",
           "answers":[
             {
-              "id": "r0r1kvkp",
-              "title": "Development and external validation of a prognostic multivariable model on admission for hospitalized patients with COVID-19",
-              "exact_answer": "Patients with hypertension, showed a significantly higher mortality rate (p<0·001)."
+              "id":"r0r1kvkp",
+              "title":"Development and external validation of a prognostic multivariable model on admission for hospitalized patients with COVID-19",
+              "exact_answer":"Patients with hypertension, showed a significantly higher mortality rate (p<0·001)."
             }
           ]
         }
       ]
-    }, {
-    "name": "Diabetes",
-    "sub_categories": [
+    },
+    {
+      "name":"Diabetes",
+      "sub_categories":[
         {
-            "nq_name": "What is the OR for severe infection in COVID-19 patients with diabetes?",
-            "kq_name": "OR for severe infection in COVID-19 patients with diabetes",
-            "answers": [
-                {
-                    "id": "oqo8pa1p",
-                    "title": "Risk factors for severe corona virus disease 2019 (COVID-19) patients : a systematic review and meta analysis",
-                    "exact_answer": "OR = 3.04 [2.01, 4.60]"
-                },
-                {
-                    "id": "v6frcc5r",
-                    "title": "Effects of hypertension, diabetes and coronary heart disease on COVID-19 diseases severity: a systematic review and meta-analysis",
-                    "exact_answer": "[OR=2.67, 95% CI (1.91, 3.74), P<0.01]"
-                },
-                {
-                    "id": "yx8b2moc",
-                    "title": "Incidence, clinical characteristics and prognostic factor of patients with COVID-19: a systematic review and meta-analysis Running title: Predictors of clinical prognosis of COVID-19",
-                    "exact_answer": "2.49; 95% CI, ; n = 10; I 2 = 44%"
-                },
-                {
-                    "id": "o56j4qio",
-                    "title": "Journal Pre-proof Prevalence of comorbidities in the novel Wuhan coronavirus (COVID-19) infection: a systematic review and meta-analysis Prevalence of comorbidities in the Novel Wuhan Coronavirus (COVID-19) infection: a systematic review and meta-analysis",
-                    "exact_answer": "OR 2.07, 95% CI: 0.89-4.82"
-                },
-                {
-                    "id": "o56j4qio",
-                    "title": "Journal Pre-proof Prevalence of comorbidities in the novel Wuhan coronavirus (COVID-19) infection: a systematic review and meta-analysis Prevalence of comorbidities in the Novel Wuhan Coronavirus (COVID-19) infection: a systematic review and meta-analysis",
-                    "exact_answer": "OR 2.07, 95% CI: 0.89-4.82"
-                }
-            ]
-        }, {
-            "nq_name": "What is the RR for severe infection in COVID-19 patients with diabetes?",
-            "kq_name": "RR for severe infection in COVID-19 patients with diabetes",
-            "answers": [
-                {
-                    "id": "4mnmaky6",
-                    "title": "The relationship of COVID-19 severity with cardiovascular disease and its traditional risk factors: A systematic review and meta-analysis",
-                    "exact_answer": "relative risk estimate of 2.81 (2.01-3.93)"
-                }
-            ]
-        }, {
-            "nq_name": "What is the HR for death in COVID-19 patients with diabetes?",
-            "kq_name": "HR for death in COVID-19 patients with diabetes",
-            "answers": [
-                {
-                    "id": "nrdiqees",
-                    "title": "History of coronary heart disease increases the mortality rate of COVID-19 patients: a nested case-control study",
-                    "exact_answer": "HR=1.1, p=0.61"
-                }
-            ]
-        }, {
-            "nq_name": "What is the AHR for death in COVID-19 patients with diabetes?",
-            "kq_name": "AHR for death in COVID-19 patients with diabetes",
-            "answers": [
-                {
-                    "id": "skknfc6h",
-                    "title": "Comorbid Diabetes Mellitus was Associated with Poorer Prognosis in Patients with COVID-19: A Retrospective Cohort Study",
-                    "exact_answer": "[aHR]=3.64; 95% confidence interval [CI]: 1.09, 12.21"
-                }
-            ]
+          "nq_name":"What is the OR for severe infection in COVID-19 patients with diabetes?",
+          "kq_name":"OR for severe infection in COVID-19 patients with diabetes",
+          "answers":[
+            {
+              "id":"oqo8pa1p",
+              "title":"Risk factors for severe corona virus disease 2019 (COVID-19) patients : a systematic review and meta analysis",
+              "exact_answer":"OR = 3.04 [2.01, 4.60]"
+            },
+            {
+              "id":"v6frcc5r",
+              "title":"Effects of hypertension, diabetes and coronary heart disease on COVID-19 diseases severity: a systematic review and meta-analysis",
+              "exact_answer":"[OR=2.67, 95% CI (1.91, 3.74), P<0.01]"
+            },
+            {
+              "id":"yx8b2moc",
+              "title":"Incidence, clinical characteristics and prognostic factor of patients with COVID-19: a systematic review and meta-analysis Running title: Predictors of clinical prognosis of COVID-19",
+              "exact_answer":"2.49; 95% CI, ; n = 10; I 2 = 44%"
+            },
+            {
+              "id":"o56j4qio",
+              "title":"Journal Pre-proof Prevalence of comorbidities in the novel Wuhan coronavirus (COVID-19) infection: a systematic review and meta-analysis Prevalence of comorbidities in the Novel Wuhan Coronavirus (COVID-19) infection: a systematic review and meta-analysis",
+              "exact_answer":"OR 2.07, 95% CI: 0.89-4.82"
+            },
+            {
+              "id":"o56j4qio",
+              "title":"Journal Pre-proof Prevalence of comorbidities in the novel Wuhan coronavirus (COVID-19) infection: a systematic review and meta-analysis Prevalence of comorbidities in the Novel Wuhan Coronavirus (COVID-19) infection: a systematic review and meta-analysis",
+              "exact_answer":"OR 2.07, 95% CI: 0.89-4.82"
+            }
+          ]
+        },
+        {
+          "nq_name":"What is the RR for severe infection in COVID-19 patients with diabetes?",
+          "kq_name":"RR for severe infection in COVID-19 patients with diabetes",
+          "answers":[
+            {
+              "id":"4mnmaky6",
+              "title":"The relationship of COVID-19 severity with cardiovascular disease and its traditional risk factors: A systematic review and meta-analysis",
+              "exact_answer":"relative risk estimate of 2.81 (2.01-3.93)"
+            }
+          ]
+        },
+        {
+          "nq_name":"What is the HR for death in COVID-19 patients with diabetes?",
+          "kq_name":"HR for death in COVID-19 patients with diabetes",
+          "answers":[
+            {
+              "id":"nrdiqees",
+              "title":"History of coronary heart disease increases the mortality rate of COVID-19 patients: a nested case-control study",
+              "exact_answer":"HR=1.1, p=0.61"
+            }
+          ]
+        },
+        {
+          "nq_name":"What is the AHR for death in COVID-19 patients with diabetes?",
+          "kq_name":"AHR for death in COVID-19 patients with diabetes",
+          "answers":[
+            {
+              "id":"skknfc6h",
+              "title":"Comorbid Diabetes Mellitus was Associated with Poorer Prognosis in Patients with COVID-19: A Retrospective Cohort Study",
+              "exact_answer":"[aHR]=3.64; 95% confidence interval [CI]: 1.09, 12.21"
+            }
+          ]
         }
-    ]
-}
+      ]
+    }
   ]
 }
