@@ -1,9 +1,12 @@
 # PyGaggle
 
-PyGaggle is a text ranking and question answering library using deep neural architectures.
+[![PyPI](https://img.shields.io/pypi/v/pygaggle?color=brightgreen)](https://pypi.org/project/pygaggle/)
+[![LICENSE](https://img.shields.io/badge/license-Apache-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
+
+PyGaggle provides a gaggle of deep neural architectures for text ranking and question answering.
 It was designed for tight integration with [Pyserini](http://pyserini.io/), but can be easily adapted for other sources as well.
 
-Currently, we provide a gaggle of rerankers for [CovidQA](https://github.com/castorini/pygaggle/blob/master/data/) on CORD-19 &mdash; the models described in ["Rapidly Bootstrapping a Question Answering Dataset for COVID-19"](https://arxiv.org/abs/2004.11339).
+Currently, this repo contains implementations of the rerankers for [CovidQA](https://github.com/castorini/pygaggle/blob/master/data/) on CORD-19, as described in ["Rapidly Bootstrapping a Question Answering Dataset for COVID-19"](https://arxiv.org/abs/2004.11339).
 
 ## Installation
 
