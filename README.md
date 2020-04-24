@@ -34,7 +34,7 @@ python -um pygaggle.run.evaluate_kaggle_highlighter --method bm25
 
 **BERT**:
 
-```python
+```bash
 python -um pygaggle.run.evaluate_kaggle_highlighter --method transformer --model-name bert-base-cased
 ```
 
