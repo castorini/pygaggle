@@ -16,7 +16,7 @@ reqs = [
     'tensorflow>=2.2.0rc1',
     'tokenizers==0.5.2',
     'tqdm==4.45.0',
-    'transformers==2.7.0'
+    'transformers>=2.7.0'
 ]
 
 setuptools.setup(

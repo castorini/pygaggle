@@ -107,7 +107,8 @@ def construct_seq_class_transformer(options: PassageRankingEvaluationOptions) ->
             model.classifier.bias = BertForSequenceClassification.bias
     device = torch.device(options.device)
     model = model.to(device).eval()
-    tokenizer = AutoTokenizer.from_pretrained(options.tokenizer_name, do_lower_case=options.do_lower_case)
+    tokenizer = AutoTokenizer.from_pretrained(options.tokenizer_name, 
+                                              do_lower_case=options.do_lower_case)
     return SequenceClassificationTransformerReranker(model, tokenizer)
 
 
