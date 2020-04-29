@@ -24,6 +24,7 @@ METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer', 'random'
 
 class PassageRankingEvaluationOptions(BaseModel):
     dataset: Path
+    data_dir: Path
     method: str
     batch_size: int
     device: str
@@ -38,7 +39,7 @@ class PassageRankingEvaluationOptions(BaseModel):
     def dataset_exists(cls, v: str):
         assert v in ['msmarco', 'treccar']
 
-    @validator('data-dir')
+    @validator('data_dir')
     def datadir_exists(cls, v: str):
         assert v.exists(), 'data directory must exist'
         return v
@@ -130,13 +131,12 @@ def main():
                  opt('--metrics', type=str, nargs='+', default=metric_names(), choices=metric_names()))
     args = apb.parser.parse_args()
     options = PassageRankingEvaluationOptions(**vars(args))
-    ds = MsMarcoDataset.from_file(str(options.dataset))
+    ds = MsMarcoDataset.from_folder(str(options.data_dir), split=options.split, is_duo=options.is_duo)
     examples = ds.to_relevance_examples(SETTINGS.msmarco_index_path, split=options.split, is_duo=options.is_duo)
     construct_map = dict(transformer=construct_transformer,
                          bm25=construct_bm25,
                          t5=construct_t5,
                          seq_class_transformer=construct_seq_class_transformer,
-                         qa_transformer=construct_qa_transformer,
                          random=lambda _: RandomReranker())
     reranker = construct_map[options.method](options)
     evaluator = RerankerEvaluator(reranker, options.metrics)
