@@ -64,4 +64,46 @@ python -um pygaggle.run.evaluate_kaggle_highlighter --method transformer --model
 python -um pygaggle.run.evaluate_kaggle_highlighter --method t5
 ```
 
-Instructions for our other MARCO and SQuAD models coming soon.
+**BioBERT (fine-tuned on SQuAD v1.1)**:
+
+1. Download the weights, vocab, and config from the [BioBERT repository](https://github.com/dmis-lab/bioasq-biobert) to the same folder.
+
+2. Rename the following files in the folder:
+
+```bash
+mv bert_config.json config.json
+for filename in model.ckpt*; do 
+    mv $filename $(echo $filename | python -c "import re; print(re.sub(r'ckpt-\\d+', 'ckpt', '$filename'))");
+done
+```
+
+3. Evaluate the model:
+
+```bash
+python -um pygaggle.run.evaluate_kaggle_highlighter --method qa_transformer --model-name <folder path>
+```
+
+**BioBERT (fine-tuned on MS MARCO)**:
+
+1. Download the weights, vocab, and config from our Google Storage bucket. This requires an installation of [gsutil](https://cloud.google.com/storage/docs/gsutil).
+
+```bash
+mkdir biobert-marco && cd biobert-marco
+gsutil cp "gs://neuralresearcher_data/doc2query/experiments/exp374/model.ckpt-100000*" .
+gsutil cp gs://neuralresearcher_data/biobert_models/biobert_v1.1_pubmed/bert_config.json config.json
+gsutil cp gs://neuralresearcher_data/biobert_models/biobert_v1.1_pubmed/vocab.txt .
+```
+
+2. Rename the files:
+
+```bash
+for filename in model.ckpt*; do 
+    mv $filename $(echo $filename | python -c "import re; print(re.sub(r'ckpt-\\d+', 'ckpt', '$filename'))");
+done
+```
+
+3. Evaluate the model:
+
+```bash
+python -um pygaggle.run.evaluate_kaggle_highlighter --method seq_class_transformer --model-name <folder path>
+```
