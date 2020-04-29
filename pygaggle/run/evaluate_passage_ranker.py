@@ -3,19 +3,18 @@ from pathlib import Path
 import logging
 
 from pydantic import BaseModel, validator
-from transformers import AutoModel, AutoTokenizer, AutoModelForSequenceClassification, BertForQuestionAnswering, \
-    BertForSequenceClassification
+from transformers import AutoModel, AutoTokenizer, AutoModelForSequenceClassification, BertForSequenceClassification
 import torch
 
 from .args import ArgumentParserBuilder, opt
 from pygaggle.rerank.base import Reranker
 from pygaggle.rerank.bm25 import Bm25Reranker
 from pygaggle.rerank.transformer import UnsupervisedTransformerReranker, T5Reranker, \
-    SequenceClassificationTransformerReranker, QuestionAnsweringTransformerReranker
+    SequenceClassificationTransformerReranker
 from pygaggle.rerank.random import RandomReranker
 from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
 from pygaggle.model import SimpleBatchTokenizer, CachedT5ModelLoader, T5BatchTokenizer, RerankerEvaluator, metric_names
-from pygaggle.data import LitReviewDataset
+from pygaggle.data import MsMarcoDataset
 from pygaggle.settings import Settings
 
 
@@ -63,7 +62,7 @@ class PassageRankingEvaluationOptions(BaseModel):
         return v
 
 
-def construct_t5(options: KaggleEvaluationOptions) -> Reranker:
+def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
     loader = CachedT5ModelLoader(SETTINGS.t5_model_dir,
                                  SETTINGS.cache_dir,
                                  'ranker',
@@ -76,7 +75,7 @@ def construct_t5(options: KaggleEvaluationOptions) -> Reranker:
     return T5Reranker(model, tokenizer)
 
 #TODO needed?
-def construct_transformer(options: KaggleEvaluationOptions) -> Reranker:
+def construct_transformer(options: PassageRankingEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     try:
         model = AutoModel.from_pretrained(options.model_name).to(device).eval()
@@ -89,7 +88,7 @@ def construct_transformer(options: KaggleEvaluationOptions) -> Reranker:
     return UnsupervisedTransformerReranker(model, tokenizer, provider)
 
 
-def construct_seq_class_transformer(options: KaggleEvaluationOptions) -> Reranker:
+def construct_seq_class_transformer(options: PassageRankingEvaluationOptions) -> Reranker:
     try:
         model = AutoModelForSequenceClassification.from_pretrained(options.model_name)
     except OSError:
@@ -108,14 +107,14 @@ def construct_seq_class_transformer(options: KaggleEvaluationOptions) -> Reranke
     return SequenceClassificationTransformerReranker(model, tokenizer)
 
 
-def construct_bm25(_: KaggleEvaluationOptions) -> Reranker:
+def construct_bm25(_: PassageRankingEvaluationOptions) -> Reranker:
     return Bm25Reranker(index_path=SETTINGS.cord19_index_path)
 
 
 def main():
     apb = ArgumentParserBuilder()
     apb.add_opts(opt('--dataset', type=str, default='msmarco'),
-                 opt('--data-dir', type=Path, default='data/kaggle-lit-review-0.1.json'),
+                 opt('--data-dir', type=Path, default='data/msmarco'),
                  opt('--method', required=True, type=str, choices=METHOD_CHOICES),
                  opt('--model-name', type=str),
                  opt('--split', type=str, default='nq', choices=('dev', 'eval')),
@@ -127,7 +126,7 @@ def main():
                  opt('--metrics', type=str, nargs='+', default=metric_names(), choices=metric_names()))
     args = apb.parser.parse_args()
     options = PassageRankingEvaluationOptions(**vars(args))
-    ds = LitReviewDataset.from_file(str(options.dataset))
+    ds = MsMarcoDataset.from_file(str(options.dataset))
     examples = ds.to_senticized_dataset(SETTINGS.cord19_index_path, split=options.split)
     construct_map = dict(transformer=construct_transformer,
                          bm25=construct_bm25,
