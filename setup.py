@@ -14,7 +14,7 @@ reqs = [
     'spacy==2.2.4',
     'tensorboard>=2.1.0',
     'tensorflow>=2.2.0rc1',
-    'tokenizers==0.5.2',
+    'tokenizers>=0.5.2',
     'tqdm==4.45.0',
     'transformers>=2.7.0'
 ]
