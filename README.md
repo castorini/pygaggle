@@ -73,7 +73,7 @@ python -um pygaggle.run.evaluate_kaggle_highlighter --method t5
 ```bash
 mv bert_config.json config.json
 for filename in model.ckpt*; do 
-    mv $filename $(echo $filename | python -c "import re; print(re.sub(r'ckpt-\\d+', 'ckpt', '$filename'))");
+    mv $filename $(python -c "import re; print(re.sub(r'ckpt-\\d+', 'ckpt', '$filename'))");
 done
 ```
 
@@ -98,7 +98,7 @@ gsutil cp gs://neuralresearcher_data/biobert_models/biobert_v1.1_pubmed/vocab.tx
 
 ```bash
 for filename in model.ckpt*; do 
-    mv $filename $(echo $filename | python -c "import re; print(re.sub(r'ckpt-\\d+', 'ckpt', '$filename'))");
+    mv $filename $(python -c "import re; print(re.sub(r'ckpt-\\d+', 'ckpt', '$filename'))");
 done
 ```
 
