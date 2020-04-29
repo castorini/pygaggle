@@ -15,10 +15,10 @@ from pygaggle.rerank.random import RandomReranker
 from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
 from pygaggle.model import SimpleBatchTokenizer, CachedT5ModelLoader, T5BatchTokenizer, RerankerEvaluator, metric_names
 from pygaggle.data import MsMarcoDataset
-from pygaggle.settings import Settings
+from pygaggle.settings import MsMarcoSettings
 
 
-SETTINGS = Settings()
+SETTINGS = MsMarcoSettings()
 METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer', 'random')
 
 
@@ -35,11 +35,12 @@ class PassageRankingEvaluationOptions(BaseModel):
     tokenizer_name: Optional[str]
 
     @validator('dataset')
-    def dataset_exists(cls, v: Path):
+    def dataset_exists(cls, v: str):
         assert v in ['msmarco', 'treccar']
 
     @validator('data-dir')
-        assert v.exists(), 'dataset must exist'
+    def datadir_exists(cls, v: str):
+        assert v.exists(), 'data directory must exist'
         return v
 
     #TODO verify
@@ -52,6 +53,8 @@ class PassageRankingEvaluationOptions(BaseModel):
             return SETTINGS.t5_model_type
         if v == 'biobert':
             return 'monologg/biobert_v1.1_pubmed'
+        if v == 'bert' and not is_duo:
+            return SETTINGS.monobert_dir
         return v
 
     #TODO verify
@@ -108,16 +111,17 @@ def construct_seq_class_transformer(options: PassageRankingEvaluationOptions) ->
 
 
 def construct_bm25(_: PassageRankingEvaluationOptions) -> Reranker:
-    return Bm25Reranker(index_path=SETTINGS.cord19_index_path)
+    return Bm25Reranker(index_path=SETTINGS.msmarco_index_path)
 
 
 def main():
     apb = ArgumentParserBuilder()
     apb.add_opts(opt('--dataset', type=str, default='msmarco'),
-                 opt('--data-dir', type=Path, default='data/msmarco'),
+                 opt('--data-dir', type=Path, default='/content/data/msmarco'),
+                 opt('--model-dir', type=Path, default='/content/models/msmarco'),
                  opt('--method', required=True, type=str, choices=METHOD_CHOICES),
                  opt('--model-name', type=str),
-                 opt('--split', type=str, default='nq', choices=('dev', 'eval')),
+                 opt('--split', type=str, default='dev', choices=('dev', 'eval')),
                  opt('--batch-size', '-bsz', type=int, default=96),
                  opt('--device', type=str, default='cuda:0'),
                  opt('--tokenizer-name', type=str),
@@ -127,7 +131,7 @@ def main():
     args = apb.parser.parse_args()
     options = PassageRankingEvaluationOptions(**vars(args))
     ds = MsMarcoDataset.from_file(str(options.dataset))
-    examples = ds.to_senticized_dataset(SETTINGS.cord19_index_path, split=options.split)
+    examples = ds.to_relevance_examples(SETTINGS.msmarco_index_path, split=options.split, is_duo=options.is_duo)
     construct_map = dict(transformer=construct_transformer,
                          bm25=construct_bm25,
                          t5=construct_t5,
