@@ -18,7 +18,7 @@ class MsMarcoSettings(Settings):
     msmarco_index_path: str = '/content/data/index-msmarco-passage-20191117-0ed488'
 
     # T5 model settings
-    t5_model_dir: str = '/content/models/t5'
+    t5_model_dir: str = 'gs://neuralresearcher_data/doc2query/experiments/367'
 
     # monoBERT model settings
     monobert_dir: str = '/content/models/monobert_msmarco_large'

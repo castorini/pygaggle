@@ -35,8 +35,6 @@ class MsMarcoDataset(BaseModel):
                 qid, _, doc_id, relevance = line.rstrip().split('\t')
                 if int(relevance) >= 1:
                     qrels[qid].add(doc_id)
-                if i % 1000 == 0:
-                    print(f'Loading qrels {i}')
         return qrels
 
     @classmethod
@@ -49,8 +47,6 @@ class MsMarcoDataset(BaseModel):
                 if qid not in run:
                     run[qid] = []
                 run[qid].append((doc_title, int(rank)))
-                if i % 1000000 == 0:
-                    print(f'Loading run {i}')
         sorted_run = OrderedDict()
         for qid, doc_titles_ranks in run.items():
             sorted(doc_titles_ranks, key=lambda x: x[1])
@@ -72,8 +68,6 @@ class MsMarcoDataset(BaseModel):
                                               text = query,
                                               candidates = run[qid],
                                               relevant_candidates = qrels[qid]))
-                if i % 1000 == 0:
-                    print(f'Loading queries {i}')
         return queries
 
     @classmethod

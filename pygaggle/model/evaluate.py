@@ -100,6 +100,11 @@ class RecallAt3Metric(TopkMixin, RecallAccumulator):
     top_k = 3
 
 
+@register_metric('recall@50')
+class RecallAt50Metric(TopkMixin, RecallAccumulator):
+    top_k = 50
+
+
 @register_metric('recall@1000')
 class RecallAt1000Metric(TopkMixin, RecallAccumulator):
     top_k = 1000
