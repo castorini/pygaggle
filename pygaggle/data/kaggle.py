@@ -41,7 +41,7 @@ class LitReviewDataset(BaseModel):
 
     @classmethod
     def from_file(cls, filename: str) -> 'LitReviewDataset':
-        with open(filename) as f:
+        with open(filename, encoding='utf-8') as f:
             return cls(**json.load(f))
 
     def query_answer_pairs(self, split: str = 'nq'):
