@@ -117,7 +117,7 @@ class MrrMetric(MeanAccumulator):
 class MrrAt10Metric(MeanAccumulator):
     def accumulate(self, scores: List[float], gold: RelevanceExample):
         scores = sorted(list(enumerate(scores)), key=lambda x: x[1], reverse=True)
-        rr = next((1 / (rank_idx + 1) for rank_idx, (idx, _) in enumerate(scores) if (gold.labels[idx] and rank_idx < 10)) 0)
+        rr = next((1 / (rank_idx + 1) for rank_idx, (idx, _) in enumerate(scores) if (gold.labels[idx] and rank_idx < 10)), 0)
         self.scores.append(rr)
 
 class ThresholdedRecallMetric(DynamicThresholdingMixin, RecallAccumulator):

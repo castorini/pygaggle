@@ -23,7 +23,7 @@ METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer', 'random'
 
 
 class PassageRankingEvaluationOptions(BaseModel):
-    dataset: Path
+    dataset: str
     data_dir: Path
     method: str
     batch_size: int
@@ -132,7 +132,7 @@ def main():
     args = apb.parser.parse_args()
     options = PassageRankingEvaluationOptions(**vars(args))
     ds = MsMarcoDataset.from_folder(str(options.data_dir), split=options.split, is_duo=options.is_duo)
-    examples = ds.to_relevance_examples(SETTINGS.msmarco_index_path, split=options.split, is_duo=options.is_duo)
+    examples = ds.to_relevance_examples(SETTINGS.msmarco_index_path, is_duo=options.is_duo)
     construct_map = dict(transformer=construct_transformer,
                          bm25=construct_bm25,
                          t5=construct_t5,

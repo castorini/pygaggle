@@ -25,10 +25,8 @@ class MsMarcoSettings(Settings):
     monobert_model_type: str = 'bert-large'
 
 
-
-
 class Cord19Settings(Settings):
-	cord19_index_path: str = 'data/lucene-index-covid-paragraph'
-
+    cord19_index_path: str = 'data/lucene-index-covid-paragraph'
+    
     # T5 model settings
     t5_model_dir: str = 'gs://neuralresearcher_data/covid/data/model_exp304'

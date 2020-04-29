@@ -36,7 +36,7 @@ class MsMarcoPassage:
 
     @property
     def all_text(self):
-        return para_text
+        return self.para_text
 
 
 class Cord19DocumentLoader:
