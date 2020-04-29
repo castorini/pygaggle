@@ -5,6 +5,7 @@ with open('README.md') as fh:
     long_description = fh.read()
 
 reqs = [
+    'dataclasses;python_version<"3.7"',
     'coloredlogs==14.0',
     'numpy==1.18.2',
     'pydantic==1.5',
