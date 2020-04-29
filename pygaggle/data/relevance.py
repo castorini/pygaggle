@@ -30,6 +30,15 @@ class Cord19Document:
         return '\n'.join((self.abstract, self.body_text, self.ref_entries))
 
 
+@dataclass
+class MsMarcoPassage:
+    para_text: str
+
+    @property
+    def all_text(self):
+        return para_text
+
+
 class Cord19DocumentLoader:
     double_space_pattern = re.compile(r'\s\s+')
 
@@ -50,3 +59,16 @@ class Cord19DocumentLoader:
         return Cord19Document(unfold(article['abstract']),
                               unfold(article['body_text']),
                               unfold(ref_entries))
+
+
+class MsMarcoPassageLoader:
+    def __init__(self, index_path: str):
+        self.searcher = pysearch.SimpleSearcher(index_path)
+
+    @lru_cache(maxsize=1024) #TODO any point in this here?
+    def load_passage(self, id: str) -> MsMarcoPassage:
+        try:
+            passage = self.searcher.doc(id).lucene_document().get('raw')
+        except AttributeError:
+            raise ValueError('passage unretrievable')
+        return MsMarcoPassage(passage)
