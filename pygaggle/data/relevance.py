@@ -65,7 +65,6 @@ class MsMarcoPassageLoader:
     def __init__(self, index_path: str):
         self.searcher = pysearch.SimpleSearcher(index_path)
 
-    @lru_cache(maxsize=1024) #TODO any point in this here?
     def load_passage(self, id: str) -> MsMarcoPassage:
         try:
             passage = self.searcher.doc(id).lucene_document().get('raw')

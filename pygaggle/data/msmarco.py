@@ -103,11 +103,9 @@ class MsMarcoDataset(BaseModel):
         for (qid, text, rel_cands), cands in self.query_passage_tuples():
             if qid not in example_map:
                 example_map[qid] = [convert_to_unicode(text), [], [], []]
-            #TODO generalize for duoBERT by removing indexing to 0
             example_map[qid][1].append([cand for cand in cands][0])
             try:
                 passages = [loader.load_passage(cand) for cand in cands]
-                #TODO generalize for duoBERT by removing indexing to 0
                 example_map[qid][2].append([convert_to_unicode(passage.all_text) for passage in passages][0]) 
             except ValueError as e:
                 logging.warning(f'Skipping {passages}')
@@ -129,7 +127,7 @@ class MsMarcoDataset(BaseModel):
             rr = 1 / np.arange(1, n + 2)
             rmrr = np.sum(numer * rr / denom)
             mean_stats['Random MRR'].append(rmrr)
-            rmrr10 = np.sum(numer[:10] * rr[:10] / denom[:10]) #TODO verify if this works
+            rmrr10 = np.sum(numer[:10] * rr[:10] / denom[:10])
             mean_stats['Random MRR@10'].append(rmrr10)
             ex_index = len(ex.candidates)
             for rel_cand in ex.relevant_candidates:

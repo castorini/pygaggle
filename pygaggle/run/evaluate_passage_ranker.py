@@ -44,7 +44,6 @@ class PassageRankingEvaluationOptions(BaseModel):
         assert v.exists(), 'data directory must exist'
         return v
 
-    #TODO verify
     @validator('model_name')
     def model_name_sane(cls, v: Optional[str], values, **kwargs):
         method = values['method']
@@ -58,7 +57,6 @@ class PassageRankingEvaluationOptions(BaseModel):
             return SETTINGS.monobert_dir
         return v
 
-    #TODO verify
     @validator('tokenizer_name')
     def tokenizer_sane(cls, v: str, values, **kwargs):
         if v is None:
@@ -78,7 +76,7 @@ def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
     tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
     return T5Reranker(model, tokenizer)
 
-#TODO needed?
+
 def construct_transformer(options: PassageRankingEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     try:
