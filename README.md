@@ -10,15 +10,17 @@ Currently, this repo contains implementations of the rerankers for [CovidQA](htt
 
 ## Installation
 
-1. For pip, do `pip install pygaggle`. If you prefer Anaconda, use `conda env create -f environment.yml && conda activate pygaggle`.
+0. Clone this repo `git clone git@github.com:castorini/pygaggle.git`
 
-2. Install [PyTorch 1.4+](http://pytorch.org/).
+0. For pip, do `pip install pygaggle`. If you prefer Anaconda, use `conda env create -f environment.yml && conda activate pygaggle`.
 
-3. Download the index: `sh scripts/update-index.sh`.
+0. Install [PyTorch 1.4+](http://pytorch.org/).
 
-4. Make sure you have an installation of Java 11+: `javac --version`.
+0. Download the index: `sh scripts/update-index.sh`.
 
-5. Install [Anserini](https://github.com/castorini/anserini).
+0. Make sure you have an installation of Java 11+: `javac --version`.
+
+0. Install [Anserini](https://github.com/castorini/anserini).
 
 
 ## Running rerankers on CovidQA
@@ -31,6 +33,8 @@ BM25 uses the CPU. If you don't have a GPU for the transformer models, pass `--d
 
 
 ### Unsupervised Methods
+
+**Note**: It's easiest to run the following commands at root of this repo
 
 **BM25**:
 
@@ -72,7 +76,7 @@ python -um pygaggle.run.evaluate_kaggle_highlighter --method t5
 
 ```bash
 mv bert_config.json config.json
-for filename in model.ckpt*; do 
+for filename in model.ckpt*; do
     mv $filename $(python -c "import re; print(re.sub(r'ckpt-\\d+', 'ckpt', '$filename'))");
 done
 ```
@@ -97,7 +101,7 @@ gsutil cp gs://neuralresearcher_data/biobert_models/biobert_v1.1_pubmed/vocab.tx
 2. Rename the files:
 
 ```bash
-for filename in model.ckpt*; do 
+for filename in model.ckpt*; do
     mv $filename $(python -c "import re; print(re.sub(r'ckpt-\\d+', 'ckpt', '$filename'))");
 done
 ```
