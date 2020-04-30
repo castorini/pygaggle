@@ -8,11 +8,20 @@ It was designed for tight integration with [Pyserini](http://pyserini.io/), but 
 
 Currently, this repo contains implementations of the rerankers for [CovidQA](https://github.com/castorini/pygaggle/blob/master/data/) on CORD-19, as described in ["Rapidly Bootstrapping a Question Answering Dataset for COVID-19"](https://arxiv.org/abs/2004.11339).
 
+## Usage
+
+0. Install via PyPI `pip install pygaggle`. Requires [Python 3.6+](https://www.python.org/downloads/)
+
+# Evaluations
+
 ## Installation
 
-0. Clone this repo `git clone git@github.com:castorini/pygaggle.git`
+0. Clone the repo with `git clone git@github.com:castorini/pygaggle.git`
 
-0. For pip, do `pip install pygaggle`. If you prefer Anaconda, use `conda env create -f environment.yml && conda activate pygaggle`.
+0. Make you sure you have an installation of [Python 3.6+](https://www.python.org/downloads/). All `python` commands below refer to this.
+
+0. For pip, do `pip install -r requirements.txt`
+    * If you prefer Anaconda, use `conda env create -f environment.yml && conda activate pygaggle`.
 
 0. Install [PyTorch 1.4+](http://pytorch.org/).
 
@@ -31,10 +40,9 @@ For a full list of mostly self-explanatory environment variables, see [this file
 
 BM25 uses the CPU. If you don't have a GPU for the transformer models, pass `--device cpu` (PyTorch device string format) to the script.
 
+*Note: Run the following evaluations at root of this repo.*
 
 ### Unsupervised Methods
-
-**Note**: It's easiest to run the following commands at root of this repo
 
 **BM25**:
 
@@ -70,26 +78,30 @@ python -um pygaggle.run.evaluate_kaggle_highlighter --method t5
 
 **BioBERT (fine-tuned on SQuAD v1.1)**:
 
-1. Download the weights, vocab, and config from the [BioBERT repository](https://github.com/dmis-lab/bioasq-biobert) to the same folder.
+0. `mkdir biobert-squad && cd biobert-squad`
 
-2. Rename the following files in the folder:
+0. Download the weights, vocab, and config from the [BioBERT repository](https://github.com/dmis-lab/bioasq-biobert) to `biobert-squad`.
+
+0. Untar the model and rename some files in `biobert-squad`:
 
 ```bash
+tar -xvzf BERT-pubmed-1000000-SQuAD.tar.gz
 mv bert_config.json config.json
 for filename in model.ckpt*; do
     mv $filename $(python -c "import re; print(re.sub(r'ckpt-\\d+', 'ckpt', '$filename'))");
 done
 ```
 
-3. Evaluate the model:
+0. Evaluate the model:
 
 ```bash
+cd .. # go to root of this of repo
 python -um pygaggle.run.evaluate_kaggle_highlighter --method qa_transformer --model-name <folder path>
 ```
 
 **BioBERT (fine-tuned on MS MARCO)**:
 
-1. Download the weights, vocab, and config from our Google Storage bucket. This requires an installation of [gsutil](https://cloud.google.com/storage/docs/gsutil).
+0. Download the weights, vocab, and config from our Google Storage bucket. This requires an installation of [gsutil](https://cloud.google.com/storage/docs/gsutil_install?hl=ru).
 
 ```bash
 mkdir biobert-marco && cd biobert-marco
@@ -98,7 +110,7 @@ gsutil cp gs://neuralresearcher_data/biobert_models/biobert_v1.1_pubmed/bert_con
 gsutil cp gs://neuralresearcher_data/biobert_models/biobert_v1.1_pubmed/vocab.txt .
 ```
 
-2. Rename the files:
+0. Rename the files:
 
 ```bash
 for filename in model.ckpt*; do
@@ -106,8 +118,9 @@ for filename in model.ckpt*; do
 done
 ```
 
-3. Evaluate the model:
+0. Evaluate the model:
 
 ```bash
+cd .. # go to root of this repo
 python -um pygaggle.run.evaluate_kaggle_highlighter --method seq_class_transformer --model-name <folder path>
 ```
