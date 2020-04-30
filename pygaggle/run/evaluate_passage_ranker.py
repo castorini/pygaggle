@@ -1,4 +1,4 @@
-from typing import Optional, List, Union
+from typing import Optional, List
 from pathlib import Path
 import logging
 
@@ -26,7 +26,7 @@ class PassageRankingEvaluationOptions(BaseModel):
     dataset: str
     data_dir: Path
     method: str
-    model_name_or_path: Optional[Union[str, Path]]
+    model_name_or_path: str
     split: str
     batch_size: int
     device: str
@@ -121,7 +121,7 @@ def main():
     apb.add_opts(opt('--dataset', type=str, default='msmarco'),
                  opt('--data-dir', type=Path, default='/content/data/msmarco'),
                  opt('--method', required=True, type=str, choices=METHOD_CHOICES),
-                 opt('--model-name-or-path', type=Union[str,Path]),
+                 opt('--model-name-or-path', type=str),
                  opt('--split', type=str, default='dev', choices=('dev', 'eval')),
                  opt('--batch-size', '-bsz', type=int, default=96),
                  opt('--device', type=str, default='cuda:0'),
