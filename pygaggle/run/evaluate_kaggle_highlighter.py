@@ -16,10 +16,10 @@ from pygaggle.rerank.random import RandomReranker
 from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
 from pygaggle.model import SimpleBatchTokenizer, CachedT5ModelLoader, T5BatchTokenizer, RerankerEvaluator, metric_names
 from pygaggle.data import LitReviewDataset
-from pygaggle.settings import Settings
+from pygaggle.settings import Cord19Settings
 
 
-SETTINGS = Settings()
+SETTINGS = Cord19Settings()
 METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer', 'qa_transformer', 'random')
 
 

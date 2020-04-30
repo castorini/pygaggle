@@ -17,9 +17,12 @@ class Query:
     ----------
     text : str
         The query text.
+    id : Optional[str]
+        The query id.
     """
-    def __init__(self, text: str):
+    def __init__(self, text: str, id: Optional[str] = None):
         self.text = text
+        self.id = id
 
 
 class Text:
