@@ -100,6 +100,16 @@ class RecallAt3Metric(TopkMixin, RecallAccumulator):
     top_k = 3
 
 
+@register_metric('recall@50')
+class RecallAt50Metric(TopkMixin, RecallAccumulator):
+    top_k = 50
+
+
+@register_metric('recall@1000')
+class RecallAt1000Metric(TopkMixin, RecallAccumulator):
+    top_k = 1000
+
+
 @register_metric('mrr')
 class MrrMetric(MeanAccumulator):
     def accumulate(self, scores: List[float], gold: RelevanceExample):
@@ -107,6 +117,13 @@ class MrrMetric(MeanAccumulator):
         rr = next((1 / (rank_idx + 1) for rank_idx, (idx, _) in enumerate(scores) if gold.labels[idx]), 0)
         self.scores.append(rr)
 
+
+@register_metric('mrr@10')
+class MrrAt10Metric(MeanAccumulator):
+    def accumulate(self, scores: List[float], gold: RelevanceExample):
+        scores = sorted(list(enumerate(scores)), key=lambda x: x[1], reverse=True)
+        rr = next((1 / (rank_idx + 1) for rank_idx, (idx, _) in enumerate(scores) if (gold.labels[idx] and rank_idx < 10)), 0)
+        self.scores.append(rr)
 
 class ThresholdedRecallMetric(DynamicThresholdingMixin, RecallAccumulator):
     threshold = 0.5

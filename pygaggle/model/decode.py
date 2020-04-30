@@ -19,7 +19,10 @@ def greedy_decode(model: PreTrainedModel,
     past = model.get_encoder()(input_ids, attention_mask=attention_mask)
     next_token_logits = None
     for _ in range(length):
-        model_inputs = model.prepare_inputs_for_generation(decode_ids, past=past, attention_mask=attention_mask)
+        model_inputs = model.prepare_inputs_for_generation(decode_ids,
+                                                           past=past, 
+                                                           attention_mask=attention_mask, 
+                                                           use_cache=True)
         outputs = model(**model_inputs)  # (batch_size, cur_len, vocab_size)
         next_token_logits = outputs[0][:, -1, :]  # (batch_size, vocab_size)
         decode_ids = torch.cat([decode_ids, next_token_logits.max(1)[1].unsqueeze(-1)], dim=-1)

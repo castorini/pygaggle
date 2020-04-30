@@ -1,4 +1,5 @@
 coloredlogs==14.0
+dataclasses;python_version<"3.7"
 numpy==1.18.2
 pydantic==1.5
 pyserini==0.9.0.0
