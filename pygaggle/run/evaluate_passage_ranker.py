@@ -54,11 +54,8 @@ class PassageRankingEvaluationOptions(BaseModel):
     @validator('model_name_or_path')
     def model_name_sane(cls, v: Optional[str], values, **kwargs):
         method = values['method']
-        model_type = values['model_type']
         if method == 'transformer' and v is None:
-            raise ValueError('transformer name must be specified')
-        elif method == 't5':
-            assert method in model_type
+            raise ValueError('transformer name or path must be specified')
         return v
 
     @validator('tokenizer_name')
@@ -76,7 +73,7 @@ def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
                                  SETTINGS.flush_cache)
     device = torch.device(options.device)
     model = loader.load().to(device).eval()
-    tokenizer = AutoTokenizer.from_pretrained(options.model_name_or_path)
+    tokenizer = AutoTokenizer.from_pretrained(options.model_type)
     tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
     return T5Reranker(model, tokenizer)
 
