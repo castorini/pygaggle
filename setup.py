@@ -17,7 +17,7 @@ reqs = [
     'tensorflow>=2.2.0rc1',
     'tokenizers>=0.5.2',
     'tqdm==4.45.0',
-    'transformers>=2.7.0'
+    'transformers==2.8.0'
 ]
 
 setuptools.setup(
@@ -25,7 +25,7 @@ setuptools.setup(
     version='0.0.1',
     author='PyGaggle Gaggle',
     author_email='r33tang@uwaterloo.ca',
-    description='A gaggle of rerankers for CovidQA and CORD-19',
+    description='A gaggle of rerankers for CovidQA, CORD-19 and MS-MARCO',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/castorini/pygaggle',

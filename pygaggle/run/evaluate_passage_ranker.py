@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Union
 from pathlib import Path
 import logging
 
@@ -26,14 +26,15 @@ class PassageRankingEvaluationOptions(BaseModel):
     dataset: str
     data_dir: Path
     method: str
+    model_name_or_path: Optional[Union[str, Path]]
+    split: str
     batch_size: int
     device: str
-    split: str
-    do_lower_case: bool
     is_duo: bool
     metrics: List[str]
-    model_name: Optional[str]
+    model_type: Optional[str]
     tokenizer_name: Optional[str]
+    index_dir: Optional[Path]
 
     @validator('dataset')
     def dataset_exists(cls, v: str):
@@ -44,35 +45,38 @@ class PassageRankingEvaluationOptions(BaseModel):
         assert v.exists(), 'data directory must exist'
         return v
 
-    @validator('model_name')
+    @validator('index_dir')
+    def index_dir_exists(cls, v: str):
+        if v is None:
+            return SETTINGS.msmarco_index_path
+        return v
+
+    @validator('model_name_or_path')
     def model_name_sane(cls, v: Optional[str], values, **kwargs):
         method = values['method']
+        model_type = values['model_type']
         if method == 'transformer' and v is None:
             raise ValueError('transformer name must be specified')
         elif method == 't5':
-            return SETTINGS.t5_model_type
-        if v == 'biobert':
-            return 'monologg/biobert_v1.1_pubmed'
-        if v == 'bert' and not is_duo:
-            return SETTINGS.monobert_dir
+            assert method in model_type
         return v
 
     @validator('tokenizer_name')
     def tokenizer_sane(cls, v: str, values, **kwargs):
         if v is None:
-            return values['model_name']
+            return values['model_name_or_path']
         return v
 
 
 def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
-    loader = CachedT5ModelLoader(SETTINGS.t5_model_dir,
+    loader = CachedT5ModelLoader(options.model_name_or_path,
                                  SETTINGS.cache_dir,
                                  'ranker',
-                                 SETTINGS.t5_model_type,
+                                 options.model_type,
                                  SETTINGS.flush_cache)
     device = torch.device(options.device)
     model = loader.load().to(device).eval()
-    tokenizer = AutoTokenizer.from_pretrained(options.model_name, do_lower_case=options.do_lower_case)
+    tokenizer = AutoTokenizer.from_pretrained(options.model_name_or_path)
     tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
     return T5Reranker(model, tokenizer)
 
@@ -80,11 +84,10 @@ def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
 def construct_transformer(options: PassageRankingEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     try:
-        model = AutoModel.from_pretrained(options.model_name).to(device).eval()
+        model = AutoModel.from_pretrained(options.model_name_or_path).to(device).eval()
     except OSError:
-        model = AutoModel.from_pretrained(options.model_name, from_tf=True).to(device).eval()
-    tokenizer = SimpleBatchTokenizer(AutoTokenizer.from_pretrained(options.tokenizer_name,
-                                                                   do_lower_case=options.do_lower_case),
+        model = AutoModel.from_pretrained(options.model_name_or_path, from_tf=True).to(device).eval()
+    tokenizer = SimpleBatchTokenizer(AutoTokenizer.from_pretrained(options.tokenizer_name),
                                      options.batch_size)
     provider = CosineSimilarityMatrixProvider() 
     return UnsupervisedTransformerReranker(model, tokenizer, provider)
@@ -92,42 +95,41 @@ def construct_transformer(options: PassageRankingEvaluationOptions) -> Reranker:
 
 def construct_seq_class_transformer(options: PassageRankingEvaluationOptions) -> Reranker:
     try:
-        model = AutoModelForSequenceClassification.from_pretrained(options.model_name)
+        model = AutoModelForSequenceClassification.from_pretrained(options.model_name_or_path)
     except OSError:
         try:
-            model = AutoModelForSequenceClassification.from_pretrained(options.model_name, from_tf=True)
+            model = AutoModelForSequenceClassification.from_pretrained(options.model_name_or_path, from_tf=True)
         except AttributeError:
             # Hotfix for BioBERT MS MARCO. Refactor.
             BertForSequenceClassification.bias = torch.nn.Parameter(torch.zeros(2))
             BertForSequenceClassification.weight = torch.nn.Parameter(torch.zeros(2, 768))
-            model = BertForSequenceClassification.from_pretrained(options.model_name, from_tf=True)
+            model = BertForSequenceClassification.from_pretrained(options.model_name_or_path, from_tf=True)
             model.classifier.weight = BertForSequenceClassification.weight
             model.classifier.bias = BertForSequenceClassification.bias
     device = torch.device(options.device)
     model = model.to(device).eval()
-    tokenizer = AutoTokenizer.from_pretrained(options.tokenizer_name, 
-                                              do_lower_case=options.do_lower_case)
+    tokenizer = AutoTokenizer.from_pretrained(options.tokenizer_name)
     return SequenceClassificationTransformerReranker(model, tokenizer)
 
 
-def construct_bm25(_: PassageRankingEvaluationOptions) -> Reranker:
-    return Bm25Reranker(index_path=SETTINGS.msmarco_index_path)
+def construct_bm25(options: PassageRankingEvaluationOptions) -> Reranker:
+    return Bm25Reranker(index_path=options.msmarco_index_path)
 
 
 def main():
     apb = ArgumentParserBuilder()
     apb.add_opts(opt('--dataset', type=str, default='msmarco'),
                  opt('--data-dir', type=Path, default='/content/data/msmarco'),
-                 opt('--model-dir', type=Path, default='/content/models/msmarco'),
                  opt('--method', required=True, type=str, choices=METHOD_CHOICES),
-                 opt('--model-name', type=str),
+                 opt('--model-name-or-path', type=Union[str,Path]),
                  opt('--split', type=str, default='dev', choices=('dev', 'eval')),
                  opt('--batch-size', '-bsz', type=int, default=96),
                  opt('--device', type=str, default='cuda:0'),
-                 opt('--tokenizer-name', type=str),
-                 opt('--do-lower-case', action='store_true'),
                  opt('--is-duo', action='store_true'),
-                 opt('--metrics', type=str, nargs='+', default=metric_names(), choices=metric_names()))
+                 opt('--metrics', type=str, nargs='+', default=metric_names(), choices=metric_names()),
+                 opt('--model-type', type=str, default='bert-base'),
+                 opt('--tokenizer-name', type=str),
+                 opt('--index-dir', type=Path))
     args = apb.parser.parse_args()
     options = PassageRankingEvaluationOptions(**vars(args))
     ds = MsMarcoDataset.from_folder(str(options.data_dir), split=options.split, is_duo=options.is_duo)
