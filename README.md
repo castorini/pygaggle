@@ -8,20 +8,9 @@ It was designed for tight integration with [Pyserini](http://pyserini.io/), but 
 
 Currently, this repo contains implementations of the rerankers for [CovidQA](https://github.com/castorini/pygaggle/blob/master/data/) on CORD-19, as described in ["Rapidly Bootstrapping a Question Answering Dataset for COVID-19"](https://arxiv.org/abs/2004.11339).
 
-## Usage
-
-0. Install via PyPI `pip install pygaggle`. Requires [Python 3.6+](https://www.python.org/downloads/)
-
-# Evaluations
-
 ## Installation
 
-0. Clone the repo with `git clone git@github.com:castorini/pygaggle.git`
-
-0. Make you sure you have an installation of [Python 3.6+](https://www.python.org/downloads/). All `python` commands below refer to this.
-
-0. For pip, do `pip install -r requirements.txt`
-    * If you prefer Anaconda, use `conda env create -f environment.yml && conda activate pygaggle`.
+0. Install via PyPI `pip install pygaggle`. Requires [Python 3.6+](https://www.python.org/downloads/)
 
 0. Install [PyTorch 1.4+](http://pytorch.org/).
 
@@ -30,6 +19,18 @@ Currently, this repo contains implementations of the rerankers for [CovidQA](htt
 0. Make sure you have an installation of Java 11+: `javac --version`.
 
 0. Install [Anserini](https://github.com/castorini/anserini).
+
+
+# Evaluations
+
+## Additional Instructions
+
+0. Clone the repo with `git clone git@github.com:castorini/pygaggle.git`
+
+0. Make you sure you have an installation of [Python 3.6+](https://www.python.org/downloads/). All `python` commands below refer to this.
+
+0. For pip, do `pip install -r requirements.txt`
+    * If you prefer Anaconda, use `conda env create -f environment.yml && conda activate pygaggle`.
 
 
 ## Running rerankers on CovidQA
