@@ -1,3 +1,11 @@
+# ide
 .idea/
+.vscode
+
+# python
 *.pyc
 __pycache__
+
+# data
+data/lucene-index-covid-paragraph
+scratch
