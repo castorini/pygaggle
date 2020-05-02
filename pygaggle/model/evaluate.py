@@ -75,7 +75,7 @@ class RecallAccumulator(TruncatingMixin, MeanAccumulator):
         score_rels = self.truncated_rels(scores)
         score_rels[score_rels != 0] = 1
         gold_rels = np.array(gold.labels, dtype=int)
-        score = recall_score(gold_rels, score_rels, zero_division=1)
+        score = recall_score(gold_rels, score_rels, zero_division=0)
         self.scores.append(score)
 
 

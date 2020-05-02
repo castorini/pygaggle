@@ -30,7 +30,7 @@ class T5Reranker(Reranker):
             attn_mask = batch.output['attention_mask']
             _, batch_scores = greedy_decode(self.model,
                                             input_ids.to(self.device),
-                                            length=2,
+                                            length=1,
                                             attention_mask=attn_mask.to(self.device),
                                             return_last_logits=True)
 
