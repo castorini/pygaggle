@@ -3,19 +3,29 @@ from pathlib import Path
 import logging
 
 from pydantic import BaseModel, validator
-from transformers import AutoModel, AutoTokenizer, AutoModelForSequenceClassification, BertForSequenceClassification
+from transformers import (AutoModel, 
+                          AutoTokenizer, 
+                          AutoModelForSequenceClassification, 
+                          BertForSequenceClassification)
 import torch
 
 from .args import ArgumentParserBuilder, opt
 from pygaggle.rerank.base import Reranker
 from pygaggle.rerank.bm25 import Bm25Reranker
-from pygaggle.rerank.transformer import UnsupervisedTransformerReranker, T5Reranker, \
-    SequenceClassificationTransformerReranker
+from pygaggle.rerank.transformer import (UnsupervisedTransformerReranker, 
+                                         T5Reranker, 
+                                         SequenceClassificationTransformerReranker)
 from pygaggle.rerank.random import RandomReranker
 from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
-from pygaggle.model import SimpleBatchTokenizer, CachedT5ModelLoader, T5BatchTokenizer, RerankerEvaluator, metric_names
+from pygaggle.model import (SimpleBatchTokenizer, 
+                            CachedT5ModelLoader, 
+                            T5BatchTokenizer, 
+                            RerankerEvaluator, 
+                            metric_names,
+                            MsMarcoWriter)
 from pygaggle.data import MsMarcoDataset
 from pygaggle.settings import MsMarcoSettings
+
 
 
 SETTINGS = MsMarcoSettings()
@@ -119,6 +129,8 @@ def main():
                  opt('--data-dir', type=Path, default='/content/data/msmarco'),
                  opt('--method', required=True, type=str, choices=METHOD_CHOICES),
                  opt('--model-name-or-path', type=str),
+                 opt('--output-file', type=Path, default='', action='store_true'),
+                 opt('--overwrite-output', action='store_true')
                  opt('--split', type=str, default='dev', choices=('dev', 'eval')),
                  opt('--batch-size', '-bsz', type=int, default=96),
                  opt('--device', type=str, default='cuda:0'),
@@ -137,7 +149,8 @@ def main():
                          seq_class_transformer=construct_seq_class_transformer,
                          random=lambda _: RandomReranker())
     reranker = construct_map[options.method](options)
-    evaluator = RerankerEvaluator(reranker, options.metrics)
+    writer = MsMarcoWriter(args.output_file, args.overwrite_output)
+    evaluator = RerankerEvaluator(reranker, options.metrics, writer)
     width = max(map(len, args.metrics)) + 1
     stdout = []
     for metric in evaluator.evaluate(examples):

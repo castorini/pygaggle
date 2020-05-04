@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from typing import List
+from typing import List, Optional
 import abc
 
 from sklearn.metrics import recall_score
@@ -8,7 +8,7 @@ import numpy as np
 
 from pygaggle.data.kaggle import RelevanceExample
 from pygaggle.rerank.base import Reranker
-
+from pygaggle.model.writer import Writer
 
 __all__ = ['RerankerEvaluator', 'metric_names']
 METRIC_MAP = OrderedDict()
@@ -137,15 +137,20 @@ class RerankerEvaluator:
     def __init__(self,
                  reranker: Reranker,
                  metric_names: List[str],
-                 use_tqdm: bool = True):
+                 use_tqdm: bool = True,
+                 writer: Optional[Writer] = None):
         self.reranker = reranker
         self.metrics = [METRIC_MAP[name] for name in metric_names]
         self.use_tqdm = use_tqdm
-
-    def evaluate(self, examples: List[RelevanceExample]) -> List[MetricAccumulator]:
+        self.writer = writer
+        
+    def evaluate(self, 
+                 examples: List[RelevanceExample]) -> List[MetricAccumulator]:
         metrics = [cls() for cls in self.metrics]
         for example in tqdm(examples, disable=not self.use_tqdm):
             scores = [x.score for x in self.reranker.rerank(example.query, example.documents)]
+            if self.writer:
+                self.writer.write(scores, example)
             for metric in metrics:
                 metric.accumulate(scores, example)
         return metrics
