@@ -150,7 +150,7 @@ def main():
                          random=lambda _: RandomReranker())
     reranker = construct_map[options.method](options)
     writer = MsMarcoWriter(args.output_file, args.overwrite_output)
-    evaluator = RerankerEvaluator(reranker, options.metrics, writer)
+    evaluator = RerankerEvaluator(reranker, options.metrics, writer=writer)
     width = max(map(len, args.metrics)) + 1
     stdout = []
     for metric in evaluator.evaluate(examples):

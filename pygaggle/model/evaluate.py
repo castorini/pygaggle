@@ -143,13 +143,13 @@ class RerankerEvaluator:
         self.metrics = [METRIC_MAP[name] for name in metric_names]
         self.use_tqdm = use_tqdm
         self.writer = writer
-        
+
     def evaluate(self, 
                  examples: List[RelevanceExample]) -> List[MetricAccumulator]:
         metrics = [cls() for cls in self.metrics]
         for example in tqdm(examples, disable=not self.use_tqdm):
             scores = [x.score for x in self.reranker.rerank(example.query, example.documents)]
-            if self.writer:
+            if self.writer is not None:
                 self.writer.write(scores, example)
             for metric in metrics:
                 metric.accumulate(scores, example)
