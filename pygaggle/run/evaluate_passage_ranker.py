@@ -129,7 +129,7 @@ def main():
                  opt('--data-dir', type=Path, default='/content/data/msmarco'),
                  opt('--method', required=True, type=str, choices=METHOD_CHOICES),
                  opt('--model-name-or-path', type=str),
-                 opt('--output-file', type=Path, default='', action='store_true'),
+                 opt('--output-file', type=Path, default=''),
                  opt('--overwrite-output', action='store_true')
                  opt('--split', type=str, default='dev', choices=('dev', 'eval')),
                  opt('--batch-size', '-bsz', type=int, default=96),
