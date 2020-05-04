@@ -3,7 +3,6 @@
 [![PyPI](https://img.shields.io/pypi/v/pyserini?color=brightgreen)](https://pypi.org/project/pyserini/)
 
 This holds static copies of notebooks for the [PyGaggle](https://github.com/castorini/pygaggle), a neural IR and QA toolkit.
-There are two ways to play with the notebooks here, using Colab and Binder.
 
 ## Colab
 
