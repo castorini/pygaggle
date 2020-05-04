@@ -9,7 +9,8 @@ __all__ = ['Writer', 'MsMarcoWriter']
 
 class Writer:
     def __init__(self, path: Optional[Path] = None, overwrite: bool = True):
-        self.to_output = path not in [".", None]
+        self.to_output = str(path) not in [".", None]
+        print(self.to_output)
         if self.to_output:
             self.f = open(path, "w" if overwrite else "w+")
 
