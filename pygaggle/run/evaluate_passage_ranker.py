@@ -130,7 +130,7 @@ def main():
                  opt('--method', required=True, type=str, choices=METHOD_CHOICES),
                  opt('--model-name-or-path', type=str),
                  opt('--output-file', type=Path, default=''),
-                 opt('--overwrite-output', action='store_true')
+                 opt('--overwrite-output', action='store_true'),
                  opt('--split', type=str, default='dev', choices=('dev', 'eval')),
                  opt('--batch-size', '-bsz', type=int, default=96),
                  opt('--device', type=str, default='cuda:0'),
