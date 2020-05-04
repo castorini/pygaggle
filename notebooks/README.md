@@ -1,6 +1,6 @@
 # pygaggle Notebooks
 
-[![PyPI](https://img.shields.io/pypi/v/pyserini?color=brightgreen)](https://pypi.org/project/pygaggle/)
+[![PyPI](https://img.shields.io/pypi/v/pygaggle?color=brightgreen)](https://pypi.org/project/pygaggle/)
 
 This holds static copies of notebooks for the [PyGaggle](https://github.com/castorini/pygaggle), a neural IR and QA toolkit.
 
