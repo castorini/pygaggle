@@ -16,7 +16,9 @@ __all__ = ['BatchTokenizer',
            'QueryDocumentBatchTokenizer',
            'SpacySenticizer',
            'SpacyWordTokenizer']
-TokenizerReturnType = Mapping[str, Union[torch.Tensor, List[int], List[List[int]], List[List[str]]]]
+TokenizerReturnType = Mapping[str, Union[torch.Tensor, List[int],
+                                         List[List[int]],
+                                         List[List[str]]]]
 
 
 @dataclass
@@ -43,8 +45,10 @@ class TokenizerEncodeMixin:
     tokenizer_kwargs = None
 
     def encode(self, strings: List[str]) -> TokenizerReturnType:
-        assert self.tokenizer and self.tokenizer_kwargs is not None, 'mixin used improperly'
-        ret = self.tokenizer.batch_encode_plus(strings, **self.tokenizer_kwargs)
+        assert self.tokenizer and self.tokenizer_kwargs is not None, \
+                'mixin used improperly'
+        ret = self.tokenizer.batch_encode_plus(strings,
+                                               **self.tokenizer_kwargs)
         ret['tokens'] = list(map(self.tokenizer.tokenize, strings))
         return ret
 
@@ -58,7 +62,9 @@ class BatchTokenizer(TokenizerEncodeMixin):
         self.batch_size = batch_size
         self.tokenizer_kwargs = tokenizer_kwargs
 
-    def traverse(self, batch_input: List[TextType]) -> Iterable[TokenizerOutputBatch]:
+    def traverse(
+            self,
+            batch_input: List[TextType]) -> Iterable[TokenizerOutputBatch]:
         for batch_idx in range(0, len(batch_input), self.batch_size):
             inputs = batch_input[batch_idx:batch_idx + self.batch_size]
             input_ids = self.encode([x.text for x in inputs])
@@ -73,7 +79,8 @@ class AppendEosTokenizerMixin:
 
     def encode(self, strings: List[str]) -> TokenizerReturnType:
         assert self.tokenizer, 'mixin used improperly'
-        return super().encode([f'{x} {self.tokenizer.eos_token}' for x in strings])
+        return super().encode(
+            [f'{x} {self.tokenizer.eos_token}' for x in strings])
 
 
 class QueryDocumentBatchTokenizer(TokenizerEncodeMixin):
@@ -87,11 +94,15 @@ class QueryDocumentBatchTokenizer(TokenizerEncodeMixin):
         self.tokenizer_kwargs = tokenizer_kwargs
         self.pattern = pattern
 
-    def traverse_query_document(self, batch_input: QueryDocumentBatch) -> Iterable[QueryDocumentBatch]:
+    def traverse_query_document(
+            self,
+            batch_input: QueryDocumentBatch) -> Iterable[QueryDocumentBatch]:
         query = batch_input.query
         for batch_idx in range(0, len(batch_input), self.batch_size):
             docs = batch_input.documents[batch_idx:batch_idx + self.batch_size]
-            outputs = self.encode([self.pattern.format(query=query.text, document=doc.text) for doc in docs])
+            outputs = self.encode([self.pattern.format(
+                                        query=query.text,
+                                        document=doc.text) for doc in docs])
             yield QueryDocumentBatch(query, docs, outputs)
 
 
@@ -129,4 +140,5 @@ class SpacySenticizer:
 
     @lru_cache(maxsize=1024)
     def __call__(self, document: str) -> List[str]:
-        return [s.string for s in self.nlp(document[:self.max_paragraph_length]).sents]
+        return [s.string for s in self.nlp(
+            document[:self.max_paragraph_length]).sents]

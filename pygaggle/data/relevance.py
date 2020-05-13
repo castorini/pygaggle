@@ -50,7 +50,8 @@ class Cord19DocumentLoader:
         def unfold(entries):
             return '\n'.join(x['text'] for x in entries)
         try:
-            article = json.loads(self.searcher.doc(id).lucene_document().get('raw'))
+            article = json.loads(
+                self.searcher.doc(id).lucene_document().get('raw'))
         except json.decoder.JSONDecodeError:
             raise ValueError('article not found')
         except AttributeError:

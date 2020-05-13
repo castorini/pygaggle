@@ -9,7 +9,8 @@ from .tokenize import BatchTokenizer
 from pygaggle.rerank.base import TextType
 
 
-__all__ = ['LongBatchEncoder', 'EncoderOutputBatch', 'SingleEncoderOutput', 'SpecialTokensCleaner']
+__all__ = ['LongBatchEncoder', 'EncoderOutputBatch', 'SingleEncoderOutput',
+           'SpecialTokensCleaner']
 
 
 @dataclass
@@ -26,10 +27,12 @@ class EncoderOutputBatch:
     texts: List[TextType]
 
     def as_single(self) -> 'SingleEncoderOutput':
-        return SingleEncoderOutput(self.encoder_output[0], self.token_ids[0], self.texts[0])
+        return SingleEncoderOutput(self.encoder_output[0],
+                                   self.token_ids[0], self.texts[0])
 
     def __iter__(self):
-        return iter(SingleEncoderOutput(enc_out, token_ids, text) for enc_out, token_ids, text
+        return iter(SingleEncoderOutput(enc_out, token_ids, text) for
+                    (enc_out, token_ids, text)
                     in zip(self.encoder_output, self.token_ids, self.texts))
 
 
@@ -38,14 +41,17 @@ class SpecialTokensCleaner:
         self.special_ids = tokenizer.all_special_ids
 
     def clean(self, output: SingleEncoderOutput) -> SingleEncoderOutput:
-        indices = [idx for idx, tok in enumerate(output.token_ids.tolist()) if tok not in self.special_ids]
-        return SingleEncoderOutput(output.encoder_output[indices], output.token_ids[indices], output.text)
+        indices = [idx for idx, tok in enumerate(output.token_ids.tolist())
+                   if tok not in self.special_ids]
+        return SingleEncoderOutput(output.encoder_output[indices],
+                                   output.token_ids[indices], output.text)
 
 
 class LongBatchEncoder:
-    """Encodes batches of documents that are longer than the maximum sequence length by striding a window across
+    """
+    Encodes batches of documents that are longer than the maximum sequence
+    length by striding a window across
     the sequence dimension.
-    
     Parameters
     ----------
     encoder : nn.Module
@@ -79,17 +85,24 @@ class LongBatchEncoder:
             encode_lst = [[] for _ in input_ids]
             new_input_ids = [(idx, x[:max_len]) for idx, x in input_ids]
             while new_input_ids:
-                attn_mask = [[1] * len(x[1]) + [0] * (max_len - len(x[1])) for x in new_input_ids]
+                attn_mask = [[1] * len(x[1]) +
+                             [0] * (max_len - len(x[1]))
+                             for x in new_input_ids]
                 attn_mask = torch.tensor(attn_mask).to(self.device)
                 nonpadded_input_ids = new_input_ids
-                new_input_ids = [x + [0] * (max_len - len(x[:max_len])) for _, x in new_input_ids]
+                new_input_ids = [x + [0] * (max_len - len(x[:max_len]))
+                                 for _, x in new_input_ids]
                 new_input_ids = torch.tensor(new_input_ids).to(self.device)
-                outputs, _ = self.encoder(input_ids=new_input_ids, attention_mask=attn_mask)
+                outputs, _ = self.encoder(input_ids=new_input_ids,
+                                          attention_mask=attn_mask)
                 for (idx, _), output in zip(nonpadded_input_ids, outputs):
                     encode_lst[idx].append(output)
 
-                new_input_ids = [(idx, x[max_len:]) for idx, x in nonpadded_input_ids if len(x) > max_len]
-                max_len = min(max(map(lambda x: len(x[1]), new_input_ids), default=0), self.msl)
+                new_input_ids = [(idx, x[max_len:])
+                                 for idx, x in nonpadded_input_ids
+                                 if len(x) > max_len]
+                max_len = min(max(map(lambda x: len(x[1]), new_input_ids),
+                                  default=0), self.msl)
 
             encode_lst = list(map(torch.cat, encode_lst))
             batch_output.extend(encode_lst)

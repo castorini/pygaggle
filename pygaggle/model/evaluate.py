@@ -55,7 +55,8 @@ class TopkMixin(TruncatingMixin):
     top_k: int = None
 
     def truncated_rels(self, scores: List[float]) -> np.ndarray:
-        rel_idxs = sorted(list(enumerate(scores)), key=lambda x: x[1], reverse=True)[self.top_k:]
+        rel_idxs = sorted(list(enumerate(scores)),
+                          key=lambda x: x[1], reverse=True)[self.top_k:]
         scores = np.array(scores)
         scores[[x[0] for x in rel_idxs]] = 0
         return scores
@@ -113,23 +114,30 @@ class RecallAt1000Metric(TopkMixin, RecallAccumulator):
 @register_metric('mrr')
 class MrrMetric(MeanAccumulator):
     def accumulate(self, scores: List[float], gold: RelevanceExample):
-        scores = sorted(list(enumerate(scores)), key=lambda x: x[1], reverse=True)
-        rr = next((1 / (rank_idx + 1) for rank_idx, (idx, _) in enumerate(scores) if gold.labels[idx]), 0)
+        scores = sorted(list(enumerate(scores)),
+                        key=lambda x: x[1], reverse=True)
+        rr = next((1 / (rank_idx + 1) for rank_idx, (idx, _) in
+                   enumerate(scores) if gold.labels[idx]), 0)
         self.scores.append(rr)
 
 
 @register_metric('mrr@10')
 class MrrAt10Metric(MeanAccumulator):
     def accumulate(self, scores: List[float], gold: RelevanceExample):
-        scores = sorted(list(enumerate(scores)), key=lambda x: x[1], reverse=True)
-        rr = next((1 / (rank_idx + 1) for rank_idx, (idx, _) in enumerate(scores) if (gold.labels[idx] and rank_idx < 10)), 0)
+        scores = sorted(list(enumerate(scores)), key=lambda x: x[1],
+                        reverse=True)
+        rr = next((1 / (rank_idx + 1) for rank_idx, (idx, _) in
+                   enumerate(scores) if (gold.labels[idx] and rank_idx < 10)),
+                  0)
         self.scores.append(rr)
+
 
 class ThresholdedRecallMetric(DynamicThresholdingMixin, RecallAccumulator):
     threshold = 0.5
 
 
-class ThresholdedPrecisionMetric(DynamicThresholdingMixin, PrecisionAccumulator):
+class ThresholdedPrecisionMetric(DynamicThresholdingMixin,
+                                 PrecisionAccumulator):
     threshold = 0.5
 
 
@@ -144,11 +152,12 @@ class RerankerEvaluator:
         self.use_tqdm = use_tqdm
         self.writer = writer
 
-    def evaluate(self, 
+    def evaluate(self,
                  examples: List[RelevanceExample]) -> List[MetricAccumulator]:
         metrics = [cls() for cls in self.metrics]
         for example in tqdm(examples, disable=not self.use_tqdm):
-            scores = [x.score for x in self.reranker.rerank(example.query, example.documents)]
+            scores = [x.score for x in self.reranker.rerank(example.query,
+                                                            example.documents)]
             if self.writer is not None:
                 self.writer.write(scores, example)
             for metric in metrics:

@@ -3,33 +3,35 @@ from pathlib import Path
 import logging
 
 from pydantic import BaseModel, validator
-from transformers import (AutoModel, 
-                          AutoTokenizer, 
-                          AutoModelForSequenceClassification, 
+from transformers import (AutoModel,
+                          AutoTokenizer,
+                          AutoModelForSequenceClassification,
                           BertForSequenceClassification)
 import torch
 
 from .args import ArgumentParserBuilder, opt
 from pygaggle.rerank.base import Reranker
 from pygaggle.rerank.bm25 import Bm25Reranker
-from pygaggle.rerank.transformer import (UnsupervisedTransformerReranker, 
-                                         T5Reranker, 
-                                         SequenceClassificationTransformerReranker)
+from pygaggle.rerank.transformer import (
+    UnsupervisedTransformerReranker,
+    T5Reranker,
+    SequenceClassificationTransformerReranker
+    )
 from pygaggle.rerank.random import RandomReranker
 from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
-from pygaggle.model import (SimpleBatchTokenizer, 
-                            CachedT5ModelLoader, 
-                            T5BatchTokenizer, 
-                            RerankerEvaluator, 
+from pygaggle.model import (SimpleBatchTokenizer,
+                            CachedT5ModelLoader,
+                            T5BatchTokenizer,
+                            RerankerEvaluator,
                             metric_names,
                             MsMarcoWriter)
 from pygaggle.data import MsMarcoDataset
 from pygaggle.settings import MsMarcoSettings
 
 
-
 SETTINGS = MsMarcoSettings()
-METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer', 'random')
+METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer',
+                  'random')
 
 
 class PassageRankingEvaluationOptions(BaseModel):
@@ -88,29 +90,39 @@ def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
     return T5Reranker(model, tokenizer)
 
 
-def construct_transformer(options: PassageRankingEvaluationOptions) -> Reranker:
+def construct_transformer(options:
+                          PassageRankingEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     try:
-        model = AutoModel.from_pretrained(options.model_name_or_path).to(device).eval()
+        model = AutoModel.from_pretrained(
+            options.model_name_or_path).to(device).eval()
     except OSError:
-        model = AutoModel.from_pretrained(options.model_name_or_path, from_tf=True).to(device).eval()
-    tokenizer = SimpleBatchTokenizer(AutoTokenizer.from_pretrained(options.tokenizer_name),
+        model = AutoModel.from_pretrained(options.model_name_or_path,
+                                          from_tf=True).to(device).eval()
+    tokenizer = SimpleBatchTokenizer(AutoTokenizer.from_pretrained(
+                                        options.tokenizer_name),
                                      options.batch_size)
-    provider = CosineSimilarityMatrixProvider() 
+    provider = CosineSimilarityMatrixProvider()
     return UnsupervisedTransformerReranker(model, tokenizer, provider)
 
 
-def construct_seq_class_transformer(options: PassageRankingEvaluationOptions) -> Reranker:
+def construct_seq_class_transformer(options: PassageRankingEvaluationOptions
+                                    ) -> Reranker:
     try:
-        model = AutoModelForSequenceClassification.from_pretrained(options.model_name_or_path)
+        model = AutoModelForSequenceClassification.from_pretrained(
+            options.model_name_or_path)
     except OSError:
         try:
-            model = AutoModelForSequenceClassification.from_pretrained(options.model_name_or_path, from_tf=True)
+            model = AutoModelForSequenceClassification.from_pretrained(
+                options.model_name_or_path, from_tf=True)
         except AttributeError:
             # Hotfix for BioBERT MS MARCO. Refactor.
-            BertForSequenceClassification.bias = torch.nn.Parameter(torch.zeros(2))
-            BertForSequenceClassification.weight = torch.nn.Parameter(torch.zeros(2, 768))
-            model = BertForSequenceClassification.from_pretrained(options.model_name_or_path, from_tf=True)
+            BertForSequenceClassification.bias = torch.nn.Parameter(
+                                                    torch.zeros(2))
+            BertForSequenceClassification.weight = torch.nn.Parameter(
+                                                    torch.zeros(2, 768))
+            model = BertForSequenceClassification.from_pretrained(
+                        options.model_name_or_path, from_tf=True)
             model.classifier.weight = BertForSequenceClassification.weight
             model.classifier.bias = BertForSequenceClassification.bias
     device = torch.device(options.device)
@@ -125,24 +137,38 @@ def construct_bm25(options: PassageRankingEvaluationOptions) -> Reranker:
 
 def main():
     apb = ArgumentParserBuilder()
-    apb.add_opts(opt('--dataset', type=str, default='msmarco'),
+    apb.add_opts(opt('--dataset',
+                     type=str,
+                     default='msmarco'),
                  opt('--data-dir', type=Path, default='/content/data/msmarco'),
-                 opt('--method', required=True, type=str, choices=METHOD_CHOICES),
+                 opt('--method',
+                     required=True,
+                     type=str,
+                     choices=METHOD_CHOICES),
                  opt('--model-name-or-path', type=str),
                  opt('--output-file', type=Path, default='.'),
                  opt('--overwrite-output', action='store_true'),
-                 opt('--split', type=str, default='dev', choices=('dev', 'eval')),
+                 opt('--split',
+                     type=str,
+                     default='dev',
+                     choices=('dev', 'eval')),
                  opt('--batch-size', '-bsz', type=int, default=96),
                  opt('--device', type=str, default='cuda:0'),
                  opt('--is-duo', action='store_true'),
-                 opt('--metrics', type=str, nargs='+', default=metric_names(), choices=metric_names()),
+                 opt('--metrics',
+                     type=str,
+                     nargs='+',
+                     default=metric_names(),
+                     choices=metric_names()),
                  opt('--model-type', type=str, default='bert-base'),
                  opt('--tokenizer-name', type=str),
                  opt('--index-dir', type=Path))
     args = apb.parser.parse_args()
     options = PassageRankingEvaluationOptions(**vars(args))
-    ds = MsMarcoDataset.from_folder(str(options.data_dir), split=options.split, is_duo=options.is_duo)
-    examples = ds.to_relevance_examples(SETTINGS.msmarco_index_path, is_duo=options.is_duo)
+    ds = MsMarcoDataset.from_folder(str(options.data_dir), split=options.split,
+                                    is_duo=options.is_duo)
+    examples = ds.to_relevance_examples(SETTINGS.msmarco_index_path,
+                                        is_duo=options.is_duo)
     construct_map = dict(transformer=construct_transformer,
                          bm25=construct_bm25,
                          t5=construct_t5,

@@ -15,9 +15,11 @@ from pygaggle.rerank import IdentityReranker
 
 class TestSearch(unittest.TestCase):
     def setUp(self):
-        # Download pre-built CACM index; append a random value to avoid filename clashes.
+        # Download pre-built CACM index
+        # Append a random value to avoid filename clashes.
         r = randint(0, 10000000)
-        self.collection_url = 'https://github.com/castorini/anserini-data/raw/master/CACM/lucene-index.cacm.tar.gz'
+        self.collection_url = ('https://github.com/castorini/anserini-data/'
+                               'raw/master/CACM/lucene-index.cacm.tar.gz')
         self.tarball_name = 'lucene-index.cacm-{}.tar.gz'.format(r)
         self.index_dir = 'index{}/'.format(r)
 
@@ -27,7 +29,8 @@ class TestSearch(unittest.TestCase):
         tarball.extractall(self.index_dir)
         tarball.close()
 
-        self.searcher = pysearch.SimpleSearcher(f'{self.index_dir}lucene-index.cacm')
+        self.searcher = pysearch.SimpleSearcher(
+            f'{self.index_dir}lucene-index.cacm')
 
     def test_basic(self):
         hits = self.searcher.search('information retrieval')
