@@ -43,7 +43,9 @@ class Text:
         from an initial retrieval stage.
     """
 
-    def __init__(self, text: str, raw: Mapping[str, Any] = None,
+    def __init__(self,
+                 text: str,
+                 raw: Mapping[str, Any] = None,
                  score: Optional[float] = 0):
         self.text = text
         if raw is None:

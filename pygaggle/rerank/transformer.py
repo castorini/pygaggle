@@ -1,14 +1,19 @@
 from copy import deepcopy
 from typing import List
 
-from transformers import T5ForConditionalGeneration, PreTrainedModel, \
-    PreTrainedTokenizer
+from transformers import (PreTrainedModel,
+                          PreTrainedTokenizer,
+                          T5ForConditionalGeneration)
 import torch
 
 from .base import Reranker, Query, Text
 from .similarity import SimilarityMatrixProvider
-from pygaggle.model import greedy_decode, QueryDocumentBatchTokenizer, BatchTokenizer,\
-    QueryDocumentBatch, LongBatchEncoder, SpecialTokensCleaner
+from pygaggle.model import (BatchTokenizer,
+                            LongBatchEncoder,
+                            QueryDocumentBatch,
+                            QueryDocumentBatchTokenizer,
+                            SpecialTokensCleaner,
+                            greedy_decode)
 
 
 __all__ = ['T5Reranker',
@@ -18,7 +23,8 @@ __all__ = ['T5Reranker',
 
 
 class T5Reranker(Reranker):
-    def __init__(self, model: T5ForConditionalGeneration,
+    def __init__(self,
+                 model: T5ForConditionalGeneration,
                  tokenizer: QueryDocumentBatchTokenizer):
         self.model = model
         self.tokenizer = tokenizer
