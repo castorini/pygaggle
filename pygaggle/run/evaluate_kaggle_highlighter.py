@@ -3,21 +3,29 @@ from pathlib import Path
 import logging
 
 from pydantic import BaseModel, validator
-from transformers import AutoModel, AutoTokenizer, \
-    AutoModelForSequenceClassification, BertForQuestionAnswering, \
-    BertForSequenceClassification
+from transformers import (AutoModel,
+                          AutoModelForSequenceClassification,
+                          AutoTokenizer,
+                          BertForQuestionAnswering,
+                          BertForSequenceClassification)
 import torch
 
 from .args import ArgumentParserBuilder, opt
 from pygaggle.rerank.base import Reranker
 from pygaggle.rerank.bm25 import Bm25Reranker
-from pygaggle.rerank.transformer import UnsupervisedTransformerReranker, \
-    T5Reranker, SequenceClassificationTransformerReranker, \
-    QuestionAnsweringTransformerReranker
+from pygaggle.rerank.transformer import (
+    QuestionAnsweringTransformerReranker,
+    SequenceClassificationTransformerReranker,
+    T5Reranker,
+    UnsupervisedTransformerReranker
+    )
 from pygaggle.rerank.random import RandomReranker
 from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
-from pygaggle.model import SimpleBatchTokenizer, CachedT5ModelLoader, \
-    T5BatchTokenizer, RerankerEvaluator, metric_names
+from pygaggle.model import (CachedT5ModelLoader,
+                            RerankerEvaluator,
+                            SimpleBatchTokenizer,
+                            T5BatchTokenizer,
+                            metric_names)
 from pygaggle.data import LitReviewDataset
 from pygaggle.settings import Cord19Settings
 
