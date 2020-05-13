@@ -11,7 +11,8 @@ TextType = Union['Query', 'Text']
 
 
 class Query:
-    """Class representing a query. A query contains the query text itself and potentially other metadata.
+    """Class representing a query.
+    A query contains the query text itself and potentially other metadata.
 
     Parameters
     ----------
@@ -26,8 +27,10 @@ class Query:
 
 
 class Text:
-    """Class representing a text to be reranked. A text is unspecified with respect to it length; in principle, it
-    could be a full-length document, a paragraph-sized passage, or even a short phrase.
+    """Class representing a text to be reranked.
+    A text is unspecified with respect to it length; in principle, it
+    could be a full-length document, a paragraph-sized passage, or
+    even a short phrase.
 
     Parameters
     ----------
@@ -36,10 +39,12 @@ class Text:
     raw : Mapping[str, Any]
         Additional metadata and other annotations.
     score : Optional[float]
-        The score of the text. For example, the score might be the BM25 score from an initial retrieval stage.
+        The score of the text. For example, the score might be the BM25 score
+        from an initial retrieval stage.
     """
 
-    def __init__(self, text: str, raw: Mapping[str, Any] = None, score: Optional[float] = 0):
+    def __init__(self, text: str, raw: Mapping[str, Any] = None,
+                 score: Optional[float] = 0):
         self.text = text
         if raw is None:
             raw = dict()
@@ -48,7 +53,8 @@ class Text:
 
 
 class Reranker:
-    """Class representing a reranker. A reranker takes a list texts and returns a list of texts non-destructively
+    """Class representing a reranker.
+    A reranker takes a list texts and returns a list of texts non-destructively
     (i.e., does not alter the original input list of texts).
     """
     @abc.abstractmethod

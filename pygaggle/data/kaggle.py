@@ -12,7 +12,8 @@ from pygaggle.model.tokenize import SpacySenticizer
 from pygaggle.rerank.base import Query, Text
 
 
-__all__ = ['MISSING_ID', 'LitReviewCategory', 'LitReviewAnswer', 'LitReviewDataset', 'LitReviewSubcategory']
+__all__ = ['MISSING_ID', 'LitReviewCategory', 'LitReviewAnswer',
+           'LitReviewDataset', 'LitReviewSubcategory']
 
 
 MISSING_ID = '<missing>'
@@ -45,7 +46,8 @@ class LitReviewDataset(BaseModel):
             return cls(**json.load(f))
 
     def query_answer_pairs(self, split: str = 'nq'):
-        return ((subcat.nq_name if split == 'nq' else subcat.kq_name, ans) for cat in self.categories
+        return ((subcat.nq_name if split == 'nq' else subcat.kq_name, ans)
+                for cat in self.categories
                 for subcat in cat.sub_categories
                 for ans in subcat.answers)
 
@@ -80,8 +82,10 @@ class LitReviewDataset(BaseModel):
             mean_stats['Random P@1'].append(np.mean(int_rels))
             n = len(int_rels) - p
             N = len(int_rels)
-            mean_stats['Random R@3'].append(1 - (n * (n - 1) * (n - 2)) / (N * (N - 1) * (N - 2)))
-            numer = np.array([sp.comb(n, i) / (N - i) for i in range(0, n + 1)]) * p
+            mean_stats['Random R@3'].append(1 - (n * (n - 1) * (n - 2)) / (N *
+                                            (N - 1) * (N - 2)))
+            numer = np.array([sp.comb(n, i) / (N - i)
+                              for i in range(0, n + 1)]) * p
             denom = np.array([sp.comb(N, i) for i in range(0, n + 1)])
             rr = 1 / np.arange(1, n + 2)
             rmrr = np.sum(numer * rr / denom)
@@ -90,5 +94,7 @@ class LitReviewDataset(BaseModel):
                 logging.warning(f'{doc_id} has no relevant answers')
         for k, v in mean_stats.items():
             logging.info(f'{k}: {np.mean(v)}')
-        return [RelevanceExample(Query(query), list(map(lambda s: Text(s, dict(docid=docid)), sents)), rels)
-                for ((query, docid), sents), (_, rels) in zip(example_map.items(), rel_map.items())]
+        return [RelevanceExample(Query(query), list(map(lambda s: Text(s,
+                dict(docid=docid)), sents)), rels)
+                for ((query, docid), sents), (_, rels) in
+                zip(example_map.items(), rel_map.items())]

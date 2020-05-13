@@ -12,7 +12,8 @@ def greedy_decode(model: PreTrainedModel,
                   input_ids: torch.Tensor,
                   length: int,
                   attention_mask: torch.Tensor = None,
-                  return_last_logits: bool = True) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+                  return_last_logits: bool = True) ->
+                  Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
     decode_ids = torch.full((input_ids.size(0), 1),
                             model.config.decoder_start_token_id,
                             dtype=torch.long).to(input_ids.device)

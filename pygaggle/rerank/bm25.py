@@ -33,7 +33,8 @@ class Bm25Reranker(Reranker):
         query_words_set = set(query_words)
         sentence_sets = list(map(set, sentences))
         if not self.use_corpus_estimator:
-            idfs = {w: math.log(len(sentence_sets) / (1 + sum(int(w in sent) for sent in sentence_sets)))
+            idfs = {w: math.log(len(sentence_sets) / (1 + sum(int(w in sent)
+                    for sent in sentence_sets)))
                     for w in query_words_set}
         mean_len = np.mean(list(map(len, sentences)))
         d_len = len(sentences)
@@ -42,9 +43,12 @@ class Bm25Reranker(Reranker):
         for sent_words, text in zip(sentences, texts):
             tf = Counter(filter(query_words.__contains__, sent_words))
             if self.use_corpus_estimator:
-                idfs = {w: self.index_utils.compute_bm25_term_weight(text.raw['docid'], w) for w in tf}
+                idfs = {w:
+                        self.index_utils.compute_bm25_term_weight(
+                                text.raw['docid'], w) for w in tf}
             score = sum(idfs[w] * tf[w] * (self.k1 + 1) /
-                        (tf[w] + self.k1 * (1 - self.b + self.b * (d_len / mean_len))) for w in tf)
+                        (tf[w] + self.k1 * (1 - self.b + self.b *
+                                            (d_len / mean_len))) for w in tf)
             if np.isnan(score):
                 score = 0
             text.score = score

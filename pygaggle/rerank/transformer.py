@@ -1,7 +1,8 @@
 from copy import deepcopy
 from typing import List
 
-from transformers import T5ForConditionalGeneration, PreTrainedModel, PreTrainedTokenizer, BertForQuestionAnswering
+from transformers import T5ForConditionalGeneration, PreTrainedModel, \
+    PreTrainedTokenizer
 import torch
 
 from .base import Reranker, Query, Text
@@ -17,7 +18,8 @@ __all__ = ['T5Reranker',
 
 
 class T5Reranker(Reranker):
-    def __init__(self, model: T5ForConditionalGeneration, tokenizer: QueryDocumentBatchTokenizer):
+    def __init__(self, model: T5ForConditionalGeneration,
+                 tokenizer: QueryDocumentBatchTokenizer):
         self.model = model
         self.tokenizer = tokenizer
         self.device = next(self.model.parameters(), None).device
@@ -26,12 +28,12 @@ class T5Reranker(Reranker):
         texts = deepcopy(texts)
         batch_input = QueryDocumentBatch(query=query, documents=texts)
         for batch in self.tokenizer.traverse_query_document(batch_input):
-            input_ids = batch.output['input_ids']
-            attn_mask = batch.output['attention_mask']
+            input_ids = batch.output['input_ids'].to(self.device)
+            attn_mask = batch.output['attention_mask'].to(self.device)
             _, batch_scores = greedy_decode(self.model,
-                                            input_ids.to(self.device),
+                                            input_ids,
                                             length=1,
-                                            attention_mask=attn_mask.to(self.device),
+                                            attention_mask=attn_mask,
                                             return_last_logits=True)
 
             # 6136 and 1176 are the indexes of the tokens false and true in T5.
@@ -76,8 +78,10 @@ class UnsupervisedTransformerReranker(Reranker):
         for enc_doc, text in zip(encoded_documents, texts):
             if self.clean_special:
                 enc_doc = self.cleaner.clean(enc_doc)
-            matrix = self.sim_matrix_provider.compute_matrix(encoded_query, enc_doc)
-            score = self.methods[self.method](matrix) if matrix.size(1) > 0 else -10000
+            matrix = self.sim_matrix_provider.compute_matrix(encoded_query,
+                                                             enc_doc)
+            score = self.methods[self.method](matrix) if matrix.size(1) > 0 \
+                else -10000
             text.score = score
             max_score = score if max_score is None else max(max_score, score)
         if self.argmax_only:
@@ -108,7 +112,8 @@ class SequenceClassificationTransformerReranker(Reranker):
             tt_ids = ret['token_type_ids'].to(self.device)
             output, = self.model(input_ids, token_type_ids=tt_ids)
             if output.size(1) > 1:
-                text.score = torch.nn.functional.log_softmax(output, 1)[0, -1].item()
+                text.score = torch.nn.functional.log_softmax(
+                                output, 1)[0, -1].item()
             else:
                 text.score = output.item()
         return texts
@@ -131,7 +136,8 @@ class QuestionAnsweringTransformerReranker(Reranker):
                                              return_token_type_ids=True)
             input_ids = ret['input_ids'].to(self.device)
             tt_ids = ret['token_type_ids'].to(self.device)
-            start_scores, end_scores = self.model(input_ids, token_type_ids=tt_ids)
+            start_scores, end_scores = self.model(input_ids,
+                                                  token_type_ids=tt_ids)
             start_scores = start_scores[0]
             end_scores = end_scores[0]
             start_scores[(1 - tt_ids[0]).bool()] = -5000

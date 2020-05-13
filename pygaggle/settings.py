@@ -13,9 +13,9 @@ class Settings(BaseSettings):
 class MsMarcoSettings(Settings):
     msmarco_index_path: str = 'data/index-msmarco-passage-20191117-0ed488'
 
+
 class Cord19Settings(Settings):
     cord19_index_path: str = 'data/lucene-index-covid-paragraph'
-    
     # T5 model settings
     t5_model_dir: str = 'gs://neuralresearcher_data/covid/data/model_exp304'
     t5_model_type: str = 't5-base'

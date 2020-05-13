@@ -18,7 +18,8 @@ class SimilarityMatrixProvider:
 
 class CosineSimilarityMatrixProvider(SimilarityMatrixProvider):
     @torch.no_grad()
-    def compute_matrix(self, encoded_query: SingleEncoderOutput, encoded_document: SingleEncoderOutput) -> torch.Tensor:
+    def compute_matrix(self, encoded_query: SingleEncoderOutput,
+                       encoded_document: SingleEncoderOutput) -> torch.Tensor:
         query_repr = encoded_query.encoder_output
         doc_repr = encoded_document.encoder_output
         matrix = torch.einsum('mh,nh->mn', query_repr, doc_repr)
