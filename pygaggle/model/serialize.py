@@ -33,6 +33,7 @@ class CachedT5ModelLoader:
         with torch.no_grad():  # Make more similar to TensorFlow implementation
             model.decoder.block[0].layer[1].EncDecAttention.\
                 relative_attention_bias.weight.data.zero_()
+        logging.disable(logging.NOTSET)
         return model
 
     def load(self) -> T5ForConditionalGeneration:
@@ -68,6 +69,9 @@ class CachedT5ModelLoader:
                 pass
             logging.info(f'Caching {name}...')
             file_io.copy(url, str(cache_file_path), overwrite=True)
+
+        # Disable logging for clean output
+        logging.disable(logging.CRITICAL)
 
         # Transformers expects a model config.json
         config = T5Config.from_pretrained(self.model_type)

@@ -1,6 +1,7 @@
 from copy import deepcopy
 from typing import List
 from itertools import permutations
+from collections import defaultdict
 
 from transformers import (PreTrainedModel,
                           PreTrainedTokenizer,
@@ -19,6 +20,7 @@ from pygaggle.model import (BatchTokenizer,
 
 
 __all__ = ['T5Reranker',
+           'T5DuoReranker',
            'UnsupervisedTransformerReranker',
            'SequenceClassificationTransformerReranker',
            'QuestionAnsweringTransformerReranker']
@@ -32,14 +34,8 @@ class T5Reranker(Reranker):
         self.tokenizer = tokenizer
         self.device = next(self.model.parameters(), None).device
 
-    def clear_scores(self, texts: List[Text]) -> List[Text]:
-        for text in texts:
-            text.score = 0
-        return texts
-
     def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
         texts = deepcopy(texts)
-        texts = self.clear_scores(texts)
         batch_input = QueryDocumentBatch(query=query, documents=texts)
         for batch in self.tokenizer.traverse_query_document(batch_input):
             input_ids = batch.output['input_ids'].to(self.device)
@@ -62,7 +58,7 @@ class T5Reranker(Reranker):
 class T5DuoReranker(T5Reranker):
     def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
         texts = deepcopy(texts)
-        texts = self.clear_scores(texts)
+        scores = defaultdict(float)
         doc_pairs = list(permutations(texts, 2))
         batch_input = DuoQueryDocumentBatch(query=query, doc_pairs=doc_pairs)
         for batch in self.tokenizer.traverse_duo_query_document(batch_input):
@@ -78,8 +74,12 @@ class T5DuoReranker(T5Reranker):
             batch_scores = batch_scores[:, [6136, 1176]]
             batch_scores = torch.nn.functional.softmax(batch_scores, dim=1)
             batch_log_probs = batch_scores[:, 1].tolist()
-            for doc, score in zip(batch.documents, batch_log_probs):
-                doc.score += score
+            for doc, score in zip(batch.doc_pairs, batch_log_probs):
+                print(doc[0], doc[1])
+                scores[doc[0].raw['docid']] += score
+                scores[doc[1].raw['docid']] += (1 - score)
+        for text in texts:
+            text.score = scores[text.raw['docid']]
         return texts
 
 

@@ -49,7 +49,7 @@ class DuoQueryDocumentBatch:
     output: Optional[TokenizerReturnType] = None
 
     def __len__(self):
-        return len(self.document_pairs)
+        return len(self.doc_pairs)
 
 
 class TokenizerEncodeMixin:
