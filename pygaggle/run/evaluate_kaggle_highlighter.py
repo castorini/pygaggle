@@ -60,7 +60,7 @@ class KaggleEvaluationOptions(BaseModel):
         method = values['method']
         if method == 'transformer' and v is None:
             raise ValueError('transformer name must be specified')
-        elif method in ['t5', 'duo-t5']:
+        elif method in ['t5', 'duo_t5']:
             return SETTINGS.t5_model_type
         if v == 'biobert':
             return 'monologg/biobert_v1.1_pubmed'
