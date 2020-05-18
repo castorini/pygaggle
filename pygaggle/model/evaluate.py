@@ -189,7 +189,7 @@ class DuoRerankerEvaluator:
             mono_out = self.mono_reranker.rerank(example.query,
                                                  example.documents)
             duo_in = sorted(enumerate(mono_out),
-                            lambda text: text[1].score,
+                            key=lambda text: text[1].score,
                             reverse=True)
             mono_texts.append(duo_in[:self.mono_hits])
             if ct == 0:
