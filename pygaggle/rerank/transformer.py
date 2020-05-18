@@ -75,7 +75,6 @@ class T5DuoReranker(T5Reranker):
             batch_scores = torch.nn.functional.softmax(batch_scores, dim=1)
             batch_log_probs = batch_scores[:, 1].tolist()
             for doc, score in zip(batch.doc_pairs, batch_log_probs):
-                print(doc[0], doc[1])
                 scores[doc[0].raw['docid']] += score
                 scores[doc[1].raw['docid']] += (1 - score)
         for text in texts:

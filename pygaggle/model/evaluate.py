@@ -194,18 +194,12 @@ class DuoRerankerEvaluator:
                             reverse=True)
             mono_texts.append(duo_in[:self.mono_hits])
             scores.append(np.array([x.score for x in mono_out]))
-            if ct == 2:
-                break
         for ct, texts in tqdm(enumerate(mono_texts),
                               disable=not self.use_tqdm):
             duo_in = list(map(lambda text: text[1], texts))
-            if ct == 0:
-                print(duo_in)
             duo_scores = [x.score for x in self.duo_reranker.rerank(
                                             examples[ct].query,
                                             duo_in)]
-            if ct == 0:
-                print(duo_scores)
             # Works for now as log_softmax vs softmax
             scores[ct][list(map(lambda x: x[0], texts))] = duo_scores
             if self.writer is not None:
