@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import List, Mapping, Union, Iterable, Optional
+from typing import List, Mapping, Union, Iterable, Optional, Tuple
 
 from spacy.lang.en import English
 from transformers import PreTrainedTokenizer
@@ -10,7 +10,9 @@ from pygaggle.rerank.base import Query, Text, TextType
 
 
 __all__ = ['BatchTokenizer',
+           'DuoQueryDocumentBatch',
            'T5BatchTokenizer',
+           'T5DuoBatchTokenizer',
            'QueryDocumentBatch',
            'SimpleBatchTokenizer',
            'QueryDocumentBatchTokenizer',
@@ -38,6 +40,16 @@ class QueryDocumentBatch:
 
     def __len__(self):
         return len(self.documents)
+
+
+@dataclass
+class DuoQueryDocumentBatch:
+    query: Query
+    doc_pairs: List[Tuple[Text, Text]]
+    output: Optional[TokenizerReturnType] = None
+
+    def __len__(self):
+        return len(self.document_pairs)
 
 
 class TokenizerEncodeMixin:
@@ -105,10 +117,33 @@ class QueryDocumentBatchTokenizer(TokenizerEncodeMixin):
                                         document=doc.text) for doc in docs])
             yield QueryDocumentBatch(query, docs, outputs)
 
+    def traverse_duo_query_document(
+            self,
+            batch_input: DuoQueryDocumentBatch) \
+            -> Iterable[DuoQueryDocumentBatch]:
+        query = batch_input.query
+        for batch_idx in range(0, len(batch_input), self.batch_size):
+            docs = batch_input.doc_pairs[batch_idx:batch_idx + self.batch_size]
+            outputs = self.encode([self.pattern.format(
+                                        query=query.text,
+                                        document0=doc[0].text,
+                                        document1=doc[1].text) for doc in docs])
+            yield DuoQueryDocumentBatch(query, docs, outputs)
+
 
 class T5BatchTokenizer(AppendEosTokenizerMixin, QueryDocumentBatchTokenizer):
     def __init__(self, *args, **kwargs):
         kwargs['pattern'] = 'Query: {query} Document: {document} Relevant:'
+        kwargs['return_attention_mask'] = True
+        kwargs['pad_to_max_length'] = True
+        kwargs['return_tensors'] = 'pt'
+        super().__init__(*args, **kwargs)
+
+
+class T5DuoBatchTokenizer(AppendEosTokenizerMixin, QueryDocumentBatchTokenizer):
+    def __init__(self, *args, **kwargs):
+        kwargs['pattern'] = ('Query: {query} Document0: {document0} '
+                             'Document1: {document1} Relevant:')
         kwargs['return_attention_mask'] = True
         kwargs['pad_to_max_length'] = True
         kwargs['return_tensors'] = 'pt'

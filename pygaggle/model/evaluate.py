@@ -10,7 +10,7 @@ from pygaggle.data.kaggle import RelevanceExample
 from pygaggle.rerank.base import Reranker
 from pygaggle.model.writer import Writer
 
-__all__ = ['RerankerEvaluator', 'metric_names']
+__all__ = ['DuoRerankerEvaluator', 'RerankerEvaluator', 'metric_names']
 METRIC_MAP = OrderedDict()
 
 
@@ -162,4 +162,51 @@ class RerankerEvaluator:
                 self.writer.write(scores, example)
             for metric in metrics:
                 metric.accumulate(scores, example)
+        return metrics
+
+
+class DuoRerankerEvaluator:
+    def __init__(self,
+                 mono_reranker: Reranker,
+                 duo_reranker: Reranker,
+                 metric_names: List[str],
+                 mono_hits: int = 10,
+                 use_tqdm: bool = True,
+                 writer: Optional[Writer] = None):
+        self.mono_reranker = mono_reranker
+        self.duo_reranker = duo_reranker
+        self.mono_hits = mono_hits
+        self.metrics = [METRIC_MAP[name] for name in metric_names]
+        self.use_tqdm = use_tqdm
+        self.writer = writer
+
+    def evaluate(self,
+                 examples: List[RelevanceExample]) -> List[MetricAccumulator]:
+        metrics = [cls() for cls in self.metrics]
+        mono_texts = []
+        for ct, example in tqdm(enumerate(examples),
+                                disable=not self.use_tqdm):
+            mono_out = self.mono_reranker.rerank(example.query,
+                                                 example.documents)
+            duo_in = sorted(enumerate(mono_out),
+                            lambda text: text[1].score,
+                            reverse=True)
+            mono_texts.append(duo_in[:self.mono_hits])
+            if ct == 0:
+                scores = np.array([[x.score for x in mono_out]])
+            else:
+                scores = np.row_stack((scores,
+                                       [x.score for x in mono_out]))
+        for ct, texts in tqdm(enumerate(mono_texts),
+                              disable=not self.use_tqdm):
+            duo_in = list(map(lambda text: text[1], texts))
+            duo_scores = [x.score for x in self.duo_reranker.rerank(
+                                            examples[ct].query,
+                                            duo_in)]
+            # Works for now as log_softmax vs softmax
+            scores[ct][list(map(lambda x: x[0], texts))] = duo_scores
+            if self.writer is not None:
+                self.writer.write(list(scores[ct]), examples[ct])
+            for metric in metrics:
+                metric.accumulate(list(scores[ct]), examples[ct])
         return metrics

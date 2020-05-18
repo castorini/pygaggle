@@ -16,15 +16,18 @@ from pygaggle.rerank.bm25 import Bm25Reranker
 from pygaggle.rerank.transformer import (
     QuestionAnsweringTransformerReranker,
     SequenceClassificationTransformerReranker,
+    T5DuoReranker,
     T5Reranker,
     UnsupervisedTransformerReranker
     )
 from pygaggle.rerank.random import RandomReranker
 from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
 from pygaggle.model import (CachedT5ModelLoader,
+                            DuoRerankerEvaluator,
                             RerankerEvaluator,
                             SimpleBatchTokenizer,
                             T5BatchTokenizer,
+                            T5DuoBatchTokenizer,
                             metric_names)
 from pygaggle.data import LitReviewDataset
 from pygaggle.settings import Cord19Settings
@@ -32,7 +35,7 @@ from pygaggle.settings import Cord19Settings
 
 SETTINGS = Cord19Settings()
 METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer',
-                  'qa_transformer', 'random')
+                  'qa_transformer', 'random', 'duo_t5')
 
 
 class KaggleEvaluationOptions(BaseModel):
@@ -82,6 +85,22 @@ def construct_t5(options: KaggleEvaluationOptions) -> Reranker:
                     do_lower_case=options.do_lower_case)
     tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
     return T5Reranker(model, tokenizer)
+
+
+def construct_duo_t5(options: KaggleEvaluationOptions) -> Reranker:
+    mono_reranker = construct_t5(options)
+    loader = CachedT5ModelLoader(options.model_name_or_path,
+                                 SETTINGS.cache_dir,
+                                 'ranker',
+                                 options.model_type,
+                                 SETTINGS.flush_cache)
+    device = torch.device(options.device)
+    model = loader.load().to(device).eval()
+    tokenizer = AutoTokenizer.from_pretrained(
+                    options.model_name,
+                    do_lower_case=options.do_lower_case)
+    tokenizer = T5DuoBatchTokenizer(tokenizer, options.batch_size)
+    return mono_reranker, T5DuoReranker(model, tokenizer)
 
 
 def construct_transformer(options: KaggleEvaluationOptions) -> Reranker:
@@ -182,9 +201,14 @@ def main():
                          t5=construct_t5,
                          seq_class_transformer=construct_seq_class_transformer,
                          qa_transformer=construct_qa_transformer,
-                         random=lambda _: RandomReranker())
+                         random=lambda _: RandomReranker(),
+                         duo_t5=construct_duo_t5)
     reranker = construct_map[options.method](options)
-    evaluator = RerankerEvaluator(reranker, options.metrics)
+    if options.method == duo_t5:
+        evaluator = DuoRerankerEvaluator(reranker[0], reranker[1],
+                                         options.metrics)
+    else:
+        evaluator = RerankerEvaluator(reranker, options.metrics)
     width = max(map(len, args.metrics)) + 1
     stdout = []
     for metric in evaluator.evaluate(examples):
