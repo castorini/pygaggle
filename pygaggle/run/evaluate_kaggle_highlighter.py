@@ -48,6 +48,8 @@ class KaggleEvaluationOptions(BaseModel):
     metrics: List[str]
     model_name: Optional[str]
     tokenizer_name: Optional[str]
+    duo_model_name_or_path: Optional[str]
+
 
     @validator('dataset')
     def dataset_exists(cls, v: Path):
@@ -75,7 +77,7 @@ class KaggleEvaluationOptions(BaseModel):
 def construct_t5(options: KaggleEvaluationOptions) -> Reranker:
     loader = CachedT5ModelLoader(SETTINGS.t5_model_dir,
                                  SETTINGS.cache_dir,
-                                 'ranker',
+                                 'mono',
                                  SETTINGS.t5_model_type,
                                  SETTINGS.flush_cache)
     device = torch.device(options.device)
@@ -89,10 +91,10 @@ def construct_t5(options: KaggleEvaluationOptions) -> Reranker:
 
 def construct_duo_t5(options: KaggleEvaluationOptions) -> Reranker:
     mono_reranker = construct_t5(options)
-    loader = CachedT5ModelLoader(options.model_name_or_path,
+    loader = CachedT5ModelLoader(options.duo_model_name_or_path,
                                  SETTINGS.cache_dir,
-                                 'ranker',
-                                 options.model_type,
+                                 'duo',
+                                 SETTINGS.t5_model_type,
                                  SETTINGS.flush_cache)
     device = torch.device(options.device)
     model = loader.load().to(device).eval()
@@ -176,6 +178,7 @@ def main():
     apb.add_opts(opt('--dataset',
                      type=Path,
                      default='data/kaggle-lit-review-0.1.json'),
+                 opt('--duo-model-name-or-path', type=str),
                  opt('--method',
                      required=True,
                      type=str,
@@ -204,7 +207,7 @@ def main():
                          random=lambda _: RandomReranker(),
                          duo_t5=construct_duo_t5)
     reranker = construct_map[options.method](options)
-    if options.method == duo_t5:
+    if options.method == 'duo_t5':
         evaluator = DuoRerankerEvaluator(reranker[0], reranker[1],
                                          options.metrics)
     else:
