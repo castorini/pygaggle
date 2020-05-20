@@ -76,7 +76,7 @@ class T5DuoReranker(T5Reranker):
             batch_log_probs = batch_scores[:, 1].tolist()
             for doc, score in zip(batch.doc_pairs, batch_log_probs):
                 scores[doc[0].raw['docid']] += score
-                scores[doc[1].raw['docid']] += (1 - score)
+                # scores[doc[1].raw['docid']] += (1 - score)
         for text in texts:
             text.score = scores[text.raw['docid']]
         return texts
