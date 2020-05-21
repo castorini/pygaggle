@@ -131,7 +131,7 @@ def construct_seq_class_transformer(options: PassageRankingEvaluationOptions
 
 
 def construct_bm25(options: PassageRankingEvaluationOptions) -> Reranker:
-    return Bm25Reranker(index_path=options.msmarco_index_path)
+    return Bm25Reranker(index_path=options.index_dir)
 
 
 def main():
@@ -166,7 +166,7 @@ def main():
     options = PassageRankingEvaluationOptions(**vars(args))
     ds = MsMarcoDataset.from_folder(str(options.data_dir), split=options.split,
                                     is_duo=options.is_duo)
-    examples = ds.to_relevance_examples(options.index_dir,
+    examples = ds.to_relevance_examples(str(options.index_dir),
                                         is_duo=options.is_duo)
     construct_map = dict(transformer=construct_transformer,
                          bm25=construct_bm25,
