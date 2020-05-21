@@ -2,7 +2,6 @@
 
 This page contains instructions for running various neural reranking baselines on the MS MARCO *passage* ranking task. 
 Note that there is also a separate [MS MARCO *document* ranking task](experiments-msmarco-doc.md).
-Make sure that you have access to a GPU before running this.
 
 Prior to running this, we suggest looking at our first-stage [BM25 ranking instructions](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-passage.md).
 We rerank the BM25 run files that contain ~ 1000 passages per query using both monoBERT and monoT5.
@@ -10,7 +9,7 @@ We rerank the BM25 run files that contain ~ 1000 passages per query using both m
 Keeping computational resources in mind, our instructions primarily focus on a 105 query subset of the MS MARCO dev set. 
 Running these instructions with the entire MS MARCO dev set should give about the same results as that in the corresponding paper. 
 
-*Note: Run the following instructions at root of this repo. Installation must have been done from source.*
+*Note: Run the following instructions at root of this repo. Installation must have been done from source. Make sure that you have access to a GPU*
 
 ## Models
 
@@ -27,19 +26,19 @@ wget https://www.dropbox.com/s/5xa5vjbjle0c8jv/msmarco_ans_small.zip -P data
 
 To confirm, `msmarco_ans_small.zip` should have MD5 checksum of `65d8007bfb2c72b5fc384738e5572f74`.
 
-Next, we extract the contents of the zip file into runs. 
+Next, we extract the contents into `data`. 
 
 ```
 unzip msmarco_ans_small.zip -d data
 ```
 
-We can evaluate the first-stage retrieved documents using the official MS MARCO evaluation script.
+As a sanity check, we can evaluate the first-stage retrieved documents using the official MS MARCO evaluation script.
 
 ```
 python evaluate/msmarco/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv data/msmarco_ans_small/run.dev.small.tsv
 ```
 
-And the output should be:
+The output should be:
 
 ```
 #####################
@@ -48,7 +47,7 @@ QueriesRanked: 105
 #####################
 ```
 
-Let's download and extract the pre-built MS MARCO index into the `indexes` directory:
+Let's download and extract the pre-built MS MARCO index into `indexes`:
 
 ```
 wget https://git.uwaterloo.ca/jimmylin/anserini-indexes/raw/master/index-msmarco-passage-20191117-0ed488.tar.gz -P indexes
@@ -57,7 +56,7 @@ tar xvfz indexes/index-msmarco-passage-20191117-0ed488.tar.gz -C indexes
 
 ## Model Prep
 
-Let's download and extract monoBERT into the `models` directory
+Let's download and extract monoBERT into `models`:
 
 ```
 wget https://www.dropbox.com/s/jr0hpksboh7pa48/monobert_msmarco_large.zip -P models
@@ -140,7 +139,7 @@ It is worth noting again that you might need to modify the batch size to best fi
 Upon completion, the re-ranked run file `run.monot5.ans_small.dev.tsv` will be available in the `runs` directory.
 
 
-Awesome, we can verify that this MRR@10 is indeed right using the official MS MARCO evaluation script:
+We can verify that the MRR@10 is indeed right using the official MS MARCO evaluation script:
 
 ```
 python evaluate/msmarco/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv runs/run.monot5.ans_small.dev.tsv
@@ -154,6 +153,8 @@ If you were able to replicate any of these results, please submit a PR adding to
 ## Replication Log
 
 ### monoBERT
++ 
 
 ### monoT5
++ 
 
