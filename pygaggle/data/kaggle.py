@@ -82,10 +82,8 @@ class LitReviewDataset(BaseModel):
             mean_stats['Random P@1'].append(np.mean(int_rels))
             n = len(int_rels) - p
             N = len(int_rels)
-            mean_stats['Random R@3'].append(1 - (n * (n - 1) * (n - 2)) / (N *
-                                            (N - 1) * (N - 2)))
-            numer = np.array([sp.comb(n, i) / (N - i)
-                              for i in range(0, n + 1)]) * p
+            mean_stats['Random R@3'].append(1 - (n * (n - 1) * (n - 2)) / (N * (N - 1) * (N - 2)))
+            numer = np.array([sp.comb(n, i) / (N - i) for i in range(0, n + 1)]) * p
             denom = np.array([sp.comb(N, i) for i in range(0, n + 1)])
             rr = 1 / np.arange(1, n + 2)
             rmrr = np.sum(numer * rr / denom)

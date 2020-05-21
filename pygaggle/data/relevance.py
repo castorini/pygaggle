@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import List
+from typing import List, Optional
 import json
 import re
 
@@ -21,9 +21,9 @@ class RelevanceExample:
 
 @dataclass
 class Cord19Document:
-    abstract: str
     body_text: str
     ref_entries: str
+    abstract: Optional[str] = ''
 
     @property
     def all_text(self):
@@ -57,9 +57,9 @@ class Cord19DocumentLoader:
         except AttributeError:
             raise ValueError('document unretrievable')
         ref_entries = article['ref_entries'].values()
-        return Cord19Document(unfold(article['abstract']),
-                              unfold(article['body_text']),
-                              unfold(ref_entries))
+        return Cord19Document(unfold(article['body_text']),
+                              unfold(ref_entries),
+                              abstract=unfold(article['abstract']) if 'abstract' in article else '')
 
 
 class MsMarcoPassageLoader:
