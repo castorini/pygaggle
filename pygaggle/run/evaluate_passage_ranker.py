@@ -46,7 +46,7 @@ class PassageRankingEvaluationOptions(BaseModel):
     metrics: List[str]
     model_type: Optional[str]
     tokenizer_name: Optional[str]
-    index_dir: Optional[Path]
+    index_dir: Path
 
     @validator('dataset')
     def dataset_exists(cls, v: str):
@@ -59,8 +59,7 @@ class PassageRankingEvaluationOptions(BaseModel):
 
     @validator('index_dir')
     def index_dir_exists(cls, v: str):
-        if v is None:
-            return SETTINGS.msmarco_index_path
+        assert v.exists(), 'index directory must exist'
         return v
 
     @validator('model_name_or_path')
@@ -140,7 +139,8 @@ def main():
     apb.add_opts(opt('--dataset',
                      type=str,
                      default='msmarco'),
-                 opt('--data-dir', type=Path, default='/content/data/msmarco'),
+                 opt('--data-dir', type=Path, required=True),
+                 opt('--index-dir', type=Path, required=True),
                  opt('--method',
                      required=True,
                      type=str,
