@@ -140,7 +140,6 @@ def main():
                      type=str,
                      default='msmarco'),
                  opt('--data-dir', type=Path, required=True),
-                 opt('--index-dir', type=Path, required=True),
                  opt('--method',
                      required=True,
                      type=str,
