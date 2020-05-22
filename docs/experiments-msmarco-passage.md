@@ -150,7 +150,7 @@ python evaluate/msmarco/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.t
 
 You should see the same result.
 
-If you were able to replicate any of these results, please submit a PR adding to the replication log!
+If you were able to replicate these results, please submit a PR adding to the replication log!
 
 
 ## Replication Log
