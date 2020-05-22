@@ -9,7 +9,9 @@ We rerank the BM25 run files that contain ~ 1000 passages per query using both m
 Keeping computational resources in mind, our instructions primarily focus on a 105 query subset of the MS MARCO dev set. 
 Running these instructions with the entire MS MARCO dev set should give about the same results as that in the corresponding paper. 
 
-*Note: Run the following instructions at root of this repo. Installation must have been done from source. Make sure that you have access to a GPU*
+Note 1: Run the following instructions at root of this repo.
+Note 2: Installation must have been done from source.
+Note 3: Make sure that you have access to a GPU
 
 ## Models
 
@@ -157,4 +159,3 @@ If you were able to replicate any of these results, please submit a PR adding to
 
 ### monoT5
 + 
-
