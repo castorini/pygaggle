@@ -1,12 +1,13 @@
 # PyGaggle: Neural Ranking Baselines on [MS MARCO Passage Retrieval](https://github.com/microsoft/MSMARCO-Passage-Ranking)
 
 This page contains instructions for running various neural reranking baselines on the MS MARCO *passage* ranking task. 
-Note that there is also a separate [MS MARCO *document* ranking task](experiments-msmarco-doc.md).
+Note that there is also a separate [MS MARCO *document* ranking task](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-doc.md).
 
 Prior to running this, we suggest looking at our first-stage [BM25 ranking instructions](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-passage.md).
-We rerank the BM25 run files that contain ~ 1000 passages per query using both monoBERT and monoT5.
+We rerank the BM25 run files that contain ~1000 passages per query using both monoBERT and monoT5.
+monoBERT and monoT5 are pointwise rerankers. This means that each document is scored independently using either BERT or T5 respectively.
 
-Keeping computational resources in mind, our instructions primarily focus on a 105 query subset of the MS MARCO dev set. 
+Since it can take many hours to run these models on all of the 6980 queries from the MS MARCO dev set, we will instead use a subset of 105 queries randomly sampled from the dev set. 
 Running these instructions with the entire MS MARCO dev set should give about the same results as that in the corresponding paper. 
 
 Note 1: Run the following instructions at root of this repo.
@@ -94,13 +95,14 @@ mrr	0.41089693612003686
 mrr@10	0.4026795162509449
 ```
 
-It takes about ~ 52 minutes to re-rank this subset on MS MARCO using a P100. 
+It takes about ~52 minutes to re-rank this subset on MS MARCO using a P100. 
 The type of GPU will directly influence your inference time. 
 It is possible that the default batch results in a GPU OOM error.
 In this case, assigning a batch size (using option `--batch-size`) which is smaller than the default (96) should help!
 
-The re-ranked run file `run.monobert.ans_small.dev.tsv` will also be available in the `runs` directory upon completion. 
-We can use this to verify that the MRR@10 is indeed right using the official MS MARCO evaluation script:
+The re-ranked run file `run.monobert.ans_small.dev.tsv` will also be available in the `runs` directory upon completion.
+
+We can use the official MS MARCO evaluation script to verify the MRR@10:
 
 ```
 python evaluate/msmarco/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv runs/run.monobert.ans_small.dev.tsv
@@ -135,13 +137,12 @@ mrr	0.3973368360121561
 mrr@10	0.39044217687074834
 ```
 
-It takes about ~ 13 minutes to re-rank this subset on MS MARCO using a P100. 
+It takes about ~13 minutes to re-rank this subset on MS MARCO using a P100. 
 It is worth noting again that you might need to modify the batch size to best fit the GPU at hand.
 
 Upon completion, the re-ranked run file `run.monot5.ans_small.dev.tsv` will be available in the `runs` directory.
 
-
-We can verify that the MRR@10 is indeed right using the official MS MARCO evaluation script:
+We can use the official MS MARCO evaluation script to verify the MRR@10:
 
 ```
 python evaluate/msmarco/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv runs/run.monot5.ans_small.dev.tsv
