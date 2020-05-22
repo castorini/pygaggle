@@ -37,6 +37,7 @@ METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer',
 class PassageRankingEvaluationOptions(BaseModel):
     dataset: str
     data_dir: Path
+    index_dir: Path
     method: str
     model_name_or_path: str
     split: str
@@ -46,7 +47,6 @@ class PassageRankingEvaluationOptions(BaseModel):
     metrics: List[str]
     model_type: Optional[str]
     tokenizer_name: Optional[str]
-    index_dir: Optional[Path]
 
     @validator('dataset')
     def dataset_exists(cls, v: str):
@@ -59,8 +59,7 @@ class PassageRankingEvaluationOptions(BaseModel):
 
     @validator('index_dir')
     def index_dir_exists(cls, v: str):
-        if v is None:
-            return SETTINGS.msmarco_index_path
+        assert v.exists(), 'index directory must exist'
         return v
 
     @validator('model_name_or_path')
@@ -132,7 +131,7 @@ def construct_seq_class_transformer(options: PassageRankingEvaluationOptions
 
 
 def construct_bm25(options: PassageRankingEvaluationOptions) -> Reranker:
-    return Bm25Reranker(index_path=options.msmarco_index_path)
+    return Bm25Reranker(index_path=options.index_dir)
 
 
 def main():
@@ -140,7 +139,8 @@ def main():
     apb.add_opts(opt('--dataset',
                      type=str,
                      default='msmarco'),
-                 opt('--data-dir', type=Path, default='/content/data/msmarco'),
+                 opt('--data-dir', type=Path, required=True),
+                 opt('--index-dir', type=Path, required=True),
                  opt('--method',
                      required=True,
                      type=str,
@@ -161,13 +161,12 @@ def main():
                      default=metric_names(),
                      choices=metric_names()),
                  opt('--model-type', type=str, default='bert-base'),
-                 opt('--tokenizer-name', type=str),
-                 opt('--index-dir', type=Path))
+                 opt('--tokenizer-name', type=str))
     args = apb.parser.parse_args()
     options = PassageRankingEvaluationOptions(**vars(args))
     ds = MsMarcoDataset.from_folder(str(options.data_dir), split=options.split,
                                     is_duo=options.is_duo)
-    examples = ds.to_relevance_examples(SETTINGS.msmarco_index_path,
+    examples = ds.to_relevance_examples(str(options.index_dir),
                                         is_duo=options.is_duo)
     construct_map = dict(transformer=construct_transformer,
                          bm25=construct_bm25,

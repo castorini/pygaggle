@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
 
 class MsMarcoSettings(Settings):
-    msmarco_index_path: str = 'data/index-msmarco-passage-20191117-0ed488'
+    pass
 
 
 class Cord19Settings(Settings):
