@@ -150,13 +150,10 @@ python evaluate/msmarco/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.t
 
 You should see the same result.
 
-If you were able to replicate any of these results, please submit a PR adding to the replication log!
+If you were able to replicate these results, please submit a PR adding to the replication log!
 
 
 ## Replication Log
 
-### monoBERT
-+ 
++ Results replicated by [@MXueguang](https://github.com/MXueguang) on 2020-05-22(commit [`69de7db`](https://github.com/castorini/pygaggle/commit/69de7db843bbe9201113c4d94c9e90be36094350)) (Tesla P4)
 
-### monoT5
-+ 
