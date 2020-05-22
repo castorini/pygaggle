@@ -155,8 +155,5 @@ If you were able to replicate any of these results, please submit a PR adding to
 
 ## Replication Log
 
-### monoBERT
-+ Results replicated by [@MXueguang](https://github.com/MXueguang) on 2020-05-22(commit [`69de7db`](https://github.com/castorini/pygaggle/commit/69de7db843bbe9201113c4d94c9e90be36094350))
++ Results replicated by [@MXueguang](https://github.com/MXueguang) on 2020-05-22(commit [`69de7db`](https://github.com/castorini/pygaggle/commit/69de7db843bbe9201113c4d94c9e90be36094350)) (monoBERT + monoT5)
 
-### monoT5
-+ Results replicated by [@MXueguang](https://github.com/MXueguang) on 2020-05-22(commit [`69de7db`](https://github.com/castorini/pygaggle/commit/69de7db843bbe9201113c4d94c9e90be36094350))
