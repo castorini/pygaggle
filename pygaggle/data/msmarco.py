@@ -107,15 +107,13 @@ class MsMarcoDataset(BaseModel):
         mean_stats = defaultdict(list)
         for ex in self.examples:
             int_rels = np.array(list(map(int, example_map[ex.qid][3])))
-            p = int_rels.sum()/(len(ex.candidates) - 1) if is_duo \
-                else int_rels.sum()
+            p = int_rels.sum()/(len(ex.candidates) - 1) if is_duo else int_rels.sum()
             mean_stats['Random P@1'].append(np.mean(int_rels))
             n = len(ex.candidates) - p
             N = len(ex.candidates)
             if len(ex.candidates) <= 1000:
                 mean_stats['Random R@1000'].append(1 if 1 in int_rels else 0)
-            numer = np.array([sp.comb(n, i) / (N - i) for i in range(0, n + 1)
-                             if i != N]) * p
+            numer = np.array([sp.comb(n, i) / (N - i) for i in range(0, n + 1) if i != N]) * p
             if n == N:
                 numer = np.append(numer, 0)
             denom = np.array([sp.comb(N, i) for i in range(0, n + 1)])
@@ -131,14 +129,11 @@ class MsMarcoDataset(BaseModel):
             mean_stats['Existing MRR'].append(1 / (ex_index + 1)
                                               if ex_index < len(ex.candidates)
                                               else 0)
-            mean_stats['Existing MRR@10'].append(1 / (ex_index + 1)
-                                                 if ex_index < 10 else 0)
+            mean_stats['Existing MRR@10'].append(1 / (ex_index + 1) if ex_index < 10 else 0)
         for k, v in mean_stats.items():
             logging.info(f'{k}: {np.mean(v)}')
         return [RelevanceExample(Query(text=query_text, id=qid),
-                                 list(map(lambda s: Text(s[1],
-                                                         dict(docid=s[0])),
+                                 list(map(lambda s: Text(s[1], dict(docid=s[0])),
                                           zip(cands, cands_text))),
                                  rel_cands)
-                for qid, (query_text, cands, cands_text, rel_cands) in
-                example_map.items()]
+                for qid, (query_text, cands, cands_text, rel_cands) in example_map.items()]
