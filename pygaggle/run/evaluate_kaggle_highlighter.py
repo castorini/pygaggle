@@ -156,7 +156,7 @@ def main():
     apb = ArgumentParserBuilder()
     apb.add_opts(opt('--dataset',
                      type=Path,
-                     default='data/kaggle-lit-review-0.1.json'),
+                     default='data/kaggle-lit-review-0.2.json'),
                  opt('--method',
                      required=True,
                      type=str,
