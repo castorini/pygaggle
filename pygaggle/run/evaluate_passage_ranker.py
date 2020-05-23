@@ -6,7 +6,8 @@ from pydantic import BaseModel, validator
 from transformers import (AutoModel,
                           AutoTokenizer,
                           AutoModelForSequenceClassification,
-                          BertForSequenceClassification)
+                          BertForSequenceClassification,
+                          T5ForConditionalGeneration)
 import torch
 
 from .args import ArgumentParserBuilder, opt
@@ -77,12 +78,15 @@ class PassageRankingEvaluationOptions(BaseModel):
 
 
 def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
-    loader = CachedT5ModelLoader(options.model_name_or_path,
-                                 SETTINGS.cache_dir,
-                                 'ranker',
-                                 options.model_type,
-                                 SETTINGS.flush_cache)
     device = torch.device(options.device)
+
+    try:
+        model = T5ForConditionalGeneration.from_pretrained(
+            options.model_name_or_path).to(device).eval()
+    except OSError:
+        model = T5ForConditionalGeneration.from_pretrained(options.model_name_or_path,
+                                                           from_tf=True).to(device).eval()
+    
     model = loader.load().to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(options.model_type)
     tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)

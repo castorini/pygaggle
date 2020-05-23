@@ -77,7 +77,7 @@ First, lets evaluate using monoBERT!
 ```
 python -um pygaggle.run.evaluate_passage_ranker --split dev \
 	                                            --method seq_class_transformer \
-	                                            --model-name-or-path models/monobert_msmarco_large \
+	                                            --model-name-or-path castorini/monobert_large_msmarco \
 	                                            --data-dir data/msmarco_ans_small/ \
 	                                            --index-dir indexes/index-msmarco-passage-20191117-0ed488 \
 	                                            --dataset msmarco \
@@ -117,7 +117,7 @@ We use the monoT5-base variant as it is the easiest to run without access to lar
 ```
 python -um pygaggle.run.evaluate_passage_ranker --split dev \
                                                 --method t5 \
-                                                --model-name-or-path gs://neuralresearcher_data/doc2query/experiments/367 \
+                                                --model-name-or-path castorini/monot5-base-msmarco \
                                                 --data-dir data/msmarco_ans_small \
                                                 --model-type t5-base \
                                                 --dataset msmarco \
@@ -156,8 +156,5 @@ If you were able to replicate these results, please submit a PR adding to the re
 ## Replication Log
 
 + Results replicated by [@MXueguang](https://github.com/MXueguang) on 2020-05-22(commit [`69de7db`](https://github.com/castorini/pygaggle/commit/69de7db843bbe9201113c4d94c9e90be36094350)) (Tesla P4)
-<<<<<<< HEAD
-=======
 + Results replicated by [@richard3983](https://github.com/richard3983) on 2020-05-22(commit [`6e9dfc6`](https://github.com/richard3983/pygaggle/commit/6e9dfc62083c15233600c41737110c9989043b98)) (Tesla P100)
->>>>>>> 29018326afd499f86a553a4645dedd73ffbebd2d
 
