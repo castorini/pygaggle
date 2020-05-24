@@ -77,7 +77,7 @@ First, lets evaluate using monoBERT!
 ```
 python -um pygaggle.run.evaluate_passage_ranker --split dev \
 	                                            --method seq_class_transformer \
-	                                            --model-name-or-path models/monobert_msmarco_large \
+	                                            --model-name-or-path castorini/monobert_large_msmarco \
 	                                            --data-dir data/msmarco_ans_small/ \
 	                                            --index-dir indexes/index-msmarco-passage-20191117-0ed488 \
 	                                            --dataset msmarco \
@@ -117,7 +117,7 @@ We use the monoT5-base variant as it is the easiest to run without access to lar
 ```
 python -um pygaggle.run.evaluate_passage_ranker --split dev \
                                                 --method t5 \
-                                                --model-name-or-path gs://neuralresearcher_data/doc2query/experiments/367 \
+                                                --model-name-or-path castorini/monot5-base-msmarco \
                                                 --data-dir data/msmarco_ans_small \
                                                 --model-type t5-base \
                                                 --dataset msmarco \

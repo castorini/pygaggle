@@ -6,7 +6,8 @@ from pydantic import BaseModel, validator
 from transformers import (AutoModel,
                           AutoTokenizer,
                           AutoModelForSequenceClassification,
-                          BertForSequenceClassification)
+                          BertForSequenceClassification,
+                          T5ForConditionalGeneration)
 import torch
 
 from .args import ArgumentParserBuilder, opt
@@ -44,6 +45,7 @@ class PassageRankingEvaluationOptions(BaseModel):
     batch_size: int
     device: str
     is_duo: bool
+    from_tf: bool
     metrics: List[str]
     model_type: Optional[str]
     tokenizer_name: Optional[str]
@@ -77,13 +79,9 @@ class PassageRankingEvaluationOptions(BaseModel):
 
 
 def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
-    loader = CachedT5ModelLoader(options.model_name_or_path,
-                                 SETTINGS.cache_dir,
-                                 'ranker',
-                                 options.model_type,
-                                 SETTINGS.flush_cache)
     device = torch.device(options.device)
-    model = loader.load().to(device).eval()
+    model = T5ForConditionalGeneration.from_pretrained(options.model_name_or_path,
+                                                           from_tf=options.from_tf).to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(options.model_type)
     tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
     return T5Reranker(model, tokenizer)
@@ -92,12 +90,8 @@ def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
 def construct_transformer(options:
                           PassageRankingEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
-    try:
-        model = AutoModel.from_pretrained(
-            options.model_name_or_path).to(device).eval()
-    except OSError:
-        model = AutoModel.from_pretrained(options.model_name_or_path,
-                                          from_tf=True).to(device).eval()
+    model = AutoModel.from_pretrained(options.model_name_or_path,
+                                          from_tf=options.from_tf).to(device).eval()
     tokenizer = SimpleBatchTokenizer(AutoTokenizer.from_pretrained(
                                         options.tokenizer_name),
                                      options.batch_size)
@@ -109,21 +103,17 @@ def construct_seq_class_transformer(options: PassageRankingEvaluationOptions
                                     ) -> Reranker:
     try:
         model = AutoModelForSequenceClassification.from_pretrained(
-            options.model_name_or_path)
-    except OSError:
-        try:
-            model = AutoModelForSequenceClassification.from_pretrained(
-                options.model_name_or_path, from_tf=True)
-        except AttributeError:
-            # Hotfix for BioBERT MS MARCO. Refactor.
-            BertForSequenceClassification.bias = torch.nn.Parameter(
-                                                    torch.zeros(2))
-            BertForSequenceClassification.weight = torch.nn.Parameter(
-                                                    torch.zeros(2, 768))
-            model = BertForSequenceClassification.from_pretrained(
-                        options.model_name_or_path, from_tf=True)
-            model.classifier.weight = BertForSequenceClassification.weight
-            model.classifier.bias = BertForSequenceClassification.bias
+            options.model_name_or_path, from_tf=options.from_tf)
+    except AttributeError:
+        # Hotfix for BioBERT MS MARCO. Refactor.
+        BertForSequenceClassification.bias = torch.nn.Parameter(
+                                                torch.zeros(2))
+        BertForSequenceClassification.weight = torch.nn.Parameter(
+                                                torch.zeros(2, 768))
+        model = BertForSequenceClassification.from_pretrained(
+                    options.model_name_or_path, from_tf=options.from_tf)
+        model.classifier.weight = BertForSequenceClassification.weight
+        model.classifier.bias = BertForSequenceClassification.bias
     device = torch.device(options.device)
     model = model.to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(options.tokenizer_name)
@@ -155,6 +145,7 @@ def main():
                  opt('--batch-size', '-bsz', type=int, default=96),
                  opt('--device', type=str, default='cuda:0'),
                  opt('--is-duo', action='store_true'),
+                 opt('--from-tf', action='store_true'),
                  opt('--metrics',
                      type=str,
                      nargs='+',
