@@ -145,7 +145,7 @@ def main():
                  opt('--batch-size', '-bsz', type=int, default=96),
                  opt('--device', type=str, default='cuda:0'),
                  opt('--is-duo', action='store_true'),
-                 opt('--from-tf', action='store_true', default='false'),
+                 opt('--from-tf', action='store_true'),
                  opt('--metrics',
                      type=str,
                      nargs='+',
