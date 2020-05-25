@@ -35,7 +35,7 @@ Currently, this repo contains implementations of the rerankers for [CovidQA](htt
 
 ## Running rerankers on CovidQA
 
-By default, the script uses `data/lucene-index-covid-paragraph` for the index path.
+By default, the script uses `indexes/lucene-index-covid-paragraph` for the index path.
 If this is undesirable, set the environment variable `CORD19_INDEX_PATH` to the path of the index.
 For a full list of mostly self-explanatory environment variables, see [this file](https://github.com/castorini/pygaggle/blob/master/pygaggle/settings.py#L7).
 

@@ -37,6 +37,7 @@ METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer',
 
 class KaggleEvaluationOptions(BaseModel):
     dataset: Path
+    index_dir: Path
     method: str
     batch_size: int
     device: str
@@ -149,14 +150,14 @@ def construct_qa_transformer(options: KaggleEvaluationOptions) -> Reranker:
 
 
 def construct_bm25(_: KaggleEvaluationOptions) -> Reranker:
-    return Bm25Reranker(index_path=SETTINGS.cord19_index_path)
+    return Bm25Reranker(index_path=options.index_dir)
 
 
 def main():
     apb = ArgumentParserBuilder()
     apb.add_opts(opt('--dataset',
-                     type=Path,
-                     default='data/kaggle-lit-review-0.2.json'),
+                     type=Path),
+                 opt('--index-dir', type=Path, required=True),
                  opt('--method',
                      required=True,
                      type=str,
@@ -175,7 +176,7 @@ def main():
     args = apb.parser.parse_args()
     options = KaggleEvaluationOptions(**vars(args))
     ds = LitReviewDataset.from_file(str(options.dataset))
-    examples = ds.to_senticized_dataset(SETTINGS.cord19_index_path,
+    examples = ds.to_senticized_dataset(options.index_dir,
                                         split=options.split)
     construct_map = dict(transformer=construct_transformer,
                          bm25=construct_bm25,
