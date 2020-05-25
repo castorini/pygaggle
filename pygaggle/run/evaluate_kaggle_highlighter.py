@@ -42,7 +42,6 @@ class KaggleEvaluationOptions(BaseModel):
     batch_size: int
     device: str
     split: str
-    do_lower_case: bool
     metrics: List[str]
     model_name: Optional[str]
     tokenizer_name: Optional[str]
@@ -79,8 +78,7 @@ def construct_t5(options: KaggleEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     model = loader.load().to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(
-                    options.model_name,
-                    do_lower_case=options.do_lower_case)
+                    options.model_name)
     tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
     return T5Reranker(model, tokenizer)
 
@@ -94,8 +92,7 @@ def construct_transformer(options: KaggleEvaluationOptions) -> Reranker:
                                           from_tf=True).to(device).eval()
     tokenizer = SimpleBatchTokenizer(
                     AutoTokenizer.from_pretrained(
-                        options.tokenizer_name,
-                        do_lower_case=options.do_lower_case),
+                        options.tokenizer_name),
                     options.batch_size)
     provider = CosineSimilarityMatrixProvider()
     return UnsupervisedTransformerReranker(model, tokenizer, provider)
@@ -124,8 +121,7 @@ def construct_seq_class_transformer(options:
     device = torch.device(options.device)
     model = model.to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(
-                    options.tokenizer_name,
-                    do_lower_case=options.do_lower_case)
+                    options.tokenizer_name)
     return SequenceClassificationTransformerReranker(model, tokenizer)
 
 
@@ -144,8 +140,7 @@ def construct_qa_transformer(options: KaggleEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     model = fixed_model.to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(
-                    options.tokenizer_name,
-                    do_lower_case=options.do_lower_case)
+                    options.tokenizer_name)
     return QuestionAnsweringTransformerReranker(model, tokenizer)
 
 
@@ -166,7 +161,6 @@ def main():
                  opt('--batch-size', '-bsz', type=int, default=96),
                  opt('--device', type=str, default='cuda:0'),
                  opt('--tokenizer-name', type=str),
-                 opt('--do-lower-case', action='store_true'),
                  opt('--metrics',
                      type=str,
                      nargs='+',
