@@ -12,4 +12,4 @@ rm -rf data/lucene-index-covid-paragraph
 export INDEX_PATH=indexes/$INDEX_NAME
 mv $INDEX_NAME $INDEX_PATH
 
-echo "Successfully updated Anserini index at data/$INDEX_NAME"
+echo "Successfully updated Anserini index at indexes/$INDEX_NAME"
