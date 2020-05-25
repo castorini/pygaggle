@@ -155,8 +155,7 @@ def construct_bm25(_: KaggleEvaluationOptions) -> Reranker:
 
 def main():
     apb = ArgumentParserBuilder()
-    apb.add_opts(opt('--dataset',
-                     type=Path),
+    apb.add_opts(opt('--dataset', type=Path, required=True),
                  opt('--index-dir', type=Path, required=True),
                  opt('--method',
                      required=True,
