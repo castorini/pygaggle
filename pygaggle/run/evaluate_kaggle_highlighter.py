@@ -149,7 +149,7 @@ def construct_qa_transformer(options: KaggleEvaluationOptions) -> Reranker:
     return QuestionAnsweringTransformerReranker(model, tokenizer)
 
 
-def construct_bm25(_: KaggleEvaluationOptions) -> Reranker:
+def construct_bm25(options: KaggleEvaluationOptions) -> Reranker:
     return Bm25Reranker(index_path=options.index_dir)
 
 
@@ -175,7 +175,7 @@ def main():
     args = apb.parser.parse_args()
     options = KaggleEvaluationOptions(**vars(args))
     ds = LitReviewDataset.from_file(str(options.dataset))
-    examples = ds.to_senticized_dataset(options.index_dir,
+    examples = ds.to_senticized_dataset(str(options.index_dir),
                                         split=options.split)
     construct_map = dict(transformer=construct_transformer,
                          bm25=construct_bm25,

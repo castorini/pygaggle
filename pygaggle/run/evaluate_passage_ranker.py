@@ -21,7 +21,6 @@ from pygaggle.rerank.transformer import (
 from pygaggle.rerank.random import RandomReranker
 from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
 from pygaggle.model import (SimpleBatchTokenizer,
-                            CachedT5ModelLoader,
                             T5BatchTokenizer,
                             RerankerEvaluator,
                             metric_names,
@@ -81,7 +80,7 @@ class PassageRankingEvaluationOptions(BaseModel):
 def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     model = T5ForConditionalGeneration.from_pretrained(options.model_name_or_path,
-                                                           from_tf=options.from_tf).to(device).eval()
+                                                       from_tf=options.from_tf).to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(options.model_type)
     tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
     return T5Reranker(model, tokenizer)
@@ -91,7 +90,7 @@ def construct_transformer(options:
                           PassageRankingEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     model = AutoModel.from_pretrained(options.model_name_or_path,
-                                          from_tf=options.from_tf).to(device).eval()
+                                      from_tf=options.from_tf).to(device).eval()
     tokenizer = SimpleBatchTokenizer(AutoTokenizer.from_pretrained(
                                         options.tokenizer_name),
                                      options.batch_size)
