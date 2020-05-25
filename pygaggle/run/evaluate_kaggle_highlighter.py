@@ -150,7 +150,7 @@ def construct_qa_transformer(options: KaggleEvaluationOptions) -> Reranker:
 
 
 def construct_bm25(options: KaggleEvaluationOptions) -> Reranker:
-    return Bm25Reranker(index_path=options.index_dir)
+    return Bm25Reranker(index_path=str(options.index_dir))
 
 
 def main():
