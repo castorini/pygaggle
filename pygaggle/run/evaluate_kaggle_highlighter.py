@@ -37,6 +37,7 @@ METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer',
 
 class KaggleEvaluationOptions(BaseModel):
     dataset: Path
+    index_dir: Path
     method: str
     batch_size: int
     device: str
@@ -78,8 +79,7 @@ def construct_t5(options: KaggleEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     model = loader.load().to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(
-                    options.model_name,
-                    do_lower_case=options.do_lower_case)
+                    options.model_name, do_lower_case=options.do_lower_case)
     tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
     return T5Reranker(model, tokenizer)
 
@@ -93,8 +93,7 @@ def construct_transformer(options: KaggleEvaluationOptions) -> Reranker:
                                           from_tf=True).to(device).eval()
     tokenizer = SimpleBatchTokenizer(
                     AutoTokenizer.from_pretrained(
-                        options.tokenizer_name,
-                        do_lower_case=options.do_lower_case),
+                        options.tokenizer_name, do_lower_case=options.do_lower_case),
                     options.batch_size)
     provider = CosineSimilarityMatrixProvider()
     return UnsupervisedTransformerReranker(model, tokenizer, provider)
@@ -123,8 +122,7 @@ def construct_seq_class_transformer(options:
     device = torch.device(options.device)
     model = model.to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(
-                    options.tokenizer_name,
-                    do_lower_case=options.do_lower_case)
+                    options.tokenizer_name, do_lower_case=options.do_lower_case)
     return SequenceClassificationTransformerReranker(model, tokenizer)
 
 
@@ -143,20 +141,18 @@ def construct_qa_transformer(options: KaggleEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     model = fixed_model.to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(
-                    options.tokenizer_name,
-                    do_lower_case=options.do_lower_case)
+                    options.tokenizer_name, do_lower_case=options.do_lower_case)
     return QuestionAnsweringTransformerReranker(model, tokenizer)
 
 
-def construct_bm25(_: KaggleEvaluationOptions) -> Reranker:
-    return Bm25Reranker(index_path=SETTINGS.cord19_index_path)
+def construct_bm25(options: KaggleEvaluationOptions) -> Reranker:
+    return Bm25Reranker(index_path=str(options.index_dir))
 
 
 def main():
     apb = ArgumentParserBuilder()
-    apb.add_opts(opt('--dataset',
-                     type=Path,
-                     default='data/kaggle-lit-review-0.2.json'),
+    apb.add_opts(opt('--dataset', type=Path, required=True),
+                 opt('--index-dir', type=Path, required=True),
                  opt('--method',
                      required=True,
                      type=str,
@@ -175,7 +171,7 @@ def main():
     args = apb.parser.parse_args()
     options = KaggleEvaluationOptions(**vars(args))
     ds = LitReviewDataset.from_file(str(options.dataset))
-    examples = ds.to_senticized_dataset(SETTINGS.cord19_index_path,
+    examples = ds.to_senticized_dataset(str(options.index_dir),
                                         split=options.split)
     construct_map = dict(transformer=construct_transformer,
                          bm25=construct_bm25,

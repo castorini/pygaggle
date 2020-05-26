@@ -78,9 +78,9 @@ First, lets evaluate using monoBERT!
 python -um pygaggle.run.evaluate_passage_ranker --split dev \
 	                                            --method seq_class_transformer \
 	                                            --model-name-or-path castorini/monobert_large_msmarco \
-	                                            --data-dir data/msmarco_ans_small/ \
+	                                            --dataset data/msmarco_ans_small/ \
 	                                            --index-dir indexes/index-msmarco-passage-20191117-0ed488 \
-	                                            --dataset msmarco \
+	                                            --task msmarco \
 	                                            --output-file runs/run.monobert.ans_small.dev.tsv
 ```
 
@@ -118,9 +118,9 @@ We use the monoT5-base variant as it is the easiest to run without access to lar
 python -um pygaggle.run.evaluate_passage_ranker --split dev \
                                                 --method t5 \
                                                 --model-name-or-path castorini/monot5-base-msmarco \
-                                                --data-dir data/msmarco_ans_small \
+                                                --dataset data/msmarco_ans_small \
                                                 --model-type t5-base \
-                                                --dataset msmarco \
+                                                --task msmarco \
                                                 --index-dir indexes/index-msmarco-passage-20191117-0ed488 \
                                                 --batch-size 32 \
                                                 --output-file runs/run.monot5.ans_small.dev.tsv

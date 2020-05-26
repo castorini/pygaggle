@@ -21,7 +21,6 @@ from pygaggle.rerank.transformer import (
 from pygaggle.rerank.random import RandomReranker
 from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
 from pygaggle.model import (SimpleBatchTokenizer,
-                            CachedT5ModelLoader,
                             T5BatchTokenizer,
                             RerankerEvaluator,
                             metric_names,
@@ -36,8 +35,8 @@ METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer',
 
 
 class PassageRankingEvaluationOptions(BaseModel):
-    dataset: str
-    data_dir: Path
+    task: str
+    dataset: Path
     index_dir: Path
     method: str
     model_name_or_path: str
@@ -50,17 +49,17 @@ class PassageRankingEvaluationOptions(BaseModel):
     model_type: Optional[str]
     tokenizer_name: Optional[str]
 
-    @validator('dataset')
-    def dataset_exists(cls, v: str):
+    @validator('task')
+    def task_exists(cls, v: str):
         assert v in ['msmarco', 'treccar']
 
-    @validator('data_dir')
-    def datadir_exists(cls, v: str):
+    @validator('dataset')
+    def dataset_exists(cls, v: Path):
         assert v.exists(), 'data directory must exist'
         return v
 
     @validator('index_dir')
-    def index_dir_exists(cls, v: str):
+    def index_dir_exists(cls, v: Path):
         assert v.exists(), 'index directory must exist'
         return v
 
@@ -81,7 +80,7 @@ class PassageRankingEvaluationOptions(BaseModel):
 def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     model = T5ForConditionalGeneration.from_pretrained(options.model_name_or_path,
-                                                           from_tf=options.from_tf).to(device).eval()
+                                                       from_tf=options.from_tf).to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(options.model_type)
     tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
     return T5Reranker(model, tokenizer)
@@ -91,7 +90,7 @@ def construct_transformer(options:
                           PassageRankingEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     model = AutoModel.from_pretrained(options.model_name_or_path,
-                                          from_tf=options.from_tf).to(device).eval()
+                                      from_tf=options.from_tf).to(device).eval()
     tokenizer = SimpleBatchTokenizer(AutoTokenizer.from_pretrained(
                                         options.tokenizer_name),
                                      options.batch_size)
@@ -121,15 +120,15 @@ def construct_seq_class_transformer(options: PassageRankingEvaluationOptions
 
 
 def construct_bm25(options: PassageRankingEvaluationOptions) -> Reranker:
-    return Bm25Reranker(index_path=options.index_dir)
+    return Bm25Reranker(index_path=str(options.index_dir))
 
 
 def main():
     apb = ArgumentParserBuilder()
-    apb.add_opts(opt('--dataset',
+    apb.add_opts(opt('--task',
                      type=str,
                      default='msmarco'),
-                 opt('--data-dir', type=Path, required=True),
+                 opt('--dataset', type=Path, required=True),
                  opt('--index-dir', type=Path, required=True),
                  opt('--method',
                      required=True,
@@ -155,7 +154,7 @@ def main():
                  opt('--tokenizer-name', type=str))
     args = apb.parser.parse_args()
     options = PassageRankingEvaluationOptions(**vars(args))
-    ds = MsMarcoDataset.from_folder(str(options.data_dir), split=options.split,
+    ds = MsMarcoDataset.from_folder(str(options.dataset), split=options.split,
                                     is_duo=options.is_duo)
     examples = ds.to_relevance_examples(str(options.index_dir),
                                         is_duo=options.is_duo)
