@@ -167,11 +167,8 @@ def main():
     writer = MsMarcoWriter(args.output_file, args.overwrite_output)
     evaluator = RerankerEvaluator(reranker, options.metrics, writer=writer)
     width = max(map(len, args.metrics)) + 1
-    stdout = []
     for metric in evaluator.evaluate(examples):
         logging.info(f'{metric.name:<{width}}{metric.value:.5}')
-        stdout.append(f'{metric.name}\t{metric.value}')
-    print('\n'.join(stdout))
 
 
 if __name__ == '__main__':
