@@ -17,11 +17,10 @@ from pygaggle.rerank.transformer import (
     UnsupervisedTransformerReranker,
     T5Reranker,
     SequenceClassificationTransformerReranker
-    )
+)
 from pygaggle.rerank.random import RandomReranker
 from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
 from pygaggle.model import (SimpleBatchTokenizer,
-                            CachedT5ModelLoader,
                             T5BatchTokenizer,
                             RerankerEvaluator,
                             metric_names,
@@ -81,7 +80,7 @@ class PassageRankingEvaluationOptions(BaseModel):
 def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     model = T5ForConditionalGeneration.from_pretrained(options.model_name_or_path,
-                                                           from_tf=options.from_tf).to(device).eval()
+                                                       from_tf=options.from_tf).to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(options.model_type)
     tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
     return T5Reranker(model, tokenizer)
@@ -91,10 +90,10 @@ def construct_transformer(options:
                           PassageRankingEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     model = AutoModel.from_pretrained(options.model_name_or_path,
-                                          from_tf=options.from_tf).to(device).eval()
+                                      from_tf=options.from_tf).to(device).eval()
     tokenizer = SimpleBatchTokenizer(AutoTokenizer.from_pretrained(
-                                        options.tokenizer_name),
-                                     options.batch_size)
+        options.tokenizer_name),
+        options.batch_size)
     provider = CosineSimilarityMatrixProvider()
     return UnsupervisedTransformerReranker(model, tokenizer, provider)
 
@@ -107,11 +106,11 @@ def construct_seq_class_transformer(options: PassageRankingEvaluationOptions
     except AttributeError:
         # Hotfix for BioBERT MS MARCO. Refactor.
         BertForSequenceClassification.bias = torch.nn.Parameter(
-                                                torch.zeros(2))
+            torch.zeros(2))
         BertForSequenceClassification.weight = torch.nn.Parameter(
-                                                torch.zeros(2, 768))
+            torch.zeros(2, 768))
         model = BertForSequenceClassification.from_pretrained(
-                    options.model_name_or_path, from_tf=options.from_tf)
+            options.model_name_or_path, from_tf=options.from_tf)
         model.classifier.weight = BertForSequenceClassification.weight
         model.classifier.bias = BertForSequenceClassification.bias
     device = torch.device(options.device)
