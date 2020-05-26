@@ -4,6 +4,7 @@ import logging
 
 from pydantic import BaseModel, validator
 from transformers import (AutoModel,
+                          AutoModelForQuestionAnswering,
                           AutoModelForSequenceClassification,
                           AutoTokenizer,
                           BertForQuestionAnswering,
@@ -130,16 +131,13 @@ def construct_qa_transformer(options: KaggleEvaluationOptions) -> Reranker:
     # We load a sequence classification model first -- again, as a workaround.
     # Refactor
     try:
-        model = AutoModelForSequenceClassification.from_pretrained(
+        model = AutoModelForQuestionAnswering.from_pretrained(
                     options.model_name)
     except OSError:
-        model = AutoModelForSequenceClassification.from_pretrained(
+        model = AutoModelForQuestionAnswering.from_pretrained(
                     options.model_name, from_tf=True)
-    fixed_model = BertForQuestionAnswering(model.config)
-    fixed_model.qa_outputs = model.classifier
-    fixed_model.bert = model.bert
     device = torch.device(options.device)
-    model = fixed_model.to(device).eval()
+    model = model.to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(
                     options.tokenizer_name, do_lower_case=options.do_lower_case)
     return QuestionAnsweringTransformerReranker(model, tokenizer)
