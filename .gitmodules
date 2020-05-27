@@ -1,0 +1,3 @@
+[submodule "anserini-eval"]
+	path = anserini-eval
+	url = https://github.com/castorini/anserini-eval.git
