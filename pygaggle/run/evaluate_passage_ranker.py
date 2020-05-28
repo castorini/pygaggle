@@ -17,7 +17,7 @@ from pygaggle.rerank.transformer import (
     UnsupervisedTransformerReranker,
     T5Reranker,
     SequenceClassificationTransformerReranker
-    )
+)
 from pygaggle.rerank.random import RandomReranker
 from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
 from pygaggle.model import (SimpleBatchTokenizer,
@@ -92,8 +92,8 @@ def construct_transformer(options:
     model = AutoModel.from_pretrained(options.model_name_or_path,
                                       from_tf=options.from_tf).to(device).eval()
     tokenizer = SimpleBatchTokenizer(AutoTokenizer.from_pretrained(
-                                        options.tokenizer_name),
-                                     options.batch_size)
+        options.tokenizer_name),
+        options.batch_size)
     provider = CosineSimilarityMatrixProvider()
     return UnsupervisedTransformerReranker(model, tokenizer, provider)
 
@@ -106,11 +106,11 @@ def construct_seq_class_transformer(options: PassageRankingEvaluationOptions
     except AttributeError:
         # Hotfix for BioBERT MS MARCO. Refactor.
         BertForSequenceClassification.bias = torch.nn.Parameter(
-                                                torch.zeros(2))
+            torch.zeros(2))
         BertForSequenceClassification.weight = torch.nn.Parameter(
-                                                torch.zeros(2, 768))
+            torch.zeros(2, 768))
         model = BertForSequenceClassification.from_pretrained(
-                    options.model_name_or_path, from_tf=options.from_tf)
+            options.model_name_or_path, from_tf=options.from_tf)
         model.classifier.weight = BertForSequenceClassification.weight
         model.classifier.bias = BertForSequenceClassification.bias
     device = torch.device(options.device)
@@ -167,11 +167,8 @@ def main():
     writer = MsMarcoWriter(args.output_file, args.overwrite_output)
     evaluator = RerankerEvaluator(reranker, options.metrics, writer=writer)
     width = max(map(len, args.metrics)) + 1
-    stdout = []
     for metric in evaluator.evaluate(examples):
         logging.info(f'{metric.name:<{width}}{metric.value:.5}')
-        stdout.append(f'{metric.name}\t{metric.value}')
-    print('\n'.join(stdout))
 
 
 if __name__ == '__main__':
