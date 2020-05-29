@@ -57,17 +57,6 @@ wget https://git.uwaterloo.ca/jimmylin/anserini-indexes/raw/master/index-msmarco
 tar xvfz indexes/index-msmarco-passage-20191117-0ed488.tar.gz -C indexes
 ```
 
-## Model Prep
-
-Let's download and extract monoBERT into `models`:
-
-```
-wget https://www.dropbox.com/s/jr0hpksboh7pa48/monobert_msmarco_large.zip -P models
-unzip models/monobert_msmarco_large.zip -d models
-```
-
-While running the re-ranking script with the monoT5 model, it is automatically downloaded from Google Cloud Storage. 
-
 Now, we can begin with re-ranking the set.
 
 ## Re-Ranking with monoBERT
@@ -77,7 +66,7 @@ First, lets evaluate using monoBERT!
 ```
 python -um pygaggle.run.evaluate_passage_ranker --split dev \
 	                                            --method seq_class_transformer \
-	                                            --model-name-or-path castorini/monobert_large_msmarco \
+	                                            --model-name-or-path castorini/monobert-large-msmarco \
 	                                            --dataset data/msmarco_ans_small/ \
 	                                            --index-dir indexes/index-msmarco-passage-20191117-0ed488 \
 	                                            --task msmarco \
