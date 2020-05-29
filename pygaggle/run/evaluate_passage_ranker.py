@@ -137,7 +137,7 @@ def main():
                  opt('--model',
                      required=True,
                      type=str,
-                     help='Path to pre-trained model or hgf model name'),
+                     help='Path to pre-trained model or huggingface model name'),
                  opt('--output-file', type=Path, default='.'),
                  opt('--overwrite-output', action='store_true'),
                  opt('--split',
