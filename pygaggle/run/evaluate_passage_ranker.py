@@ -39,7 +39,7 @@ class PassageRankingEvaluationOptions(BaseModel):
     dataset: Path
     index_dir: Path
     method: str
-    model_name_or_path: str
+    model: str
     split: str
     batch_size: int
     device: str
@@ -63,8 +63,8 @@ class PassageRankingEvaluationOptions(BaseModel):
         assert v.exists(), 'index directory must exist'
         return v
 
-    @validator('model_name_or_path')
-    def model_name_sane(cls, v: Optional[str], values, **kwargs):
+    @validator('model')
+    def model_sane(cls, v: str, values, **kwargs):
         method = values['method']
         if method == 'transformer' and v is None:
             raise ValueError('transformer name or path must be specified')
@@ -73,13 +73,13 @@ class PassageRankingEvaluationOptions(BaseModel):
     @validator('tokenizer_name')
     def tokenizer_sane(cls, v: str, values, **kwargs):
         if v is None:
-            return values['model_name_or_path']
+            return values['model']
         return v
 
 
 def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
-    model = T5ForConditionalGeneration.from_pretrained(options.model_name_or_path,
+    model = T5ForConditionalGeneration.from_pretrained(options.model,
                                                        from_tf=options.from_tf).to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(options.model_type)
     tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
@@ -89,7 +89,7 @@ def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
 def construct_transformer(options:
                           PassageRankingEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
-    model = AutoModel.from_pretrained(options.model_name_or_path,
+    model = AutoModel.from_pretrained(options.model,
                                       from_tf=options.from_tf).to(device).eval()
     tokenizer = SimpleBatchTokenizer(AutoTokenizer.from_pretrained(
         options.tokenizer_name),
@@ -102,7 +102,7 @@ def construct_seq_class_transformer(options: PassageRankingEvaluationOptions
                                     ) -> Reranker:
     try:
         model = AutoModelForSequenceClassification.from_pretrained(
-            options.model_name_or_path, from_tf=options.from_tf)
+            options.model, from_tf=options.from_tf)
     except AttributeError:
         # Hotfix for BioBERT MS MARCO. Refactor.
         BertForSequenceClassification.bias = torch.nn.Parameter(
@@ -110,7 +110,7 @@ def construct_seq_class_transformer(options: PassageRankingEvaluationOptions
         BertForSequenceClassification.weight = torch.nn.Parameter(
             torch.zeros(2, 768))
         model = BertForSequenceClassification.from_pretrained(
-            options.model_name_or_path, from_tf=options.from_tf)
+            options.model, from_tf=options.from_tf)
         model.classifier.weight = BertForSequenceClassification.weight
         model.classifier.bias = BertForSequenceClassification.bias
     device = torch.device(options.device)
@@ -134,7 +134,10 @@ def main():
                      required=True,
                      type=str,
                      choices=METHOD_CHOICES),
-                 opt('--model-name-or-path', type=str),
+                 opt('--model',
+                     required=True,
+                     type=str,
+                     help='Path to pre-trained model or huggingface model name'),
                  opt('--output-file', type=Path, default='.'),
                  opt('--overwrite-output', action='store_true'),
                  opt('--split',
@@ -150,7 +153,7 @@ def main():
                      nargs='+',
                      default=metric_names(),
                      choices=metric_names()),
-                 opt('--model-type', type=str, default='bert-base'),
+                 opt('--model-type', type=str),
                  opt('--tokenizer-name', type=str))
     args = apb.parser.parse_args()
     options = PassageRankingEvaluationOptions(**vars(args))

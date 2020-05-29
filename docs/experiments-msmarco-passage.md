@@ -65,23 +65,23 @@ First, lets evaluate using monoBERT!
 
 ```
 python -um pygaggle.run.evaluate_passage_ranker --split dev \
-	                                            --method seq_class_transformer \
-	                                            --model-name-or-path castorini/monobert-large-msmarco \
-	                                            --dataset data/msmarco_ans_small/ \
-	                                            --index-dir indexes/index-msmarco-passage-20191117-0ed488 \
-	                                            --task msmarco \
-	                                            --output-file runs/run.monobert.ans_small.dev.tsv
+                                                    --method seq_class_transformer \
+                                                    --model castorini/monobert-large-msmarco \
+                                                    --dataset data/msmarco_ans_small/ \
+                                                    --index-dir indexes/index-msmarco-passage-20191117-0ed488 \
+                                                    --task msmarco \
+                                                    --output-file runs/run.monobert.ans_small.dev.tsv
 ```
 
 Upon completion, the following output will be visible:
 
 ```
-precision@1	0.2761904761904762
-recall@3	0.42698412698412697
-recall@50	0.8174603174603176
-recall@1000	0.8476190476190476
-mrr	0.41089693612003686
-mrr@10	0.4026795162509449
+precision@1     0.2761904761904762
+recall@3        0.42698412698412697
+recall@50       0.8174603174603176
+recall@1000     0.8476190476190476
+mrr     0.41089693612003686
+mrr@10  0.4026795162509449
 ```
 
 It takes about ~52 minutes to re-rank this subset on MS MARCO using a P100. 
@@ -106,7 +106,7 @@ We use the monoT5-base variant as it is the easiest to run without access to lar
 ```
 python -um pygaggle.run.evaluate_passage_ranker --split dev \
                                                 --method t5 \
-                                                --model-name-or-path castorini/monot5-base-msmarco \
+                                                --model castorini/monot5-base-msmarco \
                                                 --dataset data/msmarco_ans_small \
                                                 --model-type t5-base \
                                                 --task msmarco \
@@ -118,12 +118,12 @@ python -um pygaggle.run.evaluate_passage_ranker --split dev \
 The following output will be visible after it has finished:
 
 ```
-precision@1	0.26666666666666666
-recall@3	0.4603174603174603
-recall@50	0.8063492063492063
-recall@1000	0.8476190476190476
-mrr	0.3973368360121561
-mrr@10	0.39044217687074834
+precision@1     0.26666666666666666
+recall@3        0.4603174603174603
+recall@50       0.8063492063492063
+recall@1000     0.8476190476190476
+mrr     0.3973368360121561
+mrr@10  0.39044217687074834
 ```
 
 It takes about ~13 minutes to re-rank this subset on MS MARCO using a P100. 
