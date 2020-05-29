@@ -157,4 +157,5 @@ If you were able to replicate these results, please submit a PR adding to the re
 
 + Results replicated by [@MXueguang](https://github.com/MXueguang) on 2020-05-22(commit [`69de7db`](https://github.com/castorini/pygaggle/commit/69de7db843bbe9201113c4d94c9e90be36094350)) (Tesla P4)
 + Results replicated by [@richard3983](https://github.com/richard3983) on 2020-05-22(commit [`6e9dfc6`](https://github.com/richard3983/pygaggle/commit/6e9dfc62083c15233600c41737110c9989043b98)) (Tesla P100)
++ Results replicated by [@HangCui0510](https://github.com/HangCui0510) on 2020-05-29(commit [`591e7ff`](https://github.com/HangCui0510/pygaggle/commit/591e7ffd6cc826fd2bae5e721f9693452f9e4a49)) (Tesla P100)
 
