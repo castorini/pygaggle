@@ -32,7 +32,7 @@ To confirm, `msmarco_ans_small.zip` should have MD5 checksum of `65d8007bfb2c72b
 Next, we extract the contents into `data`. 
 
 ```
-unzip msmarco_ans_small.zip -d data
+unzip data/msmarco_ans_small.zip -d data
 ```
 
 As a sanity check, we can evaluate the first-stage retrieved documents using the official MS MARCO evaluation script.
@@ -65,12 +65,12 @@ First, lets evaluate using monoBERT!
 
 ```
 python -um pygaggle.run.evaluate_passage_ranker --split dev \
-                                                    --method seq_class_transformer \
-                                                    --model castorini/monobert-large-msmarco \
-                                                    --dataset data/msmarco_ans_small/ \
-                                                    --index-dir indexes/index-msmarco-passage-20191117-0ed488 \
-                                                    --task msmarco \
-                                                    --output-file runs/run.monobert.ans_small.dev.tsv
+                                                --method seq_class_transformer \
+                                                --model castorini/monobert-large-msmarco \
+                                                --dataset data/msmarco_ans_small/ \
+                                                --index-dir indexes/index-msmarco-passage-20191117-0ed488 \
+                                                --task msmarco \
+                                                --output-file runs/run.monobert.ans_small.dev.tsv
 ```
 
 Upon completion, the following output will be visible:
@@ -144,7 +144,7 @@ If you were able to replicate these results, please submit a PR adding to the re
 
 ## Replication Log
 
-+ Results replicated by [@MXueguang](https://github.com/MXueguang) on 2020-05-22(commit [`69de7db`](https://github.com/castorini/pygaggle/commit/69de7db843bbe9201113c4d94c9e90be36094350)) (Tesla P4)
-+ Results replicated by [@richard3983](https://github.com/richard3983) on 2020-05-22(commit [`6e9dfc6`](https://github.com/richard3983/pygaggle/commit/6e9dfc62083c15233600c41737110c9989043b98)) (Tesla P100)
-+ Results replicated by [@HangCui0510](https://github.com/HangCui0510) on 2020-05-29(commit [`591e7ff`](https://github.com/HangCui0510/pygaggle/commit/591e7ffd6cc826fd2bae5e721f9693452f9e4a49)) (Tesla P100)
-
++ Results replicated by [@MXueguang](https://github.com/MXueguang) on 2020-05-22 (commit [`69de7db`](https://github.com/castorini/pygaggle/commit/69de7db843bbe9201113c4d94c9e90be36094350)) (Tesla P4)
++ Results replicated by [@richard3983](https://github.com/richard3983) on 2020-05-22 (commit [`6e9dfc6`](https://github.com/richard3983/pygaggle/commit/6e9dfc62083c15233600c41737110c9989043b98)) (Tesla P100)
++ Results replicated by [@HangCui0510](https://github.com/HangCui0510) on 2020-05-29 (commit [`591e7ff`](https://github.com/HangCui0510/pygaggle/commit/591e7ffd6cc826fd2bae5e721f9693452f9e4a49)) (Tesla P100)
++ Results replicated by [@kelvin-jiang](https://github.com/kelvin-jiang) on 2020-05-31 (commit [`82dc086`](https://github.com/HangCui0510/pygaggle/commit/82dc086b86d828147dad34d9a7f8bb66a3c23c88)) (GeForce RTX 2080 Ti)
