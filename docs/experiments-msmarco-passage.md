@@ -11,8 +11,19 @@ Since it can take many hours to run these models on all of the 6980 queries from
 Running these instructions with the entire MS MARCO dev set should give about the same results as that in the corresponding paper. 
 
 Note 1: Run the following instructions at root of this repo.
-Note 2: Installation must have been done from source.
-Note 3: Make sure that you have access to a GPU
+Note 2: Make sure that you have access to a GPU
+Note 3: Installation must have been done from source and make sure the [anserini-eval](https://github.com/castorini/anserini-eval) submodule is pulled. 
+To do this, first clone the repository recursively.
+
+```
+git clone --recursive https://github.com/castorini/pygaggle.git
+```
+
+Then install PyGaggle using:
+
+```
+pip install pygaggle/
+```
 
 ## Models
 
@@ -38,7 +49,7 @@ unzip data/msmarco_ans_small.zip -d data
 As a sanity check, we can evaluate the first-stage retrieved documents using the official MS MARCO evaluation script.
 
 ```
-python evaluate/msmarco/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv data/msmarco_ans_small/run.dev.small.tsv
+python eval/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv data/msmarco_ans_small/run.dev.small.tsv
 ```
 
 The output should be:
@@ -94,7 +105,7 @@ The re-ranked run file `run.monobert.ans_small.dev.tsv` will also be available i
 We can use the official MS MARCO evaluation script to verify the MRR@10:
 
 ```
-python evaluate/msmarco/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv runs/run.monobert.ans_small.dev.tsv
+python eval/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv runs/run.monobert.ans_small.dev.tsv
 ```
 
 You should see the same result. Great, let's move on to monoT5!
@@ -134,7 +145,7 @@ Upon completion, the re-ranked run file `run.monot5.ans_small.dev.tsv` will be a
 We can use the official MS MARCO evaluation script to verify the MRR@10:
 
 ```
-python evaluate/msmarco/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv runs/run.monot5.ans_small.dev.tsv
+python eval/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv runs/run.monot5.ans_small.dev.tsv
 ```
 
 You should see the same result.
