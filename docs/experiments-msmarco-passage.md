@@ -11,8 +11,19 @@ Since it can take many hours to run these models on all of the 6980 queries from
 Running these instructions with the entire MS MARCO dev set should give about the same results as that in the corresponding paper. 
 
 Note 1: Run the following instructions at root of this repo.
-Note 2: Installation must have been done from source.
-Note 3: Make sure that you have access to a GPU
+Note 2: Make sure that you have access to a GPU
+Note 3: Installation must have been done from source and make sure the [anserini-eval](https://github.com/castorini/anserini-eval) submodule is pulled. 
+To do this, first clone the repository recursively.
+
+```
+git clone --recursive https://github.com/castorini/pygaggle.git
+```
+
+Then install PyGaggle using:
+
+```
+pip install pygaggle/
+```
 
 ## Models
 

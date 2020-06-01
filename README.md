@@ -25,7 +25,7 @@ Currently, this repo contains implementations of the rerankers for [CovidQA](htt
 
 ## Additional Instructions
 
-0. Clone the repo with `git clone git@github.com:castorini/pygaggle.git`
+0. Clone the repo with `git clone --recursive https://github.com/castorini/pygaggle.git`
 
 0. Make you sure you have an installation of [Python 3.6+](https://www.python.org/downloads/). All `python` commands below refer to this.
 
