@@ -38,7 +38,7 @@ unzip data/msmarco_ans_small.zip -d data
 As a sanity check, we can evaluate the first-stage retrieved documents using the official MS MARCO evaluation script.
 
 ```
-python evaluate/msmarco/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv data/msmarco_ans_small/run.dev.small.tsv
+python eval/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv data/msmarco_ans_small/run.dev.small.tsv
 ```
 
 The output should be:
@@ -94,7 +94,7 @@ The re-ranked run file `run.monobert.ans_small.dev.tsv` will also be available i
 We can use the official MS MARCO evaluation script to verify the MRR@10:
 
 ```
-python evaluate/msmarco/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv runs/run.monobert.ans_small.dev.tsv
+python eval/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv runs/run.monobert.ans_small.dev.tsv
 ```
 
 You should see the same result. Great, let's move on to monoT5!
@@ -134,7 +134,7 @@ Upon completion, the re-ranked run file `run.monot5.ans_small.dev.tsv` will be a
 We can use the official MS MARCO evaluation script to verify the MRR@10:
 
 ```
-python evaluate/msmarco/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv runs/run.monot5.ans_small.dev.tsv
+python eval/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv runs/run.monot5.ans_small.dev.tsv
 ```
 
 You should see the same result.
