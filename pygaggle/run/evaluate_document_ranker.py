@@ -34,7 +34,7 @@ METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer',
                   'random')
 
 
-class PassageRankingEvaluationOptions(BaseModel):
+class DocumentRankingEvaluationOptions(BaseModel):
     task: str
     dataset: Path
     index_dir: Path
@@ -53,7 +53,7 @@ class PassageRankingEvaluationOptions(BaseModel):
 
     @validator('task')
     def task_exists(cls, v: str):
-        assert v in ['msmarco', 'treccar']
+        assert v in ['msmarco']
 
     @validator('dataset')
     def dataset_exists(cls, v: Path):
@@ -79,7 +79,7 @@ class PassageRankingEvaluationOptions(BaseModel):
         return v
 
 
-def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
+def construct_t5(options: DocumentRankingEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     model = T5ForConditionalGeneration.from_pretrained(options.model,
                                                        from_tf=options.from_tf).to(device).eval()
@@ -89,7 +89,7 @@ def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
 
 
 def construct_transformer(options:
-                          PassageRankingEvaluationOptions) -> Reranker:
+                          DocumentRankingEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     model = AutoModel.from_pretrained(options.model,
                                       from_tf=options.from_tf).to(device).eval()
@@ -100,7 +100,7 @@ def construct_transformer(options:
     return UnsupervisedTransformerReranker(model, tokenizer, provider)
 
 
-def construct_seq_class_transformer(options: PassageRankingEvaluationOptions
+def construct_seq_class_transformer(options: DocumentRankingEvaluationOptions
                                     ) -> Reranker:
     try:
         model = AutoModelForSequenceClassification.from_pretrained(
@@ -121,7 +121,7 @@ def construct_seq_class_transformer(options: PassageRankingEvaluationOptions
     return SequenceClassificationTransformerReranker(model, tokenizer)
 
 
-def construct_bm25(options: PassageRankingEvaluationOptions) -> Reranker:
+def construct_bm25(options: DocumentRankingEvaluationOptions) -> Reranker:
     return Bm25Reranker(index_path=str(options.index_dir))
 
 
@@ -160,7 +160,7 @@ def main():
                  opt('--seg-size', type=int, default=10),
                  opt('--seg-stride', type=int, default=5))
     args = apb.parser.parse_args()
-    options = PassageRankingEvaluationOptions(**vars(args))
+    options = DocumentRankingEvaluationOptions(**vars(args))
     ds = MsMarcoDataset.from_folder(str(options.dataset), split=options.split,
                                     is_duo=options.is_duo)
     examples = ds.to_relevance_examples(str(options.index_dir),
