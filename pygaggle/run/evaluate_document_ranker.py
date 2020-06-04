@@ -6,7 +6,6 @@ from pydantic import BaseModel, validator
 from transformers import (AutoModel,
                           AutoTokenizer,
                           AutoModelForSequenceClassification,
-                          BertForSequenceClassification,
                           T5ForConditionalGeneration)
 import torch
 
