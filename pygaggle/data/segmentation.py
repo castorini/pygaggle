@@ -1,4 +1,5 @@
 import spacy
+import numpy as np
 from pygaggle.rerank.base import Text
 from typing import List
 
@@ -10,7 +11,7 @@ class SegmentProcessor:
         self.documents = documents
         self.aggregate_methods = {
             "max": self._max_aggregate,
-            "sum": self._sum_aggregate
+            "mean": self._mean_aggregate
         }
 
     def segment(self, seg_size: int, stride: int) -> List[Text]:
@@ -42,5 +43,5 @@ class SegmentProcessor:
         return max(scores)
 
     @staticmethod
-    def _sum_aggregate(scores):
-        return sum(scores)
+    def _mean_aggregate(scores):
+        return np.mean(scores)

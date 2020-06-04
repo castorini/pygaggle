@@ -44,6 +44,7 @@ class DocumentRankingEvaluationOptions(BaseModel):
     batch_size: int
     seg_size: int
     seg_stride: int
+    aggregate_method: str
     device: str
     is_duo: bool
     from_tf: bool
@@ -158,7 +159,8 @@ def main():
                  opt('--model-type', type=str),
                  opt('--tokenizer-name', type=str),
                  opt('--seg-size', type=int, default=10),
-                 opt('--seg-stride', type=int, default=5))
+                 opt('--seg-stride', type=int, default=5),
+                 opt('--aggregate-method', type=str, default="max"))
     args = apb.parser.parse_args()
     options = DocumentRankingEvaluationOptions(**vars(args))
     ds = MsMarcoDataset.from_folder(str(options.dataset), split=options.split,
@@ -174,7 +176,10 @@ def main():
     writer = MsMarcoWriter(args.output_file, args.overwrite_output)
     evaluator = RerankerEvaluator(reranker, options.metrics, writer=writer)
     width = max(map(len, args.metrics)) + 1
-    for metric in evaluator.evaluate_by_segments(examples, options.seg_size, options.seg_stride):
+    for metric in evaluator.evaluate_by_segments(examples,
+                                                 options.seg_size,
+                                                 options.seg_stride,
+                                                 options.aggregate_method):
         logging.info(f'{metric.name:<{width}}{metric.value:.5}')
 
 
