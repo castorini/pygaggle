@@ -2,29 +2,45 @@ import spacy
 from pygaggle.rerank.base import Text
 from typing import List
 
-def segment(documents: List[Text]):
-    stride = 5
-    max_length = 10
-    segmented_doc, doc_len, end = [], [0], 0
-    
-    nlp = spacy.blank("en")
-    nlp.add_pipe(nlp.create_pipe("sentencizer"))
-    for document in documents:
-        content = document.text
-        doc = nlp(content)
-        sentences = [sent.string.strip() for sent in doc.sents]
-        for i in range(0, len(sentences), stride):
-            segment = ' '.join(sentences[i:i + max_length])
-            segmented_doc.append(Text(segment,dict(docid=document.raw["docid"])))
-            if i + max_length >= len(sentences):
-                end += i/stride + 1
-                doc_len.append(int(end))
-                break
 
-    return segmented_doc, doc_len
+class SegmentProcessor:
 
-def aggregate(scores: List[int], doc_len: List[int]): 
+    def __init__(self, documents: List[Text]):
+        self.doc_end_indexes = [0]
+        self.documents = documents
+        self.aggregate_methods = {
+            "max": self._max_aggregate,
+            "sum": self._sum_aggregate
+        }
 
-    aggregated_scores = [max(scores[doc_len[i]:doc_len[i+1]]) for i in range(len(doc_len)-1)]
-    
-    return aggregated_scores
+    def segment(self, seg_size: int, stride: int) -> List[Text]:
+        segmented_doc, end_idx = [], 0
+        nlp = spacy.blank("en")
+        nlp.add_pipe(nlp.create_pipe("sentencizer"))
+        for document in self.documents:
+            doc = nlp(document.text[:1000000])
+            sentences = [sent.string.strip() for sent in doc.sents]
+            for i in range(0, len(sentences), stride):
+                segment_text = ' '.join(sentences[i:i + seg_size])
+                segmented_doc.append(Text(segment_text))
+                if i + seg_size >= len(sentences):
+                    end_idx += i/stride + 1
+                    self.doc_end_index.append(int(end_idx))
+                    break
+        return segmented_doc
+
+    def aggregate(self, scores: List[int], method: str = "max"):
+        for i in range(len(self.documents)):
+            scores_start_idx = self.doc_end_indexes[i]
+            scores_end_idx = self.doc_end_indexes[i+1]
+            target_scores = scores[scores_start_idx: scores_end_idx]
+            self.documents[i].score = self.aggregate_methods[method](target_scores)
+        return self.documents
+
+    @staticmethod
+    def _max_aggregate(scores):
+        return max(scores)
+
+    @staticmethod
+    def _sum_aggregate(scores):
+        return sum(scores)
