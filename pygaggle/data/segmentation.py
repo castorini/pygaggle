@@ -25,7 +25,7 @@ class SegmentProcessor:
                 segmented_doc.append(Text(segment_text))
                 if i + seg_size >= len(sentences):
                     end_idx += i/stride + 1
-                    self.doc_end_index.append(int(end_idx))
+                    self.doc_end_indexes.append(int(end_idx))
                     break
         return segmented_doc
 
