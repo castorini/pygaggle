@@ -7,6 +7,12 @@ from typing import List
 class SegmentProcessor:
 
     def __init__(self, documents: List[Text]):
+        """
+        'self.doc_end_indexes' stores the index of the last segment of each
+            document when 'segment()' converting a 'List[Text]' of documents into
+            'List[Text]' of segments. It will be used to split and group segments'
+            scores and feed the aggregated scores back to documents in 'aggregate()'
+        """
         self.doc_end_indexes = [0]
         self.documents = documents
         self.aggregate_methods = {
