@@ -103,19 +103,7 @@ def construct_transformer(options:
 
 def construct_seq_class_transformer(options: DocumentRankingEvaluationOptions
                                     ) -> Reranker:
-    try:
-        model = AutoModelForSequenceClassification.from_pretrained(
-            options.model, from_tf=options.from_tf)
-    except AttributeError:
-        # Hotfix for BioBERT MS MARCO. Refactor.
-        BertForSequenceClassification.bias = torch.nn.Parameter(
-            torch.zeros(2))
-        BertForSequenceClassification.weight = torch.nn.Parameter(
-            torch.zeros(2, 768))
-        model = BertForSequenceClassification.from_pretrained(
-            options.model, from_tf=options.from_tf)
-        model.classifier.weight = BertForSequenceClassification.weight
-        model.classifier.bias = BertForSequenceClassification.bias
+    model = AutoModelForSequenceClassification.from_pretrained(options.model, from_tf=options.from_tf)
     device = torch.device(options.device)
     model = model.to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(options.tokenizer_name)
