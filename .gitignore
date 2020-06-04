@@ -1,6 +1,7 @@
 # ide
 .idea/
 .vscode
+.DS_Store
 
 # python
 *.pyc
