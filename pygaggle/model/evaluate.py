@@ -163,3 +163,17 @@ class RerankerEvaluator:
             for metric in metrics:
                 metric.accumulate(scores, example)
         return metrics
+
+    def evaluateDocReranker(self,
+                 examples: List[RelevanceExample]) -> List[MetricAccumulator]:
+        metrics = [cls() for cls in self.metrics]
+        for example in tqdm(examples, disable=not self.use_tqdm):
+            segmented_doc, doc_len = segment(example.document)
+            scores= [x.score for x in self.reranker.rerank(example.query,
+                                                            segmented_doc)]
+            aggregated_scores = aggregate(scores, doc_len)
+            if self.writer is not None:
+                self.writer.write(aggregated_scores, example)
+            for metric in metrics:
+                metric.accumulate(aggregated_scores, example)
+        return metrics
