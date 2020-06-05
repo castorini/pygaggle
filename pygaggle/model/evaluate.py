@@ -172,11 +172,13 @@ class RerankerEvaluator:
                              stride: int,
                              aggregate_method: str) -> List[MetricAccumulator]:
         metrics = [cls() for cls in self.metrics]
+        segment_processor = SegmentProcessor()
         for example in tqdm(examples, disable=not self.use_tqdm):
-            segment_processor = SegmentProcessor(example.documents)
-            segment_scores = [x.score for x in self.reranker.rerank(example.query,
-                                                                    segment_processor.segment(seg_size, stride))]
-            doc_scores = [x.score for x in segment_processor.aggregate(segment_scores, aggregate_method)]
+            segment_group = segment_processor.segment(example.documents, seg_size, stride)
+            segment_group.segments = self.reranker.rerank(example.query, segment_group.segments)
+            doc_scores = [x.score for x in segment_processor.aggregate(example.documents,
+                                                                       segment_group,
+                                                                       aggregate_method)]
             if self.writer is not None:
                 self.writer.write(doc_scores, example)
             for metric in metrics:
