@@ -8,7 +8,6 @@ We rerank the BM25 run files that contain ~1000 documents per query using monoT5
 MonoT5 is pointwise reranker. This means that each document is scored independently using T5 respectively.
 
 Since it can take many hours to run these models on all of the 5193 queries from the MS MARCO dev set, we will instead use a subset of 50 queries randomly sampled from the dev set. 
-Running these instructions with the entire MS MARCO dev set should give about the same results as that in the corresponding paper. 
 
 Note 1: Run the following instructions at root of this repo.
 Note 2: Make sure that you have access to a GPU
@@ -60,10 +59,17 @@ QueriesRanked: 25
 #####################
 ```
 
-Let's download and extract the pre-built MS MARCO index into `indexes`:
+Let's download the pre-built MS MARCO index :
 
 ```
 wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=16Ozzq1bSiu7OyimD8bGVSLj1C0EK7Br3' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=16Ozzq1bSiu7OyimD8bGVSLj1C0EK7Br3" -O index-msmarco-doc20200528.tar.gz && rm -rf /tmp/cookies.txt
+```
+
+`index-msmarco-doc20200528.tar.gz ` should have MD5 checksum of `ff1cf8fb0a2388f454cf0ba5f6a8031d`.
+
+Then, we can extract it into into `indexes`:
+
+```
 tar xvfz index-msmarco-doc20200528.tar.gz -C indexes
 rm index-msmarco-doc20200528.tar.gz
 ```
