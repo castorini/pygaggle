@@ -150,7 +150,7 @@ def main():
                  opt('--aggregate-method', type=str, default="max"))
     args = apb.parser.parse_args()
     options = DocumentRankingEvaluationOptions(**vars(args))
-    logging.info("Preporcessing Queries & Docs:")
+    logging.info("Preprocessing Queries & Docs:")
     ds = MsMarcoDataset.from_folder(str(options.dataset), split=options.split,
                                     is_duo=options.is_duo)
     examples = ds.to_relevance_examples(str(options.index_dir),

@@ -157,7 +157,7 @@ def main():
                  opt('--tokenizer-name', type=str))
     args = apb.parser.parse_args()
     options = PassageRankingEvaluationOptions(**vars(args))
-    logging.info("Preporcessing Queries & Docs:")
+    logging.info("Preprocessing Queries & Passages:")
     ds = MsMarcoDataset.from_folder(str(options.dataset), split=options.split,
                                     is_duo=options.is_duo)
     examples = ds.to_relevance_examples(str(options.index_dir),
