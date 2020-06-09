@@ -83,15 +83,16 @@ class MsMarcoDataset(BaseModel):
                                              cls.load_run(run_path)))
 
     def query_passage_tuples(self, is_duo: bool = False):
-        return (((ex.qid, ex.text, ex.relevant_candidates), perm_pas)
+        return [((ex.qid, ex.text, ex.relevant_candidates), perm_pas)
                 for ex in self.examples
-                for perm_pas in permutations(ex.candidates, r=1+int(is_duo)))
+                for perm_pas in permutations(ex.candidates, r=1+int(is_duo))]
 
     def to_relevance_examples(self,
                               index_path: str,
                               is_duo: bool = False) -> List[RelevanceExample]:
         loader = MsMarcoPassageLoader(index_path)
         example_map = {}
+        print("Preprocessing:")
         for (qid, text, rel_cands), cands in tqdm(self.query_passage_tuples()):
             if qid not in example_map:
                 example_map[qid] = [convert_to_unicode(text), [], [], []]
