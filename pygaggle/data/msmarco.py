@@ -92,7 +92,6 @@ class MsMarcoDataset(BaseModel):
                               is_duo: bool = False) -> List[RelevanceExample]:
         loader = MsMarcoPassageLoader(index_path)
         example_map = {}
-        print("Preprocessing:")
         for (qid, text, rel_cands), cands in tqdm(self.query_passage_tuples()):
             if qid not in example_map:
                 example_map[qid] = [convert_to_unicode(text), [], [], []]
