@@ -150,10 +150,12 @@ def main():
                  opt('--aggregate-method', type=str, default="max"))
     args = apb.parser.parse_args()
     options = DocumentRankingEvaluationOptions(**vars(args))
+    logging.info("Preporcessing Queries & Docs:")
     ds = MsMarcoDataset.from_folder(str(options.dataset), split=options.split,
                                     is_duo=options.is_duo)
     examples = ds.to_relevance_examples(str(options.index_dir),
                                         is_duo=options.is_duo)
+    logging.info("Loading Ranker & Tokenizer:")
     construct_map = dict(transformer=construct_transformer,
                          bm25=construct_bm25,
                          t5=construct_t5,
@@ -163,6 +165,7 @@ def main():
     writer = MsMarcoWriter(args.output_file, args.overwrite_output)
     evaluator = RerankerEvaluator(reranker, options.metrics, writer=writer)
     width = max(map(len, args.metrics)) + 1
+    logging.info("Reranking:")
     for metric in evaluator.evaluate_by_segments(examples,
                                                  options.seg_size,
                                                  options.seg_stride,
