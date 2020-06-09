@@ -7,6 +7,7 @@ from itertools import permutations
 from pydantic import BaseModel
 import scipy.special as sp
 import numpy as np
+from tqdm import tqdm
 
 from .relevance import RelevanceExample, MsMarcoPassageLoader
 from pygaggle.rerank.base import Query, Text
@@ -91,7 +92,7 @@ class MsMarcoDataset(BaseModel):
                               is_duo: bool = False) -> List[RelevanceExample]:
         loader = MsMarcoPassageLoader(index_path)
         example_map = {}
-        for (qid, text, rel_cands), cands in self.query_passage_tuples():
+        for (qid, text, rel_cands), cands in tqdm(self.query_passage_tuples()):
             if qid not in example_map:
                 example_map[qid] = [convert_to_unicode(text), [], [], []]
             example_map[qid][1].append([cand for cand in cands][0])
