@@ -62,16 +62,16 @@ QueriesRanked: 25
 Let's download the pre-built MS MARCO index :
 
 ```
-wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=16Ozzq1bSiu7OyimD8bGVSLj1C0EK7Br3' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=16Ozzq1bSiu7OyimD8bGVSLj1C0EK7Br3" -O index-msmarco-doc20200528.tar.gz && rm -rf /tmp/cookies.txt
+wget https://www.dropbox.com/s/awukuo8c0tkl9sc/index-msmarco-doc-20200527-a1ecfa.tar.gz
 ```
 
-`index-msmarco-doc20200528.tar.gz ` should have MD5 checksum of `ff1cf8fb0a2388f454cf0ba5f6a8031d`.
+`index-msmarco-doc-20200527-a1ecfa.tar.gz ` should have MD5 checksum of `72b1a0f9a9094a86d15c6f4babf8967a`.
 
 Then, we can extract it into into `indexes`:
 
 ```
-tar xvfz index-msmarco-doc20200528.tar.gz -C indexes
-rm index-msmarco-doc20200528.tar.gz
+tar xvfz index-msmarco-doc-20200527-a1ecfa.tar.gz -C indexes
+rm index-msmarco-doc-20200527-a1ecfa.tar.gz
 ```
 
 Now, we can begin with re-ranking the set.
@@ -87,7 +87,7 @@ python -um pygaggle.run.evaluate_document_ranker --split dev \
                                                 --dataset data/msmarco_doc_ans_small/fh \
                                                 --model-type t5-base \
                                                 --task msmarco \
-                                                --index-dir indexes/lucene-index.msmarco-doc.pos+docvectors+rawdocs \
+                                                --index-dir indexes/index-msmarco-doc-20200527-a1ecfa \
                                                 --batch-size 32 \
                                                 --output-file runs/run.monot5.doc_fh.dev.tsv
 ```
