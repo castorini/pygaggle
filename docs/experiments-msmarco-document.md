@@ -44,7 +44,7 @@ Next, we extract the contents into `data`.
 unzip data/msmarco_doc_ans_small.zip -d data
 ```
 
-`msmarco_doc_ans_small` contains two disjoint sets, `fh` and `sh`, and each set has 25 queries. As a sanity check, we can evaluate the first-stage retrieved documents using the official MS MARCO evaluation script on first half of the dataset.
+`msmarco_doc_ans_small` contains two disjoint sets, `fh` and `sh`, and each set has 25 queries.
 
 ```
 python eval/msmarco_eval.py data/msmarco_doc_ans_small/fh/qrels.dev.small.tsv data/msmarco_doc_ans_small/fh/run.dev.small.tsv
@@ -136,5 +136,4 @@ If you were able to replicate these results, please submit a PR adding to the re
 
 
 ## Replication Log
-
 
