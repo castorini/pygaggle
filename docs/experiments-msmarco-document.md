@@ -105,7 +105,7 @@ You should see the same result.
 
 We can modify the argument for `--dataset` to `data/msmarco_doc_ans_small/sh` to re-rank the second half of the dataset, and don't forget to change output file name.
 
-The results are shown as follows:
+The results are as follows:
 
 ```
 precision@1 0.24
