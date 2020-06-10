@@ -5,7 +5,7 @@ Note that there is also a separate [MS MARCO *passage* ranking task](https://git
 
 Prior to running this, we suggest looking at our first-stage [BM25 ranking instructions](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-doc.md).
 We rerank the BM25 run files that contain ~1000 documents per query using monoT5.
-MonoT5 is pointwise reranker. This means that each document is scored independently using T5 respectively.
+monoT5 is a pointwise reranker. This means that each document is scored independently using T5.
 
 Since it can take many hours to run these models on all of the 5193 queries from the MS MARCO dev set, we will instead use a subset of 50 queries randomly sampled from the dev set. 
 
@@ -136,4 +136,3 @@ If you were able to replicate these results, please submit a PR adding to the re
 
 
 ## Replication Log
-
