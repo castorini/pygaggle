@@ -46,19 +46,6 @@ unzip data/msmarco_doc_ans_small.zip -d data
 
 `msmarco_doc_ans_small` contains two disjoint sets, `fh` and `sh`, and each set has 25 queries.
 
-```
-python eval/msmarco_eval.py data/msmarco_doc_ans_small/fh/qrels.dev.small.tsv data/msmarco_doc_ans_small/fh/run.dev.small.tsv
-```
-
-The output should be:
-
-```
-#####################
-MRR @10: 0.162
-QueriesRanked: 25
-#####################
-```
-
 Let's download the pre-built MS MARCO index :
 
 ```
