@@ -95,12 +95,12 @@ python -um pygaggle.run.evaluate_document_ranker --split dev \
 The following output will be visible after it has finished:
 
 ```
-precision@1 0.2
-recall@3    0.44
-recall@50   0.8
+precision@1 0.16
+recall@3  0.44
+recall@50  0.84
 recall@1000 0.88
-mrr         0.36038
-mrr@10      0.35792
+mrr     0.33663
+mrr@10   0.33171
 ```
 
 It takes about 5 hours to re-rank this subset on MS MARCO using a P100. 
@@ -121,12 +121,12 @@ We can modify the argument for `--dataset` to `data/msmarco_doc_ans_small/sh` to
 The results are shown as follows:
 
 ```
-precision@1     0.24
-recall@3        0.32
-recall@50       0.76
-recall@1000     0.88
-mrr     0.31052131247680653
-mrr@10  0.29133333333333333
+precision@1 0.24
+recall@3  0.32
+recall@50  0.76
+recall@1000 0.88
+mrr     0.31052
+mrr@10   0.29133
 ```
 
 
