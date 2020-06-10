@@ -10,6 +10,8 @@ from pygaggle.data.kaggle import RelevanceExample
 from pygaggle.rerank.base import Reranker
 from pygaggle.model.writer import Writer
 
+from pygaggle.data.segmentation import SegmentProcessor
+
 __all__ = ['RerankerEvaluator', 'metric_names']
 METRIC_MAP = OrderedDict()
 
@@ -162,4 +164,23 @@ class RerankerEvaluator:
                 self.writer.write(scores, example)
             for metric in metrics:
                 metric.accumulate(scores, example)
+        return metrics
+
+    def evaluate_by_segments(self,
+                             examples: List[RelevanceExample],
+                             seg_size: int,
+                             stride: int,
+                             aggregate_method: str) -> List[MetricAccumulator]:
+        metrics = [cls() for cls in self.metrics]
+        segment_processor = SegmentProcessor()
+        for example in tqdm(examples, disable=not self.use_tqdm):
+            segment_group = segment_processor.segment(example.documents, seg_size, stride)
+            segment_group.segments = self.reranker.rerank(example.query, segment_group.segments)
+            doc_scores = [x.score for x in segment_processor.aggregate(example.documents,
+                                                                       segment_group,
+                                                                       aggregate_method)]
+            if self.writer is not None:
+                self.writer.write(doc_scores, example)
+            for metric in metrics:
+                metric.accumulate(doc_scores, example)
         return metrics
