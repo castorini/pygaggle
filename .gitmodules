@@ -1,6 +1,0 @@
-[submodule "tools"]
-	path = tools
-	url = https://github.com/castorini/anserini-tools.git
-[submodule "anserini-tools"]
-	path = anserini-tools
-	url = https://github.com/castorini/anserini-tools.git
