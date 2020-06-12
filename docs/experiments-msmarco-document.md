@@ -95,14 +95,6 @@ It is worth noting again that you might need to modify the batch size to best fi
 
 Upon completion, the re-ranked run file `runs/run.monot5.doc_fh.dev.tsv` will be available in the `runs` directory.
 
-We can use the official MS MARCO evaluation script to verify the MRR@10:
-
-```
-python eval/msmarco_eval.py data/msmarco_doc_ans_small/fh/qrels.dev.small.tsv runs/run.monot5.doc_fh.dev.tsv
-```
-
-You should see the same result.
-
 We can modify the argument for `--dataset` to `data/msmarco_doc_ans_small/sh` to re-rank the second half of the dataset, and don't forget to change output file name.
 
 The results are as follows:
