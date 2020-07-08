@@ -115,3 +115,5 @@ If you were able to replicate these results, please submit a PR adding to the re
 
 
 ## Replication Log
+
++ Results replicated by [@HangCui0510](https://github.com/HangCui0510) on 2020-05-29 (commit [`f2e078e`](https://github.com/HangCui0510/pygaggle/commit/f2e078e47c87156925a9151632753be861ec403d)) (Tesla P100)
