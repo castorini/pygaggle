@@ -1,4 +1,4 @@
-# PyGaggle: Neural Ranking Baselines on [MS MARCO Passage Retrieval](https://github.com/microsoft/MSMARCO-Passage-Ranking)
+# PyGaggle: Neural Ranking Baselines on CovidQA
 
 This page contains instructions for running various neural reranking baselines on the CovidQA ranking task. 
 
