@@ -44,14 +44,16 @@ tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
 tokenizer = T5BatchTokenizer(tokenizer, batch_size)
 reranker =  T5Reranker(model, tokenizer)
 
-query = Query('This is an example query')
-doc1 = Text('This is an example document 1')
-doc2 = Text('This is an example document 2')
-documents = [doc1, doc2]
+query = Query('what causes low liver enzymes')
+
+correct_doc = Text('Reduced production of liver enzymes may indicate dysfunction of the liver. This article explains the causes and symptoms of low liver enzymes. Scroll down to know how the production of the enzymes can be accelerated.')
+
+wrong_doc = Text('Elevated liver enzymes often indicate inflammation or damage to cells in the liver. Inflamed or injured liver cells leak higher than normal amounts of certain chemicals, including liver enzymes, into the bloodstream, elevating liver enzymes on blood tests.')
+
+documents = [correct_doc, wrong_doc]
 
 scores = [result.score for result in reranker.rerank(query, documents)]
-# scores = [-0.2899352014064789, -0.3390249013900757]
-
+# scores = [-0.1782158613204956, -0.36637523770332336]
 ```
 
 # Evaluations
