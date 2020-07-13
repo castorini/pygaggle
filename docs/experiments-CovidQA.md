@@ -99,7 +99,7 @@ mrr             0.249090910278702
 mrr@10          0.22846344887161213
 ```
 
-It takes about 10 seconds to re-rank this subset on CovidQA using a P100.
+It takes about 10 seconds to re-rank this subset on CovidQA
 
 ## Re-Ranking with monoT5
 
