@@ -30,10 +30,12 @@ Currently, this repo contains implementations of the rerankers for [CovidQA](htt
     * If you prefer Anaconda, use `conda env create -f environment.yml && conda activate pygaggle`.
 
 
-# A simple reranking example - T5
-The code below exemplifies how to score two documents for a given query using a T5 reranker from [Document Ranking with a Pretrained
-Sequence-to-Sequence Model](https://arxiv.org/pdf/2003.06713.pdf).
+## A Simple Reranking Example
+
+Here's how to initalize the T5 reranker from [Document Ranking with a Pretrained Sequence-to-Sequence Model](https://arxiv.org/pdf/2003.06713.pdf):
+
 ```python
+# Initialize the reranker
 import torch
 from transformers import AutoTokenizer, T5ForConditionalGeneration
 from pygaggle.model import T5BatchTokenizer
@@ -52,22 +54,10 @@ model = model.to(device).eval()
 tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
 tokenizer = T5BatchTokenizer(tokenizer, batch_size)
 reranker =  T5Reranker(model, tokenizer)
-
-query = Query('what causes low liver enzymes')
-
-correct_doc = Text('Reduced production of liver enzymes may indicate dysfunction of the liver. This article explains the causes and symptoms of low liver enzymes. Scroll down to know how the production of the enzymes can be accelerated.')
-
-wrong_doc = Text('Elevated liver enzymes often indicate inflammation or damage to cells in the liver. Inflamed or injured liver cells leak higher than normal amounts of certain chemicals, including liver enzymes, into the bloodstream, elevating liver enzymes on blood tests.')
-
-documents = [correct_doc, wrong_doc]
-
-scores = [result.score for result in reranker.rerank(query, documents)]
-# scores = [-0.1782158613204956, -0.36637523770332336]
 ```
 
-# A simple reranking example - BERT
-You can also try the code below, which uses a BERT reranker from [Passage Re-ranking with BERT](https://arxiv.org/pdf/1901.04085.pdf).
-Note that the T5 reranker produces slightly better scores than the BERT reranker.
+Alternatively, here's the BERT reranker from [Passage Re-ranking with BERT](https://arxiv.org/pdf/1901.04085.pdf), which isn't as good as the T5 reranker:
+
 ```python
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
@@ -85,15 +75,38 @@ model = model.to(device).eval()
 
 tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
 reranker =  SequenceClassificationTransformerReranker(model, tokenizer)
+```
 
-query = Query('what causes low liver enzymes')
+Either way, continue with a complere reranking example:
 
-correct_doc = Text('Reduced production of liver enzymes may indicate dysfunction of the liver. This article explains the causes and symptoms of low liver enzymes. Scroll down to know how the production of the enzymes can be accelerated.')
+```python
+# Here's our query:
+query = Query('who proposed the geocentric theory')
 
-wrong_doc = Text('Elevated liver enzymes often indicate inflammation or damage to cells in the liver. Inflamed or injured liver cells leak higher than normal amounts of certain chemicals, including liver enzymes, into the bloodstream, elevating liver enzymes on blood tests.')
+# Option 1: fetch some passages to rerank from MS MARCO with Pyserini
+from pyserini.search import SimpleSearcher
 
-documents = [correct_doc, wrong_doc]
+searcher = SimpleSearcher('/path/to/msmarco/index/')
 
-scores = [result.score for result in reranker.rerank(query, documents)]
-# scores = [-3.077077865600586, -5.45782470703125]
+hits = searcher.search(query.text)
+
+from pygaggle.rerank.base import hits_to_texts
+texts = hits_to_texts(hits)
+
+# Option 2: here's what Pyserini would have retrieved, hard-coded
+passages = [['7744105', 'For Earth-centered it was  Geocentric Theory proposed by greeks under the guidance of Ptolemy and Sun-centered was Heliocentric theory proposed by Nicolas Copernicus in 16th century A.D. In short, Your Answers are: 1st blank - Geo-Centric Theory. 2nd blank - Heliocentric Theory.'], ['2593796', 'Copernicus proposed a heliocentric model of the solar system â\x80\x93 a model where everything orbited around the Sun. Today, with advancements in science and technology, the geocentric model seems preposterous.he geocentric model, also known as the Ptolemaic system, is a theory that was developed by philosophers in Ancient Greece and was named after the philosopher Claudius Ptolemy who lived circa 90 to 168 A.D. It was developed to explain how the planets, the Sun, and even the stars orbit around the Earth.'], ['6217200', 'The geocentric model, also known as the Ptolemaic system, is a theory that was developed by philosophers in Ancient Greece and was named after the philosopher Claudius Ptolemy who lived circa 90 to 168 A.D. It was developed to explain how the planets, the Sun, and even the stars orbit around the Earth.opernicus proposed a heliocentric model of the solar system â\x80\x93 a model where everything orbited around the Sun. Today, with advancements in science and technology, the geocentric model seems preposterous.'], ['3276925', 'Copernicus proposed a heliocentric model of the solar system â\x80\x93 a model where everything orbited around the Sun. Today, with advancements in science and technology, the geocentric model seems preposterous.Simple tools, such as the telescope â\x80\x93 which helped convince Galileo that the Earth was not the center of the universe â\x80\x93 can prove that ancient theory incorrect.ou might want to check out one article on the history of the geocentric model and one regarding the geocentric theory. Here are links to two other articles from Universe Today on what the center of the universe is and Galileo one of the advocates of the heliocentric model.'], ['6217208', 'Copernicus proposed a heliocentric model of the solar system â\x80\x93 a model where everything orbited around the Sun. Today, with advancements in science and technology, the geocentric model seems preposterous.Simple tools, such as the telescope â\x80\x93 which helped convince Galileo that the Earth was not the center of the universe â\x80\x93 can prove that ancient theory incorrect.opernicus proposed a heliocentric model of the solar system â\x80\x93 a model where everything orbited around the Sun. Today, with advancements in science and technology, the geocentric model seems preposterous.'], ['4280557', 'The geocentric model, also known as the Ptolemaic system, is a theory that was developed by philosophers in Ancient Greece and was named after the philosopher Claudius Ptolemy who lived circa 90 to 168 A.D. It was developed to explain how the planets, the Sun, and even the stars orbit around the Earth.imple tools, such as the telescope â\x80\x93 which helped convince Galileo that the Earth was not the center of the universe â\x80\x93 can prove that ancient theory incorrect. You might want to check out one article on the history of the geocentric model and one regarding the geocentric theory.'], ['264181', 'Nicolaus Copernicus (b. 1473â\x80\x93d. 1543) was the first modern author to propose a heliocentric theory of the universe. From the time that Ptolemy of Alexandria (c. 150 CE) constructed a mathematically competent version of geocentric astronomy to Copernicusâ\x80\x99s mature heliocentric version (1543), experts knew that the Ptolemaic system diverged from the geocentric concentric-sphere conception of Aristotle.'], ['4280558', 'A Geocentric theory is an astronomical theory which describes the universe as a Geocentric system, i.e., a system which puts the Earth in the center of the universe, and describes other objects from the point of view of the Earth. Geocentric theory is an astronomical theory which describes the universe as a Geocentric system, i.e., a system which puts the Earth in the center of the universe, and describes other objects from the point of view of the Earth.'], ['3276926', 'The geocentric model, also known as the Ptolemaic system, is a theory that was developed by philosophers in Ancient Greece and was named after the philosopher Claudius Ptolemy who lived circa 90 to 168 A.D. It was developed to explain how the planets, the Sun, and even the stars orbit around the Earth.ou might want to check out one article on the history of the geocentric model and one regarding the geocentric theory. Here are links to two other articles from Universe Today on what the center of the universe is and Galileo one of the advocates of the heliocentric model.'], ['5183032', "After 1,400 years, Copernicus was the first to propose a theory which differed from Ptolemy's geocentric system, according to which the earth is at rest in the center with the rest of the planets revolving around it."]]
+
+texts = [ Text(p[1], {'docid': p[0]}, 0) for p in passages] # Note, scores don't matter since T5 will ignore them.
+
+# Either option, let's print out the passages prior to reranking:
+for i in range(0, 10):
+    print(f'{i+1:2} {texts[i].metadata["docid"]:15} {texts[i].score:.5f} {texts[i].text}')
+
+# Finally, rerank:
+reranked = reranker.rerank(query, texts)
+reranked.sort(key=lambda x: x.score, reverse=True)
+
+# Print out reranked results:
+for i in range(0, 10):
+    print(f'{i+1:2} {texts[i].metadata["docid"]:15} {reranked[i].score:.5f} {reranked[i].text}')
 ```
