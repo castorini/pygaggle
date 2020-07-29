@@ -85,9 +85,7 @@ query = Query('who proposed the geocentric theory')
 
 # Option 1: fetch some passages to rerank from MS MARCO with Pyserini
 from pyserini.search import SimpleSearcher
-
 searcher = SimpleSearcher('/path/to/msmarco/index/')
-
 hits = searcher.search(query.text)
 
 from pygaggle.rerank.base import hits_to_texts
