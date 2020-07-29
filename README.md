@@ -62,7 +62,7 @@ wrong_doc = Text('Elevated liver enzymes often indicate inflammation or damage t
 documents = [correct_doc, wrong_doc]
 
 scores = [result.score for result in reranker.rerank(query, documents)]
-# scores = [-0.1782158613204956, -0.36637523770332336]
+# scores = [-1.004280924797058, -6.026238441467285]
 ```
 
 # A simple reranking example - BERT
