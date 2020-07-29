@@ -35,7 +35,6 @@ Currently, this repo contains implementations of the rerankers for [CovidQA](htt
 Here's how to initalize the T5 reranker from [Document Ranking with a Pretrained Sequence-to-Sequence Model](https://arxiv.org/pdf/2003.06713.pdf):
 
 ```python
-# Initialize the reranker
 import torch
 from transformers import AutoTokenizer, T5ForConditionalGeneration
 from pygaggle.model import T5BatchTokenizer
