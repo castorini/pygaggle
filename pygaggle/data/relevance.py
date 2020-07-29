@@ -4,7 +4,7 @@ from typing import List, Optional
 import json
 import re
 
-from pyserini.search import pysearch
+from pyserini.search import SimpleSearcher
 
 from pygaggle.rerank.base import Query, Text
 
@@ -43,7 +43,7 @@ class Cord19DocumentLoader:
     double_space_pattern = re.compile(r'\s\s+')
 
     def __init__(self, index_path: str):
-        self.searcher = pysearch.SimpleSearcher(index_path)
+        self.searcher = SimpleSearcher(index_path)
 
     @lru_cache(maxsize=1024)
     def load_document(self, id: str) -> Cord19Document:

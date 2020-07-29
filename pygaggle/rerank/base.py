@@ -1,10 +1,10 @@
 from typing import List, Union, Optional, Mapping, Any
 import abc
 
-from pyserini.pyclass import JSimpleSearcherResult
+from pyserini.search import JSimpleSearcherResult
 
 
-__all__ = ['Query', 'Text', 'Reranker', 'to_texts', 'TextType']
+__all__ = ['Query', 'Text', 'Reranker', 'hits_to_texts', 'TextType']
 
 
 TextType = Union['Query', 'Text']
@@ -36,7 +36,7 @@ class Text:
     ----------
     text : str
         The text to be reranked.
-    raw : Mapping[str, Any]
+    metadata : Mapping[str, Any]
         Additional metadata and other annotations.
     score : Optional[float]
         The score of the text. For example, the score might be the BM25 score
@@ -45,12 +45,12 @@ class Text:
 
     def __init__(self,
                  text: str,
-                 raw: Mapping[str, Any] = None,
+                 metadata: Mapping[str, Any] = None,
                  score: Optional[float] = 0):
         self.text = text
-        if raw is None:
-            raw = dict()
-        self.raw = raw
+        if metadata is None:
+            metadata = dict()
+        self.metadata = metadata
         self.score = score
 
 
@@ -78,13 +78,15 @@ class Reranker:
         pass
 
 
-def to_texts(hits: List[JSimpleSearcherResult]) -> List[Text]:
+def hits_to_texts(hits: List[JSimpleSearcherResult], field='raw') -> List[Text]:
     """Converts hits from Pyserini into a list of texts.
 
      Parameters
      ----------
      hits : List[JSimpleSearcherResult]
-         The hits.
+        The hits.
+     field : str
+        Field to use.
 
      Returns
      -------
@@ -93,5 +95,7 @@ def to_texts(hits: List[JSimpleSearcherResult]) -> List[Text]:
      """
     texts = []
     for i in range(0, len(hits)):
-        texts.append(Text(hits[i].contents, hits[i].raw, hits[i].score))
+        t = hits[i].raw if field == 'raw' else hits[i].contents
+        metadata = {'raw': hits[i].raw, 'docid': hits[i].docid}
+        texts.append(Text(t, metadata, hits[i].score))
     return texts
