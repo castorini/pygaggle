@@ -105,5 +105,5 @@ reranked.sort(key=lambda x: x.score, reverse=True)
 
 # Print out reranked results:
 for i in range(0, 10):
-    print(f'{i+1:2} {texts[i].metadata["docid"]:15} {reranked[i].score:.5f} {reranked[i].text}')
+    print(f'{i+1:2} {reranked[i].metadata["docid"]:15} {reranked[i].score:.5f} {reranked[i].text}')
 ```
