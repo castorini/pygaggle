@@ -1,4 +1,4 @@
-# PyGaggle: Neural Ranking Baselines on [MS MARCO Document Retrieval](https://github.com/microsoft/TREC-2019-Deep-Learning)
+# PyGaggle: Baselines on [MS MARCO Document Retrieval](https://github.com/microsoft/TREC-2019-Deep-Learning)
 
 This page contains instructions for running various neural reranking baselines on the MS MARCO *document* ranking task. 
 Note that there is also a separate [MS MARCO *passage* ranking task](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage.md).
@@ -117,5 +117,4 @@ If you were able to replicate these results, please submit a PR adding to the re
 ## Replication Log
 
 + Results replicated by [@HangCui0510](https://github.com/HangCui0510) on 2020-07-08 (commit [`f2e078e`](https://github.com/HangCui0510/pygaggle/commit/f2e078e47c87156925a9151632753be861ec403d)) (Tesla P100)
-+ Results replicated by [@mrkarezina](https://github.com/mrkarezina) on 2020-07-20 (commit [`c1a54cb`]
-(https://github.com/castorini/pygaggle/commit/c1a54cb012a1d4ea24a2ce2bc24298417279a9c4)) (Tesla T4)
++ Results replicated by [@mrkarezina](https://github.com/mrkarezina) on 2020-07-20 (commit [`c1a54cb`](https://github.com/castorini/pygaggle/commit/c1a54cb012a1d4ea24a2ce2bc24298417279a9c4)) (Tesla T4)
