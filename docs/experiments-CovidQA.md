@@ -142,7 +142,7 @@ mrr             0.37988285486956513
 mrr@10          0.3671336788683727
 ```
 
-It takes about 17 minutes to re-rank this subset on CovidQA using a P100.
+It takes about 17 minutes to re-rank this subset on CovidQA using a P100.  It is worth noting again that you might need to modify the batch size to best fit the GPU at hand.
 
 If you were able to replicate these results, please submit a PR adding to the replication log!
 
