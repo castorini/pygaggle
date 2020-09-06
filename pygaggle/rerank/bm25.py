@@ -3,8 +3,8 @@ from copy import deepcopy
 from typing import List
 import math
 
-from pyserini.analysis.pyanalysis import get_lucene_analyzer, Analyzer
-from pyserini.index.pyutils import IndexReaderUtils
+from pyserini.analysis import get_lucene_analyzer, Analyzer
+from pyserini.index import IndexReader
 import numpy as np
 
 from .base import Reranker, Query, Text
@@ -24,7 +24,7 @@ class Bm25Reranker(Reranker):
         self.analyzer = Analyzer(get_lucene_analyzer())
         if index_path:
             self.use_corpus_estimator = True
-            self.index_utils = IndexReaderUtils(index_path)
+            self.index_utils = IndexReader(index_path)
 
     def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
         query_words = self.analyzer.analyze(query.text)
@@ -45,7 +45,7 @@ class Bm25Reranker(Reranker):
             if self.use_corpus_estimator:
                 idfs = {w:
                         self.index_utils.compute_bm25_term_weight(
-                                text.raw['docid'], w) for w in tf}
+                                text.metadata['docid'], w) for w in tf}
             score = sum(idfs[w] * tf[w] * (self.k1 + 1) /
                         (tf[w] + self.k1 * (1 - self.b + self.b *
                                             (d_len / mean_len))) for w in tf)
