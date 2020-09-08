@@ -153,6 +153,12 @@ You should see the same result.
 If you were able to replicate these results, please submit a PR adding to the replication log!
 
 
+## Replication on Colab
+
+For users without local GPU resources, Colab is a good solution. 
+
+There is a [notebook](https://github.com/castorini/pygaggle/blob/master/notebooks/pygaggle_Colab_demo.ipynb) containing instructions about how to deploy pygaggle on Colab.
+
 ## Replication Log
 
 + Results replicated by [@MXueguang](https://github.com/MXueguang) on 2020-05-22 (commit [`69de7db`](https://github.com/castorini/pygaggle/commit/69de7db843bbe9201113c4d94c9e90be36094350)) (Tesla P4)
