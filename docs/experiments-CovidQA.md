@@ -148,3 +148,5 @@ If you were able to replicate these results, please submit a PR adding to the re
 
 
 ## Replication Log
+
++ Results replicated by [@justinborromeo](https://github.com/justinborromeo) on 2020-09-08 (commit[`94befbd`](https://github.com/castorini/pygaggle/commit/94befbd58b19c3e46d930e67797102bf174efd01)) (GTX960M)
