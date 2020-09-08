@@ -64,7 +64,7 @@ class Cord19DocumentLoader:
 
 class MsMarcoPassageLoader:
     def __init__(self, index_path: str):
-        self.searcher = pysearch.SimpleSearcher(index_path)
+        self.searcher = SimpleSearcher(index_path)
 
     def load_passage(self, id: str) -> MsMarcoPassage:
         try:
