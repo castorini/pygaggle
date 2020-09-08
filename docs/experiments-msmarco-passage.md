@@ -160,5 +160,4 @@ If you were able to replicate these results, please submit a PR adding to the re
 + Results replicated by [@HangCui0510](https://github.com/HangCui0510) on 2020-05-29 (commit [`591e7ff`](https://github.com/HangCui0510/pygaggle/commit/591e7ffd6cc826fd2bae5e721f9693452f9e4a49)) (Tesla P100)
 + Results replicated by [@kelvin-jiang](https://github.com/kelvin-jiang) on 2020-05-31 (commit [`82dc086`](https://github.com/HangCui0510/pygaggle/commit/82dc086b86d828147dad34d9a7f8bb66a3c23c88)) (GeForce RTX 2080 Ti)
 + Results replicated by [@justinborromeo](https://github.com/justinborromeo) on 2020-07-02 (commit [`70b2a9f`](https://github.com/castorini/pygaggle/commit/70b2a9fe625554aeae02f64eb68f1edc57f96860)) (GeForce GTX 960M)
-+ Results replicated by [@mrkarezina](https://github.com/mrkarezina) on 2020-07-19 (commit [`c1a54cb`]
-(https://github.com/castorini/pygaggle/commit/c1a54cb012a1d4ea24a2ce2bc24298417279a9c4)) (Tesla T4)
++ Results replicated by [@mrkarezina](https://github.com/mrkarezina) on 2020-07-19 (commit [`c1a54cb`](https://github.com/castorini/pygaggle/commit/c1a54cb012a1d4ea24a2ce2bc24298417279a9c4)) (Tesla T4)
