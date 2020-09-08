@@ -28,4 +28,4 @@ class MsMarcoWriter(Writer):
         doc_scores = sorted(list(zip(example.documents, scores)),
                             key=lambda x: x[1], reverse=True)
         for ct, (doc, score) in enumerate(doc_scores):
-            self.write_line(f"{example.query.id}\t{doc.raw['docid']}\t{ct+1}")
+            self.write_line(f"{example.query.id}\t{doc.metadata['docid']}\t{ct+1}")
