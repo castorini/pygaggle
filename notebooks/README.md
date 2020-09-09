@@ -9,7 +9,6 @@ This holds static copies of notebooks for the [PyGaggle](https://github.com/cast
 The notebooks in this repo are sync'ed (by hand) with notebooks in Colab.
 These online demos provide a low-effort way to try out PyGaggle's features:
 
-+ PyGaggle replication demo on Colab: [[GitHub]](pygaggle_Colab_demo.ipynb)
 + PyGaggle demo on CovidQA: [[GitHub]](pygaggle_covidqa_demo.ipynb)
 
 Click "Open in Playground" and you'll be able to replicate our results!
