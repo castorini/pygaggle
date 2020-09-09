@@ -153,6 +153,37 @@ You should see the same result.
 If you were able to replicate these results, please submit a PR adding to the replication log!
 
 
+## Replication on Colab
+
+For users without local GPU resources, Colab is an available solution. It could be transformed into a GPU instance with full SSH access.
+
+First of all, create a Colab notebook using your Google account and use the GPU runtime mode.
+[Ngrok](https://ngrok.com/) is used to make ssh forwarding. Before this, please create a password. Then, let's start `sshd`.
+Let's setup and run `sshd`.
+```
+! apt-get install -qq -o=Dpkg::Use-Pty=0 openssh-server pwgen > /dev/null
+! echo root:$password | chpasswd
+! mkdir -p /var/run/sshd
+! echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+! echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
+get_ipython().system_raw('/usr/sbin/sshd -D &')
+```
+After that, we can install and run Ngrok, which creates a TCP tunnel.
+You can get authtoken from https://dashboard.ngrok.com/auth".
+```
+! wget -q -c -nc https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+! unzip -qq -n ngrok-stable-linux-amd64.zip
+import getpass
+authtoken = getpass.getpass()
+get_ipython().system_raw('./ngrok authtoken $authtoken && ./ngrok tcp 22 &')
+```
+Now, You can access your server through `ssh` command in your local machine.
+The Port number can be found through the Ngrok interface https://dashboard.ngrok.com/status.
+```
+ssh root@0.tcp.ngrok.io -p [port_number]
+```
+
+
 ## Replication Log
 
 + Results replicated by [@MXueguang](https://github.com/MXueguang) on 2020-05-22 (commit [`69de7db`](https://github.com/castorini/pygaggle/commit/69de7db843bbe9201113c4d94c9e90be36094350)) (Tesla P4)
@@ -161,3 +192,4 @@ If you were able to replicate these results, please submit a PR adding to the re
 + Results replicated by [@kelvin-jiang](https://github.com/kelvin-jiang) on 2020-05-31 (commit [`82dc086`](https://github.com/HangCui0510/pygaggle/commit/82dc086b86d828147dad34d9a7f8bb66a3c23c88)) (GeForce RTX 2080 Ti)
 + Results replicated by [@justinborromeo](https://github.com/justinborromeo) on 2020-07-02 (commit [`70b2a9f`](https://github.com/castorini/pygaggle/commit/70b2a9fe625554aeae02f64eb68f1edc57f96860)) (GeForce GTX 960M)
 + Results replicated by [@mrkarezina](https://github.com/mrkarezina) on 2020-07-19 (commit [`c1a54cb`](https://github.com/castorini/pygaggle/commit/c1a54cb012a1d4ea24a2ce2bc24298417279a9c4)) (Tesla T4)
++ Results replicated by [@qguo96](https://github.com/qguo96) on 2020-09-08 (commit [`94befbd`](https://github.com/qguo96/pygaggle/commit/94befbd58b19c3e46d930e67797102bf174efd01)) (Tesla T4 on Colab)
