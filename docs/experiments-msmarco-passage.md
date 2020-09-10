@@ -163,3 +163,4 @@ If you were able to replicate these results, please submit a PR adding to the re
 + Results replicated by [@mrkarezina](https://github.com/mrkarezina) on 2020-07-19 (commit [`c1a54cb`](https://github.com/castorini/pygaggle/commit/c1a54cb012a1d4ea24a2ce2bc24298417279a9c4)) (Tesla T4)
 + Results replicated by [@qguo96](https://github.com/qguo96) on 2020-09-08 (commit [`94befbd`](https://github.com/qguo96/pygaggle/commit/94befbd58b19c3e46d930e67797102bf174efd01)) (Tesla T4 on Colab)
 + Results replicated by [@yuxuan-ji](https://github.com/yuxuan-ji) on 2020-09-08 (commit[`94befbd`](https://github.com/castorini/pygaggle/commit/94befbd58b19c3e46d930e67797102bf174efd01)) (Tesla T4 on Colab)
++ Results replicated by [@LizzyZhang-tutu](https://github.com/LizzyZhang-tutu) on 2020-09-09 (commit[`8eeefa5`](https://github.com/castorini/pygaggle/commit/8eeefa578c65e2da78be129c87dfb40beb74099c)) (Tesla T4 on Colab)
