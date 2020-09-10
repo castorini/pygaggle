@@ -71,12 +71,13 @@ python -um pygaggle.run.evaluate_kaggle_highlighter --method bm25 \
 The following output will be visible after it has finished:
 
 ```
-precision@1     0.14685314685314685
-recall@3        0.2199546485260771
-recall@50       0.6582766439909296
-recall@1000     0.6820861678004534
-mrr             0.24651188194041115
-mrr@10          0.2267060792570997
+precision@1    0.15384615384615385
+recall@3       0.21865889212827985
+recall@50      0.7208778749595076
+recall@1000    0.7582928409459021
+mrr            0.25329970378011524
+mrr@10         0.23344131303314977
+
 ```
 
 Keyword Query:
@@ -91,12 +92,12 @@ python -um pygaggle.run.evaluate_kaggle_highlighter --method bm25 \
 The following output will be visible after it has finished:
 
 ```
-precision@1     0.14685314685314685
-recall@3        0.22675736961451243
-recall@50       0.6650793650793649
-recall@1000     0.6888888888888888
-mrr             0.249090910278702
-mrr@10          0.22846344887161213
+precision@1    0.15384615384615385
+recall@3       0.21865889212827985
+recall@50      0.7208778749595076
+recall@1000    0.7582928409459021
+mrr            0.25441237140238665
+mrr@10         0.23493413238311195
 ```
 
 It takes about 10 seconds to re-rank this subset on CovidQA
@@ -149,4 +150,5 @@ If you were able to replicate these results, please submit a PR adding to the re
 
 ## Replication Log
 
-Results replicated by [@yuxuan-ji](https://github.com/yuxuan-ji) on 2020-09-08 (commit[`94befbd`](https://github.com/castorini/pygaggle/commit/94befbd58b19c3e46d930e67797102bf174efd01)) (Tesla T4 on Colab, Tesla P100 on Colab)
++ Results replicated by [@justinborromeo](https://github.com/justinborromeo) on 2020-09-08 (commit[`94befbd`](https://github.com/castorini/pygaggle/commit/94befbd58b19c3e46d930e67797102bf174efd01)) (GTX960M)
++ Results replicated by [@yuxuan-ji](https://github.com/yuxuan-ji) on 2020-09-08 (commit[`94befbd`](https://github.com/castorini/pygaggle/commit/94befbd58b19c3e46d930e67797102bf174efd01)) (Tesla T4 on Colab, Tesla P100 on Colab)
