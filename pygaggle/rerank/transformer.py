@@ -1,7 +1,9 @@
 from copy import deepcopy
-from typing import List
+from typing import List, Union
 
-from transformers import (PreTrainedModel,
+from transformers import (AutoTokenizer,
+                          AutoModelForSequenceClassification,
+                          PreTrainedModel,
                           PreTrainedTokenizer,
                           T5ForConditionalGeneration)
 import torch
@@ -13,21 +15,29 @@ from pygaggle.model import (BatchTokenizer,
                             QueryDocumentBatch,
                             QueryDocumentBatchTokenizer,
                             SpecialTokensCleaner,
+                            T5BatchTokenizer,
                             greedy_decode)
 
 
-__all__ = ['T5Reranker',
+__all__ = ['monoT5',
            'UnsupervisedTransformerReranker',
-           'SequenceClassificationTransformerReranker',
+           'monoBERT',
            'QuestionAnsweringTransformerReranker']
 
 
-class T5Reranker(Reranker):
+class monoT5(Reranker):
     def __init__(self,
-                 model: T5ForConditionalGeneration,
-                 tokenizer: QueryDocumentBatchTokenizer):
-        self.model = model
-        self.tokenizer = tokenizer
+                 model_name_or_instance: Union[str, T5ForConditionalGeneration] = 'castorini/monot5-base-msmarco',
+                 tokenizer_name_or_instance: Union[str, QueryDocumentBatchTokenizer] = 't5-base'):
+        if isinstance(model_name_or_instance, str):
+            device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+            model_name_or_instance = T5ForConditionalGeneration.from_pretrained(model_name_or_instance).to(device).eval()
+        self.model = model_name_or_instance
+
+        if isinstance(tokenizer_name_or_instance, str):
+            tokenizer_name_or_instance = T5BatchTokenizer(AutoTokenizer.from_pretrained(tokenizer_name_or_instance), batch_size=8)
+        self.tokenizer = tokenizer_name_or_instance
+
         self.device = next(self.model.parameters(), None).device
 
     def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
@@ -97,13 +107,20 @@ class UnsupervisedTransformerReranker(Reranker):
         return texts
 
 
-class SequenceClassificationTransformerReranker(Reranker):
+class monoBERT(Reranker):
     def __init__(self,
-                 model: PreTrainedModel,
-                 tokenizer: PreTrainedTokenizer):
-        self.tokenizer = tokenizer
-        self.model = model
-        self.device = next(model.parameters()).device
+                 model_name_or_instance: Union[str, PreTrainedModel] = 'castorini/monobert-large-msmarco',
+                 tokenizer_name_or_instance: Union[str, PreTrainedTokenizer] = 'bert-large-uncased'):
+        if isinstance(model_name_or_instance, str):
+            device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+            model_name_or_instance = AutoModelForSequenceClassification.from_pretrained(model_name_or_instance).to(device).eval()
+        self.model = model_name_or_instance
+
+        if isinstance(tokenizer_name_or_instance, str):
+            tokenizer_name_or_instance = AutoTokenizer.from_pretrained(tokenizer_name_or_instance)
+        self.tokenizer = tokenizer_name_or_instance
+
+        self.device = next(self.model.parameters(), None).device
 
     @torch.no_grad()
     def rerank(self, query: Query, texts: List[Text]) -> List[Text]:

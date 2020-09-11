@@ -14,8 +14,8 @@ from pygaggle.rerank.base import Reranker
 from pygaggle.rerank.bm25 import Bm25Reranker
 from pygaggle.rerank.transformer import (
     UnsupervisedTransformerReranker,
-    T5Reranker,
-    SequenceClassificationTransformerReranker
+    monoT5,
+    monoBERT
 )
 from pygaggle.rerank.random import RandomReranker
 from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
@@ -85,7 +85,7 @@ def construct_t5(options: DocumentRankingEvaluationOptions) -> Reranker:
                                                        from_tf=options.from_tf).to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(options.model_type)
     tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
-    return T5Reranker(model, tokenizer)
+    return monoT5(model, tokenizer)
 
 
 def construct_transformer(options:
@@ -106,7 +106,7 @@ def construct_seq_class_transformer(options: DocumentRankingEvaluationOptions
     device = torch.device(options.device)
     model = model.to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(options.tokenizer_name)
-    return SequenceClassificationTransformerReranker(model, tokenizer)
+    return monoBERT(model, tokenizer)
 
 
 def construct_bm25(options: DocumentRankingEvaluationOptions) -> Reranker:

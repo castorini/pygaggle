@@ -35,45 +35,23 @@ Currently, this repo contains implementations of the rerankers for [CovidQA](htt
 Here's how to initalize the T5 reranker from [Document Ranking with a Pretrained Sequence-to-Sequence Model](https://arxiv.org/pdf/2003.06713.pdf):
 
 ```python
-import torch
-from transformers import AutoTokenizer, T5ForConditionalGeneration
-from pygaggle.model import T5BatchTokenizer
 from pygaggle.rerank.base import Query, Text
-from pygaggle.rerank.transformer import T5Reranker
+from pygaggle.rerank.transformer import monoT5
 
 model_name = 'castorini/monot5-base-msmarco'
 tokenizer_name = 't5-base'
-batch_size = 8
-
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-model = T5ForConditionalGeneration.from_pretrained(model_name)
-model = model.to(device).eval()
-
-tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
-tokenizer = T5BatchTokenizer(tokenizer, batch_size)
-reranker =  T5Reranker(model, tokenizer)
+reranker =  monoT5(model_name, tokenizer_name)
 ```
 
 Alternatively, here's the BERT reranker from [Passage Re-ranking with BERT](https://arxiv.org/pdf/1901.04085.pdf), which isn't as good as the T5 reranker:
 
 ```python
-import torch
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
-from pygaggle.model import BatchTokenizer
 from pygaggle.rerank.base import Query, Text
-from pygaggle.rerank.transformer import SequenceClassificationTransformerReranker
+from pygaggle.rerank.transformer import monoBERT
 
 model_name = 'castorini/monobert-large-msmarco'
 tokenizer_name = 'bert-large-uncased'
-
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-model = AutoModelForSequenceClassification.from_pretrained(model_name)
-model = model.to(device).eval()
-
-tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
-reranker =  SequenceClassificationTransformerReranker(model, tokenizer)
+reranker =  monoBERT(model_name, tokenizer_name)
 ```
 
 Either way, continue with a complere reranking example:
