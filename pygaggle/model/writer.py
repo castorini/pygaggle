@@ -4,7 +4,7 @@ import abc
 
 from pygaggle.data.relevance import RelevanceExample
 
-__all__ = ['Writer', 'MsMarcoWriter']
+__all__ = ['Writer', 'MsMarcoWriter', 'TRECCovidWriter']
 
 
 class Writer:
@@ -27,5 +27,12 @@ class MsMarcoWriter(Writer):
     def write(self, scores: List[float], example: RelevanceExample):
         doc_scores = sorted(list(zip(example.documents, scores)),
                             key=lambda x: x[1], reverse=True)
+        for ct, (doc, score) in enumerate(doc_scores):
+            self.write_line(f"{example.query.id}\t{doc.metadata['docid']}\t{ct+1}")
+
+class TRECCovidWriter(Writer):
+    def write(self, scores: List[float], example: RelevanceExample):
+        doc_scores = sorted(list(zip(example.documents, scores)),
+                    key=lambda x: x[1], reverse=True)
         for ct, (doc, score) in enumerate(doc_scores):
             self.write_line(f"{example.query.id}\t{doc.metadata['docid']}\t{ct+1}")

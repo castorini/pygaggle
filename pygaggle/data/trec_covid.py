@@ -14,22 +14,19 @@ from pygaggle.rerank.base import Query, Text
 from pygaggle.data.unicode import convert_to_unicode
 
 
-__all__ = ['MsMarcoExample', 'MsMarcoDataset']
+__all__ = ['TRECCovidExample', 'TRECCovidDataset']
 
-# MsMarcoExample represents a query along with its ranked and re-ranked
-# candidates.
-class MsMarcoExample(BaseModel):
+
+class TRECCovidExample(BaseModel):
     qid: str
     text: str
     candidates: List[str]
     relevant_candidates: Set[str]
 
 
-class MsMarcoDataset(BaseModel):
+class TRECCovidDataset(BaseModel):
     examples: List[MsMarcoExample]
 
-    # Load qrels from the provided path and return a dictionary mapping
-    # qid -> set({doc_id, doc_id...}) for all doc_ids with relevance over 1.
     @classmethod
     def load_qrels(cls, path: str) -> DefaultDict[str, Set[str]]:
         qrels = defaultdict(set)
@@ -40,9 +37,6 @@ class MsMarcoDataset(BaseModel):
                     qrels[qid].add(doc_id)
         return qrels
 
-    # Load a run from the provided path.  The run file contains mappings from
-    # a query id and a doc title to a rank.  load_run returns a dictionary 
-    # mapping query ids to lists of doc titles sorted by ascending rank.
     @classmethod
     def load_run(cls, path: str):
         '''Returns OrderedDict[str, List[str]]'''

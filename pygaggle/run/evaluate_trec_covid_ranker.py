@@ -23,12 +23,12 @@ from pygaggle.model import (SimpleBatchTokenizer,
                             T5BatchTokenizer,
                             RerankerEvaluator,
                             metric_names,
-                            MsMarcoWriter)
-from pygaggle.data import MsMarcoDataset
-from pygaggle.settings import MsMarcoSettings
+                            TRECCovidWriter)
+from pygaggle.data import TRECCovidDataset
+from pygaggle.settings import TRECCovidSettings
 
 
-SETTINGS = MsMarcoSettings()
+SETTINGS = TRECCovidSettings()
 METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer',
                   'random')
 
@@ -53,7 +53,7 @@ class DocumentRankingEvaluationOptions(BaseModel):
 
     @validator('task')
     def task_exists(cls, v: str):
-        assert v in ['msmarco']
+        assert v in ['trec_covid']
 
     @validator('dataset')
     def dataset_exists(cls, v: Path):
@@ -151,7 +151,7 @@ def main():
     args = apb.parser.parse_args()
     options = DocumentRankingEvaluationOptions(**vars(args))
     logging.info("Preprocessing Queries & Docs:")
-    ds = MsMarcoDataset.from_folder(str(options.dataset), split=options.split,
+    ds = TRECCovidDataset.from_folder(str(options.dataset), split=options.split,
                                     is_duo=options.is_duo)
     examples = ds.to_relevance_examples(str(options.index_dir),
                                         is_duo=options.is_duo)
@@ -161,8 +161,9 @@ def main():
                          t5=construct_t5,
                          seq_class_transformer=construct_seq_class_transformer,
                          random=lambda _: RandomReranker())
+    # Retrieve the correct reranker from the options map based on the input flag.
     reranker = construct_map[options.method](options)
-    writer = MsMarcoWriter(args.output_file, args.overwrite_output)
+    writer = TRECCovidWriter(args.output_file, args.overwrite_output)
     evaluator = RerankerEvaluator(reranker, options.metrics, writer=writer)
     width = max(map(len, args.metrics)) + 1
     logging.info("Reranking:")
@@ -171,6 +172,7 @@ def main():
                                                  options.seg_stride,
                                                  options.aggregate_method):
         logging.info(f'{metric.name:<{width}}{metric.value:.5}')
+
 
 if __name__ == '__main__':
     main()
