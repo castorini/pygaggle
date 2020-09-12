@@ -31,19 +31,9 @@ class MsMarcoWriter(Writer):
         for ct, (doc, score) in enumerate(doc_scores):
             self.write_line(f"{example.query.id}\t{doc.metadata['docid']}\t{ct+1}")
 
-<<<<<<< HEAD
-class TRECCovidWriter(Writer):
-    def write(self, scores: List[float], example: RelevanceExample):
-        doc_scores = sorted(list(zip(example.documents, scores)),
-                    key=lambda x: x[1], reverse=True)
-        for ct, (doc, score) in enumerate(doc_scores):
-            self.write_line(f"{example.query.id}\t{doc.metadata['docid']}\t{ct+1}")
-=======
-
 class TrecWriter(Writer):
     def write(self, scores: List[float], example: RelevanceExample):
         doc_scores = sorted(list(zip(example.documents, scores)),
                             key=lambda x: x[1], reverse=True)
         for ct, (doc, score) in enumerate(doc_scores):
             self.write_line(f"{example.query.id}\tQ0\t{doc.metadata['docid']}\t{ct+1}\t{score}\t{self.tag}")
->>>>>>> a258c13bb9f5abb2a0740ff4fbfe4e98d6d3093b
