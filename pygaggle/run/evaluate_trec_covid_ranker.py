@@ -32,7 +32,6 @@ SETTINGS = TRECCovidSettings()
 METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer',
                   'random')
 
-
 class DocumentRankingEvaluationOptions(BaseModel):
     task: str
     dataset: Path

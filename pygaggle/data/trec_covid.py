@@ -9,7 +9,7 @@ import scipy.special as sp
 import numpy as np
 from tqdm import tqdm
 
-from .relevance import RelevanceExample, MsMarcoPassageLoader
+from .relevance import RelevanceExample, Cord19DocumentLoader
 from pygaggle.rerank.base import Query, Text
 from pygaggle.data.unicode import convert_to_unicode
 
@@ -25,13 +25,14 @@ class TRECCovidExample(BaseModel):
 
 
 class TRECCovidDataset(BaseModel):
-    examples: List[MsMarcoExample]
+    examples: List[TRECCovidExample]
 
+    # Returns a set mapping qrels 
     @classmethod
     def load_qrels(cls, path: str) -> DefaultDict[str, Set[str]]:
         qrels = defaultdict(set)
         with open(path) as f:
-            for i, line in enumerate(f):
+            for _, line in enumerate(f):
                 qid, _, doc_id, relevance = line.rstrip().split('\t')
                 if int(relevance) >= 1:
                     qrels[qid].add(doc_id)
@@ -42,8 +43,10 @@ class TRECCovidDataset(BaseModel):
         '''Returns OrderedDict[str, List[str]]'''
         run = OrderedDict()
         with open(path) as f:
-            for i, line in enumerate(f):
-                qid, doc_title, rank = line.split('\t')
+            for _, line in enumerate(f):
+                # Line is of the format {qid}, QO, {docid}, {rank}, {score},
+                # {tag}.
+                qid, _, doc_title, rank, score, _ = line.split(' ')
                 if qid not in run:
                     run[qid] = []
                 run[qid].append((doc_title, int(rank)))
@@ -54,16 +57,17 @@ class TRECCovidDataset(BaseModel):
             sorted_run[qid] = doc_titles
         return sorted_run
 
+    # TODO(justinborromeo)
     @classmethod
     def load_queries(cls,
                      path: str,
                      qrels: DefaultDict[str, Set[str]],
-                     run) -> List[MsMarcoExample]:
+                     run) -> List[TRECCovidExample]:
         queries = []
         with open(path) as f:
-            for i, line in enumerate(f):
+            for _, line in enumerate(f):
                 qid, query = line.rstrip().split('\t')
-                queries.append(MsMarcoExample(qid=qid,
+                queries.append(TRECCovidExample(qid=qid,
                                               text=query,
                                               candidates=run[qid],
                                               relevant_candidates=qrels[qid]))
@@ -73,7 +77,7 @@ class TRECCovidDataset(BaseModel):
     def from_folder(cls,
                     folder: str,
                     split: str = 'dev',
-                    is_duo: bool = False) -> 'MsMarcoDataset':
+                    is_duo: bool = False) -> 'TRECCovidDataset':
         run_mono = "mono." if is_duo else ""
         query_path = os.path.join(folder, f"queries.{split}.small.tsv")
         qrels_path = os.path.join(folder, f"qrels.{split}.small.tsv")
@@ -82,15 +86,17 @@ class TRECCovidDataset(BaseModel):
                                              cls.load_qrels(qrels_path),
                                              cls.load_run(run_path)))
 
+     # TODO(justinborromeo) What is this?
     def query_passage_tuples(self, is_duo: bool = False):
         return [((ex.qid, ex.text, ex.relevant_candidates), perm_pas)
                 for ex in self.examples
                 for perm_pas in permutations(ex.candidates, r=1+int(is_duo))]
 
+     # TODO(justinborromeo)
     def to_relevance_examples(self,
                               index_path: str,
                               is_duo: bool = False) -> List[RelevanceExample]:
-        loader = MsMarcoPassageLoader(index_path)
+        loader = Cord19DocumentLoader(index_path)
         example_map = {}
         for (qid, text, rel_cands), cands in tqdm(self.query_passage_tuples()):
             if qid not in example_map:
