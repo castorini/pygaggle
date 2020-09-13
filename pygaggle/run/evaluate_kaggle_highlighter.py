@@ -16,8 +16,8 @@ from pygaggle.rerank.base import Reranker
 from pygaggle.rerank.bm25 import Bm25Reranker
 from pygaggle.rerank.transformer import (
     QuestionAnsweringTransformerReranker,
-    SequenceClassificationTransformerReranker,
-    T5Reranker,
+    MonoBERT,
+    MonoT5,
     UnsupervisedTransformerReranker
     )
 from pygaggle.rerank.random import RandomReranker
@@ -82,7 +82,7 @@ def construct_t5(options: KaggleEvaluationOptions) -> Reranker:
     tokenizer = AutoTokenizer.from_pretrained(
                     options.model_name, do_lower_case=options.do_lower_case)
     tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
-    return T5Reranker(model, tokenizer)
+    return MonoT5(model, tokenizer)
 
 
 def construct_transformer(options: KaggleEvaluationOptions) -> Reranker:
@@ -124,7 +124,7 @@ def construct_seq_class_transformer(options:
     model = model.to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(
                     options.tokenizer_name, do_lower_case=options.do_lower_case)
-    return SequenceClassificationTransformerReranker(model, tokenizer)
+    return MonoBERT(model, tokenizer)
 
 
 def construct_qa_transformer(options: KaggleEvaluationOptions) -> Reranker:
