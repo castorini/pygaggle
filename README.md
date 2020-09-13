@@ -54,7 +54,7 @@ tokenizer_name = 'bert-large-uncased'
 reranker =  MonoBERT(model_name, tokenizer_name)
 ```
 
-Either way, continue with a complere reranking example:
+Either way, continue with a complete reranking example:
 
 ```python
 # Here's our query:
