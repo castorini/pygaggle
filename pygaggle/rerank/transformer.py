@@ -19,15 +19,15 @@ from pygaggle.model import (BatchTokenizer,
                             greedy_decode)
 
 
-__all__ = ['monoT5',
+__all__ = ['MonoT5',
            'UnsupervisedTransformerReranker',
-           'monoBERT',
+           'MonoBERT',
            'QuestionAnsweringTransformerReranker']
 
 
-class monoT5(Reranker):
+class MonoT5(Reranker):
     def __init__(self,
-                 model_name_or_instance: Union[str, T5ForConditionalGeneration] = 'castorini/monot5-base-msmarco',
+                 model_name_or_instance: Union[str, T5ForConditionalGeneration] = 'castorini/monoT5-base-msmarco',
                  tokenizer_name_or_instance: Union[str, QueryDocumentBatchTokenizer] = 't5-base'):
         if isinstance(model_name_or_instance, str):
             device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -107,9 +107,9 @@ class UnsupervisedTransformerReranker(Reranker):
         return texts
 
 
-class monoBERT(Reranker):
+class MonoBERT(Reranker):
     def __init__(self,
-                 model_name_or_instance: Union[str, PreTrainedModel] = 'castorini/monobert-large-msmarco',
+                 model_name_or_instance: Union[str, PreTrainedModel] = 'castorini/monoBERT-large-msmarco',
                  tokenizer_name_or_instance: Union[str, PreTrainedTokenizer] = 'bert-large-uncased'):
         if isinstance(model_name_or_instance, str):
             device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
