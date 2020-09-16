@@ -4,7 +4,7 @@ import abc
 
 from pygaggle.data.relevance import RelevanceExample
 
-__all__ = ['Writer', 'MsMarcoWriter', 'TRECCovidWriter']
+__all__ = ['Writer', 'MsMarcoWriter', 'TrecWriter']
 
 
 class Writer:

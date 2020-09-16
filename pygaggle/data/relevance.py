@@ -9,7 +9,7 @@ from pyserini.search import SimpleSearcher
 from pygaggle.rerank.base import Query, Text
 
 
-__all__ = ['RelevanceExample', 'Cord19DocumentLoader']
+__all__ = ['RelevanceExample', 'Cord19DocumentLoader', 'Cord19AbstractLoader']
 
 
 @dataclass
@@ -28,6 +28,14 @@ class Cord19Document:
     @property
     def all_text(self):
         return '\n'.join((self.abstract, self.body_text, self.ref_entries))
+
+@dataclass
+class Cord19Abstract:
+    title: str
+    abstract: str
+
+    def all_text(self):
+        return '\n'.join((self.title, self.abstract))
 
 
 @dataclass
@@ -60,6 +68,25 @@ class Cord19DocumentLoader:
         return Cord19Document(unfold(article['body_text']),
                               unfold(ref_entries),
                               abstract=unfold(article['abstract']) if 'abstract' in article else '')
+
+
+class Cord19AbstractLoader:
+    double_space_pattern = re.compile(r'\s\s+')
+
+    def __init__(self, index_path: str):
+        self.searcher = SimpleSearcher(index_path)
+
+    @lru_cache(maxsize=1024)
+    def load_document(self, id: str) -> Cord19Document:
+        try:
+            article = json.loads(
+                self.searcher.doc(id).lucene_document().get('raw'))
+        except json.decoder.JSONDecodeError:
+            raise ValueError('article not found')
+        except AttributeError:
+            raise ValueError('document unretrievable')
+        return Cord19Abstract(article['csv_metadata']['title'],
+                              abstract=article['csv_metadata']['abstract'] if 'abstract' in article else '')
 
 
 class MsMarcoPassageLoader:

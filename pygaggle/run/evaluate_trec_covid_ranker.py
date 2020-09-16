@@ -23,7 +23,7 @@ from pygaggle.model import (SimpleBatchTokenizer,
                             T5BatchTokenizer,
                             RerankerEvaluator,
                             metric_names,
-                            TRECCovidWriter)
+                            TrecWriter)
 from pygaggle.data import TRECCovidDataset
 from pygaggle.settings import TRECCovidSettings
 
@@ -52,7 +52,7 @@ class DocumentRankingEvaluationOptions(BaseModel):
 
     @validator('task')
     def task_exists(cls, v: str):
-        assert v in ['trec_covid']
+        assert v in ['trec-covid']
 
     @validator('dataset')
     def dataset_exists(cls, v: Path):
@@ -116,7 +116,7 @@ def main():
     apb = ArgumentParserBuilder()
     apb.add_opts(opt('--task',
                      type=str,
-                     default='msmarco'),
+                     default='trec-covid'),
                  opt('--dataset', type=Path, required=True),
                  opt('--index-dir', type=Path, required=True),
                  opt('--method',
@@ -150,10 +150,8 @@ def main():
     args = apb.parser.parse_args()
     options = DocumentRankingEvaluationOptions(**vars(args))
     logging.info("Preprocessing Queries & Docs:")
-    ds = TRECCovidDataset.from_folder(str(options.dataset), split=options.split,
-                                    is_duo=options.is_duo)
-    examples = ds.to_relevance_examples(str(options.index_dir),
-                                        is_duo=options.is_duo)
+    ds = TRECCovidDataset.from_folder(str(options.dataset))
+    examples = ds.to_relevance_examples(str(options.index_dir))
     logging.info("Loading Ranker & Tokenizer:")
     construct_map = dict(transformer=construct_transformer,
                          bm25=construct_bm25,
@@ -162,7 +160,7 @@ def main():
                          random=lambda _: RandomReranker())
     # Retrieve the correct reranker from the options map based on the input flag.
     reranker = construct_map[options.method](options)
-    writer = TRECCovidWriter(args.output_file, args.overwrite_output)
+    writer = TrecWriter(args.output_file, args.overwrite_output)
     evaluator = RerankerEvaluator(reranker, options.metrics, writer=writer)
     width = max(map(len, args.metrics)) + 1
     logging.info("Reranking:")
