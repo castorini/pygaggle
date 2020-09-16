@@ -81,6 +81,7 @@ class Cord19AbstractLoader:
         try:
             article = json.loads(
                 self.searcher.doc(id).lucene_document().get('raw'))
+            print(article)
         except json.decoder.JSONDecodeError:
             raise ValueError('article not found')
         except AttributeError:

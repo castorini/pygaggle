@@ -68,6 +68,8 @@ class TRECCovidDataset(BaseModel):
         for topic in query_xml_tree.getroot():
             qid = topic.attrib["number"]
             query = topic.find("query").text
+            print("Candidates: " + str(len(run[qid])))
+            print("Relevant Candidates: " + str(len(qrels[qid])))
             queries.append(
                 TRECCovidExample(
                     qid=qid,
@@ -139,6 +141,8 @@ class TRECCovidDataset(BaseModel):
             mean_stats['Existing MRR@10'].append(1 / (ex_index + 1) if ex_index < 10 else 0)
         for k, v in mean_stats.items():
             logging.info(f'{k}: {np.mean(v)}')
+        for qid, (query_text, cands, cands_text, rel_cands) in example_map.items():
+            print("asdf " + str(len(cands)))
         rel = [RelevanceExample(Query(text=query_text, id=qid),
                                  list(map(lambda s: Text(s[1], dict(docid=s[0])),
                                           zip(cands, cands_text))),

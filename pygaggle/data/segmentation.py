@@ -51,7 +51,7 @@ class SegmentProcessor:
         docs = deepcopy(documents)
         for i in range(len(docs)):
             doc_start_idx = segments_group.doc_end_indexes[i]
-            # Bandaid
+            # TODO(justinborromeo) Get rid of this bandaid
             if i + 1 >= len(segments_group.doc_end_indexes):
                 continue
             doc_end_idx = segments_group.doc_end_indexes[i+1]
