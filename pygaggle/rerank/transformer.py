@@ -29,18 +29,24 @@ class MonoT5(Reranker):
     def __init__(self,
                  model: T5ForConditionalGeneration = None,
                  tokenizer: QueryDocumentBatchTokenizer = None):
-        self.model = model or self.get_model('castorini/monot5-base-msmarco')
-        self.tokenizer = tokenizer or self.get_tokenizer('t5-base')
+        self.model = model or self.get_model()
+        self.tokenizer = tokenizer or self.get_tokenizer()
         self.device = next(self.model.parameters(), None).device
 
     @staticmethod
-    def get_model(*args, device: str = None, **kwargs) -> T5ForConditionalGeneration:
+    def get_model(pretrained_model_name_or_path: str = 'castorini/monot5-base-msmarco',
+                  *args, device: str = None, **kwargs) -> T5ForConditionalGeneration:
         device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
-        return T5ForConditionalGeneration.from_pretrained(*args, **kwargs).to(torch.device(device)).eval()
+        device = torch.device(device)
+        return T5ForConditionalGeneration.from_pretrained(pretrained_model_name_or_path, *args, **kwargs).to(device).eval()
 
     @staticmethod
-    def get_tokenizer(*args, batch_size: int = 8, **kwargs) -> T5BatchTokenizer:
-        return T5BatchTokenizer(AutoTokenizer.from_pretrained(*args, **kwargs), batch_size=batch_size)
+    def get_tokenizer(pretrained_model_name_or_path: str = 't5-base',
+                      *args, batch_size: int = 8, **kwargs) -> T5BatchTokenizer:
+        return T5BatchTokenizer(
+            AutoTokenizer.from_pretrained(pretrained_model_name_or_path, *args, **kwargs),
+            batch_size=batch_size
+        )
 
     def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
         texts = deepcopy(texts)
@@ -113,18 +119,21 @@ class MonoBERT(Reranker):
     def __init__(self,
                  model: PreTrainedModel = None,
                  tokenizer: PreTrainedTokenizer = None):
-        self.model = model or self.get_model('castorini/monobert-large-msmarco')
-        self.tokenizer = tokenizer or self.get_tokenizer('bert-large-uncased')
+        self.model = model or self.get_model()
+        self.tokenizer = tokenizer or self.get_tokenizer()
         self.device = next(self.model.parameters(), None).device
 
     @staticmethod
-    def get_model(*args, device: str = None, **kwargs) -> AutoModelForSequenceClassification:
+    def get_model(pretrained_model_name_or_path: str = 'castorini/monobert-large-msmarco',
+                  *args, device: str = None, **kwargs) -> AutoModelForSequenceClassification:
         device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
-        return AutoModelForSequenceClassification.from_pretrained(*args, **kwargs).to(torch.device(device)).eval()
+        device = torch.device(device)
+        return AutoModelForSequenceClassification.from_pretrained(pretrained_model_name_or_path, *args, **kwargs).to(device).eval()
 
     @staticmethod
-    def get_tokenizer(*args, **kwargs) -> AutoTokenizer:
-        return AutoTokenizer.from_pretrained(*args, **kwargs)
+    def get_tokenizer(pretrained_model_name_or_path: str = 'bert-large-uncased',
+                      *args, **kwargs) -> AutoTokenizer:
+        return AutoTokenizer.from_pretrained(pretrained_model_name_or_path, *args, **kwargs)
 
     @torch.no_grad()
     def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
