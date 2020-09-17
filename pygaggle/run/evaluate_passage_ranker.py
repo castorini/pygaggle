@@ -78,11 +78,10 @@ class PassageRankingEvaluationOptions(BaseModel):
 
 
 def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
-    device = torch.device(options.device)
-    model = T5ForConditionalGeneration.from_pretrained(options.model,
-                                                       from_tf=options.from_tf).to(device).eval()
-    tokenizer = AutoTokenizer.from_pretrained(options.model_type)
-    tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
+    model = MonoT5.get_model(options.model,
+                             from_tf=options.from_tf,
+                             device=options.device)
+    tokenizer = MonoT5.get_tokenizer(options.model_type, batch_size=options.batch_size)
     return MonoT5(model, tokenizer)
 
 
@@ -101,8 +100,8 @@ def construct_transformer(options:
 def construct_seq_class_transformer(options: PassageRankingEvaluationOptions
                                     ) -> Reranker:
     try:
-        model = AutoModelForSequenceClassification.from_pretrained(
-            options.model, from_tf=options.from_tf)
+        model = MonoBERT.get_model(
+            options.model, from_tf=options.from_tf, device=options.device)
     except AttributeError:
         # Hotfix for BioBERT MS MARCO. Refactor.
         BertForSequenceClassification.bias = torch.nn.Parameter(
@@ -113,9 +112,9 @@ def construct_seq_class_transformer(options: PassageRankingEvaluationOptions
             options.model, from_tf=options.from_tf)
         model.classifier.weight = BertForSequenceClassification.weight
         model.classifier.bias = BertForSequenceClassification.bias
-    device = torch.device(options.device)
-    model = model.to(device).eval()
-    tokenizer = AutoTokenizer.from_pretrained(options.tokenizer_name)
+        device = torch.device(options.device)
+        model = model.to(device).eval()
+    tokenizer = MonoBERT.get_tokenizer(options.tokenizer_name)
     return MonoBERT(model, tokenizer)
 
 

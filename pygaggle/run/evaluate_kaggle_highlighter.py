@@ -79,9 +79,9 @@ def construct_t5(options: KaggleEvaluationOptions) -> Reranker:
                                  SETTINGS.flush_cache)
     device = torch.device(options.device)
     model = loader.load().to(device).eval()
-    tokenizer = AutoTokenizer.from_pretrained(
-                    options.model_name, do_lower_case=options.do_lower_case)
-    tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
+    tokenizer = MonoT5.get_tokenizer(options.model_type, 
+                                     do_lower_case=options.do_lower_case, 
+                                     batch_size=options.batch_size)
     return MonoT5(model, tokenizer)
 
 
@@ -103,13 +103,13 @@ def construct_transformer(options: KaggleEvaluationOptions) -> Reranker:
 def construct_seq_class_transformer(options:
                                     KaggleEvaluationOptions) -> Reranker:
     try:
-        model = AutoModelForSequenceClassification.from_pretrained(
-                    options.model_name)
+        model = MonoBERT.get_model(options.model_name, device=options.device)
     except OSError:
         try:
-            model = AutoModelForSequenceClassification.from_pretrained(
+            model = MonoBERT.get_model(
                         options.model_name,
-                        from_tf=True)
+                        from_tf=True,
+                        device=options.device)
         except AttributeError:
             # Hotfix for BioBERT MS MARCO. Refactor.
             BertForSequenceClassification.bias = torch.nn.Parameter(
@@ -120,9 +120,9 @@ def construct_seq_class_transformer(options:
                         options.model_name, from_tf=True)
             model.classifier.weight = BertForSequenceClassification.weight
             model.classifier.bias = BertForSequenceClassification.bias
-    device = torch.device(options.device)
-    model = model.to(device).eval()
-    tokenizer = AutoTokenizer.from_pretrained(
+            device = torch.device(options.device)
+            model = model.to(device).eval()
+    tokenizer = MonoBERT.get_tokenizer(
                     options.tokenizer_name, do_lower_case=options.do_lower_case)
     return MonoBERT(model, tokenizer)
 
