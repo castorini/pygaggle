@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import List, Union
+from typing import List
 
 from transformers import (AutoTokenizer,
                           AutoModelForSequenceClassification,
