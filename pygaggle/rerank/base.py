@@ -45,6 +45,7 @@ class Text:
 
     def __init__(self,
                  text: str,
+                 title: str,
                  metadata: Mapping[str, Any] = None,
                  score: Optional[float] = 0):
         self.text = text
@@ -52,6 +53,7 @@ class Text:
             metadata = dict()
         self.metadata = metadata
         self.score = score
+        self.title = title
 
 
 class Reranker:

@@ -98,13 +98,16 @@ class TRECCovidDataset(BaseModel):
         example_map = {}
         for (qid, text, rel_cands), cands in tqdm(self.query_document_tuples()):
             if qid not in example_map:
-                example_map[qid] = [convert_to_unicode(text), [], [], []]
+                example_map[qid] = [convert_to_unicode(text), [], [], [], []]
             example_map[qid][1].append([cand for cand in cands][0])
             try:
                 passages = [loader.load_document(cand) for cand in cands]
                 # Sometimes this abstract is empty.
                 example_map[qid][2].append(
                     [convert_to_unicode(passage.abstract)
+                     for passage in passages][0])
+                example_map[qid][4].append(
+                    [convert_to_unicode(passage.title)
                      for passage in passages][0])
             except ValueError as e:
                 logging.error(e)
@@ -141,7 +144,7 @@ class TRECCovidDataset(BaseModel):
         for k, v in mean_stats.items():
             logging.info(f'{k}: {np.mean(v)}')
         rel = [RelevanceExample(Query(text=query_text, id=qid),
-                                 list(map(lambda s: Text(s[1], dict(docid=s[0])),
-                                          zip(cands, cands_text))),
-                                 rel_cands) for qid, (query_text, cands, cands_text, rel_cands) in example_map.items()]
+                                list(map(lambda s: Text(s[1], s[2], dict(docid=s[0])), 
+                                          zip(cands, cands_text, title))),
+                                rel_cands) for qid, (query_text, cands, cands_text, rel_cands, title) in example_map.items()]
         return rel

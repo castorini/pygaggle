@@ -63,7 +63,7 @@ class Cord19DocumentLoader:
                 self.searcher.doc(id).lucene_document().get('raw'))
         except json.decoder.JSONDecodeError:
             raise ValueError('article not found')
-        except AttributeError as e:
+        except AttributeError:
             raise ValueError('document unretrievable')
         ref_entries = article['ref_entries'].values()
         return Cord19Document(unfold(article['body_text']),

@@ -38,6 +38,7 @@ class SegmentProcessor:
             sentences = [sent.string.strip() for sent in doc.sents]
             for i in range(0, len(sentences), stride):
                 segment_text = ' '.join(sentences[i:i + seg_size])
+                segment_text = document.title + '. ' + segment_text
                 segmented_doc.append(Text(segment_text, dict(docid=document.metadata["docid"])))
                 if i + seg_size >= len(sentences):
                     end_idx += i/stride + 1

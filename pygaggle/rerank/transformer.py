@@ -5,7 +5,7 @@ from transformers import (PreTrainedModel,
                           PreTrainedTokenizer,
                           T5ForConditionalGeneration)
 import torch
-
+import logging
 from .base import Reranker, Query, Text
 from .similarity import SimilarityMatrixProvider
 from pygaggle.model import (BatchTokenizer,
@@ -48,6 +48,11 @@ class T5Reranker(Reranker):
             batch_log_probs = batch_scores[:, 1].tolist()
             for doc, score in zip(batch.documents, batch_log_probs):
                 doc.score = score
+        if int(query.id) == 1:
+            print('********')
+            for text in texts:
+                logging.warning(text.metadata)
+                logging.warning(text.score)
         return texts
 
 
