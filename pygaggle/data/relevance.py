@@ -3,6 +3,7 @@ from functools import lru_cache
 from typing import List, Optional
 import json
 import re
+import logging
 
 from pyserini.search import SimpleSearcher
 
@@ -62,7 +63,7 @@ class Cord19DocumentLoader:
                 self.searcher.doc(id).lucene_document().get('raw'))
         except json.decoder.JSONDecodeError:
             raise ValueError('article not found')
-        except AttributeError:
+        except AttributeError as e:
             raise ValueError('document unretrievable')
         ref_entries = article['ref_entries'].values()
         return Cord19Document(unfold(article['body_text']),
@@ -81,10 +82,10 @@ class Cord19AbstractLoader:
         try:
             article = json.loads(
                 self.searcher.doc(id).lucene_document().get('raw'))
-            print(article)
         except json.decoder.JSONDecodeError:
             raise ValueError('article not found')
-        except AttributeError:
+        except AttributeError as e:
+            logging.error(e)
             raise ValueError('document unretrievable')
         return Cord19Abstract(article['csv_metadata']['title'],
                               abstract=article['csv_metadata']['abstract'] if 'abstract' in article else '')

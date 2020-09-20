@@ -68,8 +68,6 @@ class TRECCovidDataset(BaseModel):
         for topic in query_xml_tree.getroot():
             qid = topic.attrib["number"]
             query = topic.find("query").text
-            print("Candidates: " + str(len(run[qid])))
-            print("Relevant Candidates: " + str(len(qrels[qid])))
             queries.append(
                 TRECCovidExample(
                     qid=qid,
@@ -89,9 +87,10 @@ class TRECCovidDataset(BaseModel):
                                              cls.load_run(run_path)))
 
     def query_document_tuples(self):
-        return [((ex.qid, ex.text, ex.relevant_candidates), ex.candidates)
-                for ex in self.examples]
-                # for perm_pas in permutations(ex.candidates, r=1)
+        return [((ex.qid, ex.text, ex.relevant_candidates), perm_pas)
+                for ex in self.examples 
+                for perm_pas in permutations(ex.candidates, r=1)]
+                # 
 
     def to_relevance_examples(self,
                               index_path: str) -> List[RelevanceExample]:
@@ -141,8 +140,6 @@ class TRECCovidDataset(BaseModel):
             mean_stats['Existing MRR@10'].append(1 / (ex_index + 1) if ex_index < 10 else 0)
         for k, v in mean_stats.items():
             logging.info(f'{k}: {np.mean(v)}')
-        for qid, (query_text, cands, cands_text, rel_cands) in example_map.items():
-            print("asdf " + str(len(cands)))
         rel = [RelevanceExample(Query(text=query_text, id=qid),
                                  list(map(lambda s: Text(s[1], dict(docid=s[0])),
                                           zip(cands, cands_text))),

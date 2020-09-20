@@ -34,7 +34,6 @@ class SegmentProcessor:
         segmented_doc, doc_end_indexes, end_idx = [], [0], 0
 
         for document in documents:
-            print("Text: " + document.text)
             doc = self.nlp(document.text[:self.max_characters])
             sentences = [sent.string.strip() for sent in doc.sents]
             for i in range(0, len(sentences), stride):
@@ -44,16 +43,15 @@ class SegmentProcessor:
                     end_idx += i/stride + 1
                     doc_end_indexes.append(int(end_idx))
                     break
-        print("Segmented doc: " + str(segmented_doc))
         return SegmentGroup(segmented_doc, doc_end_indexes)
 
     def aggregate(self, documents: List[Text], segments_group: SegmentGroup, method: str = "max") -> List[Text]:
         docs = deepcopy(documents)
         for i in range(len(docs)):
-            doc_start_idx = segments_group.doc_end_indexes[i]
             # TODO(justinborromeo) Get rid of this bandaid
-            if i + 1 >= len(segments_group.doc_end_indexes):
+            if i + 1 >= len(segments_group.doc_end_indexes) or i >= len(segments_group.doc_end_indexes):
                 continue
+            doc_start_idx = segments_group.doc_end_indexes[i]
             doc_end_idx = segments_group.doc_end_indexes[i+1]
             target_scores = [seg.score for seg in segments_group.segments[doc_start_idx: doc_end_idx]]
             docs[i].score = self.aggregate_methods[method](target_scores)
