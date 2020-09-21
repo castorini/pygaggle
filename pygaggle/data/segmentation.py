@@ -32,26 +32,28 @@ class SegmentProcessor:
 
     def segment(self, documents: List[Text], seg_size: int, stride: int) -> SegmentGroup:
         segmented_doc, doc_end_indexes, end_idx = [], [0], 0
-
         for document in documents:
             doc = self.nlp(document.text[:self.max_characters])
             sentences = [sent.string.strip() for sent in doc.sents]
-            for i in range(0, len(sentences), stride):
-                segment_text = ' '.join(sentences[i:i + seg_size])
-                segment_text = document.title + '. ' + segment_text
+            if len(sentences) == 0: # Text is empty
+                segment_text = document.title + '. '
                 segmented_doc.append(Text(segment_text, dict(docid=document.metadata["docid"])))
-                if i + seg_size >= len(sentences):
-                    end_idx += i/stride + 1
-                    doc_end_indexes.append(int(end_idx))
-                    break
+                end_idx += 1
+                doc_end_indexes.append(int(end_idx))
+            else:
+                for i in range(0, len(sentences), stride):
+                    segment_text = ' '.join(sentences[i:i + seg_size])
+                    segment_text = document.title + '. ' + segment_text
+                    segmented_doc.append(Text(segment_text, dict(docid=document.metadata["docid"])))
+                    if i + seg_size >= len(sentences):
+                        end_idx += i/stride + 1
+                        doc_end_indexes.append(int(end_idx))
+                        break
         return SegmentGroup(segmented_doc, doc_end_indexes)
 
     def aggregate(self, documents: List[Text], segments_group: SegmentGroup, method: str = "max") -> List[Text]:
         docs = deepcopy(documents)
         for i in range(len(docs)):
-            # TODO(justinborromeo) Get rid of this bandaid
-            if i + 1 >= len(segments_group.doc_end_indexes) or i >= len(segments_group.doc_end_indexes):
-                continue
             doc_start_idx = segments_group.doc_end_indexes[i]
             doc_end_idx = segments_group.doc_end_indexes[i+1]
             target_scores = [seg.score for seg in segments_group.segments[doc_start_idx: doc_end_idx]]

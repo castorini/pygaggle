@@ -48,11 +48,6 @@ class T5Reranker(Reranker):
             batch_log_probs = batch_scores[:, 1].tolist()
             for doc, score in zip(batch.documents, batch_log_probs):
                 doc.score = score
-        if int(query.id) == 1:
-            print('********')
-            for text in texts:
-                logging.warning(text.metadata)
-                logging.warning(text.score)
         return texts
 
 
