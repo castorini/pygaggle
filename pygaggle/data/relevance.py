@@ -3,15 +3,12 @@ from functools import lru_cache
 from typing import List, Optional
 import json
 import re
-import logging
 
 from pyserini.search import SimpleSearcher
 
 from pygaggle.rerank.base import Query, Text
 
-
 __all__ = ['RelevanceExample', 'Cord19DocumentLoader', 'Cord19AbstractLoader']
-
 
 @dataclass
 class RelevanceExample:

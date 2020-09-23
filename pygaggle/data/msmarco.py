@@ -140,7 +140,7 @@ class MsMarcoDataset(BaseModel):
         for k, v in mean_stats.items():
             logging.info(f'{k}: {np.mean(v)}')
         return [RelevanceExample(Query(text=query_text, id=qid),
-                                 list(map(lambda s: Text(s[1], dict(docid=s[0])),
+                                 list(map(lambda s: Text(s[1], '', dict(docid=s[0])),
                                           zip(cands, cands_text))),
                                  rel_cands)
                 for qid, (query_text, cands, cands_text, rel_cands) in example_map.items()]

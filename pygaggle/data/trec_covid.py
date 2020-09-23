@@ -90,7 +90,6 @@ class TRECCovidDataset(BaseModel):
         return [((ex.qid, ex.text, ex.relevant_candidates), perm_pas)
                 for ex in self.examples 
                 for perm_pas in permutations(ex.candidates, r=1)]
-                # 
 
     def to_relevance_examples(self,
                               index_path: str) -> List[RelevanceExample]:
