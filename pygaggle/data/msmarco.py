@@ -34,7 +34,7 @@ class MsMarcoDataset(BaseModel):
     def load_qrels(cls, path: str) -> DefaultDict[str, Set[str]]:
         qrels = defaultdict(set)
         with open(path) as f:
-            for _, line in enumerate(f):
+            for line in f:
                 qid, _, doc_id, relevance = line.rstrip().split('\t')
                 if int(relevance) >= 1:
                     qrels[qid].add(doc_id)
