@@ -67,7 +67,7 @@ class MsMarcoDataset(BaseModel):
                      run) -> List[MsMarcoExample]:
         queries = []
         with open(path) as f:
-            for _, line in enumerate(f):
+            for line in f:
                 qid, query = line.rstrip().split('\t')
                 queries.append(MsMarcoExample(qid=qid,
                                               text=query,
