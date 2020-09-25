@@ -20,7 +20,10 @@ class SegmentGroup:
 
 
 class SegmentProcessor:
-
+    """
+    The SegmentProcessor class is responsible for segmenting documents and aggregating the scores of segments from
+    the same document.
+    """
     def __init__(self, max_characters=10000000):
         self.nlp = spacy.blank("en")
         self.nlp.add_pipe(self.nlp.create_pipe("sentencizer"))
@@ -31,13 +34,26 @@ class SegmentProcessor:
         }
 
     def segment(self, documents: List[Text], seg_size: int, stride: int) -> SegmentGroup:
-        segmented_doc, doc_end_indexes, end_idx = [], [0], 0
+        """
+        Breaks each document into segments.  For example, given a document with sentences [1,2,3,4,5], a seg_size of 3,
+        and a stride of 2, the document will be broken into segments [[1, 2, 3], [3, 4, 5], and [5]].  If the document's
+        text is empty, a single segment containing the document's title is generated.  Otherwise, the document's title
+        is prepended to the document's text.
+
+        :param documents: A list of Text objects, each of which corresponds to an indexed document.
+        :param seg_size: The number of sentences each segment should contain.
+        :param stride: The number of sentences to advance for the next segment.
+        :return: A SegmentGroup containing all the documents' segments and the end index of each document in
+        segmented_docs.
+        """
+        segmented_docs, doc_end_indexes, end_idx = [], [0], 0
         for document in documents:
             doc = self.nlp(document.text[:self.max_characters])
             sentences = [sent.string.strip() for sent in doc.sents]
-            if len(sentences) == 0: # Text is empty
-                segment_text = document.title + '. '
-                segmented_doc.append(Text(segment_text, dict(docid=document.metadata["docid"])))
+            # If the text is empty (i.e. there are no sentences), the segment_text is solely the title of the document.
+            if len(sentences) == 0:
+                segment_text = document.title
+                segmented_docs.append(Text(segment_text, dict(docid=document.metadata["docid"])))
                 end_idx += 1
                 doc_end_indexes.append(int(end_idx))
             else:
@@ -45,14 +61,21 @@ class SegmentProcessor:
                     segment_text = ' '.join(sentences[i:i + seg_size])
                     if not document.title == '':
                         segment_text = document.title + '. ' + segment_text
-                    segmented_doc.append(Text(segment_text, dict(docid=document.metadata["docid"])))
+                    segmented_docs.append(Text(segment_text, dict(docid=document.metadata["docid"])))
                     if i + seg_size >= len(sentences):
                         end_idx += i/stride + 1
                         doc_end_indexes.append(int(end_idx))
                         break
-        return SegmentGroup(segmented_doc, doc_end_indexes)
+        return SegmentGroup(segmented_docs, doc_end_indexes)
 
     def aggregate(self, documents: List[Text], segments_group: SegmentGroup, method: str = "max") -> List[Text]:
+        """
+        Aggregates the scores for each of a document's segments and assigns the aggregated score to the document.
+        :param documents: A list of Text objects, each of which corresponds to an indexed document.
+        :param segments_group: A SegmentGroup containing all the documents' segments and the end index of each document.
+        :param method: The aggregation function to use (default is max).
+        :return: The updated list of documents, including scores.
+        """
         docs = deepcopy(documents)
         for i in range(len(docs)):
             doc_start_idx = segments_group.doc_end_indexes[i]
