@@ -38,7 +38,6 @@ class DocumentRankingEvaluationOptions(BaseModel):
     index_dir: Path
     method: str
     model: str
-    split: str
     batch_size: int
     seg_size: int
     seg_stride: int
