@@ -5,3 +5,4 @@
 from .kaggle import *
 from .relevance import *
 from .msmarco import *
+from .trec_covid import *
