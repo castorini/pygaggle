@@ -92,4 +92,5 @@ The following documents describe how to use Pygaggle on various IR test collecti
 
 + [Experiments on CovidQA](https://github.com/castorini/pygaggle/blob/master/docs/experiments-CovidQA.md)
 + [Experiments on MS MARCO Document Retrieval](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-document.md)
-+ [Experiments on MS MARCO Passage Retrieval](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage.md)
++ [Experiments on MS MARCO Passage Retrieval - Dev Subset](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-subset.md)
++ [Experiments on MS MARCO Passage Retrieval - Entire Dev Set](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-entire.md)

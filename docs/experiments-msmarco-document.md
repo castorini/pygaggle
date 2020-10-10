@@ -1,7 +1,7 @@
 # PyGaggle: Baselines on [MS MARCO Document Retrieval](https://github.com/microsoft/TREC-2019-Deep-Learning)
 
 This page contains instructions for running various neural reranking baselines on the MS MARCO *document* ranking task. 
-Note that there is also a separate [MS MARCO *passage* ranking task](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage.md).
+Note that there is also a separate [MS MARCO *passage* ranking task (dev subset)](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-subset.md) and a separate [MS MARCO *passage* ranking task (entrie dev set)](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-entire.md).
 
 Prior to running this, we suggest looking at our first-stage [BM25 ranking instructions](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-doc.md).
 We rerank the BM25 run files that contain ~1000 documents per query using monoT5.
