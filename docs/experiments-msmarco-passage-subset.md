@@ -1,4 +1,4 @@
-# PyGaggle: Neural Ranking Baselines on [MS MARCO Passage Retrieval](https://github.com/microsoft/MSMARCO-Passage-Ranking)
+# PyGaggle: Neural Ranking Baselines on [MS MARCO Passage Retrieval](https://github.com/microsoft/MSMARCO-Passage-Ranking) - Dev Subset 
 
 This page contains instructions for running various neural reranking baselines on the MS MARCO *passage* ranking task. 
 Note that there is also a separate [MS MARCO *document* ranking task](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-doc.md).
