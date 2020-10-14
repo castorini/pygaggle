@@ -1,13 +1,24 @@
+"""
+This script creates monoT5 input files by taking corpus,
+queries and the retrieval run file for the queries and then
+create files for monoT5 input. Each line in the monoT5 input
+file follows the format:
+    f'Query: {query} Document: {document} Relevant:\n')
+"""
 import collections
 from tqdm import tqdm
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--queries", type=str, required=True)
-parser.add_argument("--run", type=str, required=True)
+parser.add_argument("--queries", type=str, required=True,
+                    help="tsv file with two columns, <query_id> and <query_text>")
+parser.add_argument("--run", type=str, required=True,
+                    help="tsv file with three columns <query_id>, <doc_id> and <rank>")
 parser.add_argument("--corpus", type=str, required=True)
-parser.add_argument("--t5_input", type=str, required=True)
-parser.add_argument("--t5_input_ids", type=str, required=True)
+parser.add_argument("--t5_input", type=str, required=True,
+                    help="path to store t5_input, txt format")
+parser.add_argument("--t5_input_ids", type=str, required=True,
+                    help="path to store the query-doc ids of t5_input, tsv format")
 args = parser.parse_args()
 
 
