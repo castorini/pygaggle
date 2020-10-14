@@ -2,18 +2,18 @@
 
 This page contains instructions for running various monoT5 on the MS MARCO *passage* ranking task. We will run on the entire dev set. 
 
-We will focus on using monoT5-3B to rerank. Since it is difficult to such a large model run without TPU.
+We will focus on using monoT5-3B to rerank, since it is difficult to run such a large model without a TPU.
 - monoT5-3B: Document Ranking with a Pretrained Sequence-to-Sequence Model [(Nogueira et al., 2020)](https://arxiv.org/pdf/2003.06713.pdf)
 
-Note that there ars also separate documents to run MS MARCO ranking tasks on regular GPU. Please see [MS MARCO *document* ranking task](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-doc.md), [MS MARCO *passage* ranking task - Subset](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-passage-subset.md) and [MS MARCO *passage* ranking task - Entire](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-passage-entrie.md).
+Note that there are also separate documents to run MS MARCO ranking tasks on regular GPU. Please see [MS MARCO *document* ranking task](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-doc.md), [MS MARCO *passage* ranking task - Subset](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-passage-subset.md) and [MS MARCO *passage* ranking task - Entire](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-passage-entrie.md).
 
 Prior to running this, we suggest looking at our first-stage [BM25 ranking instructions](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-passage.md).
-We rerank the BM25 run files that contain ~1000 passages per query using both monoBERT and monoT5.
-monoBERT and monoT5 are pointwise rerankers. This means that each document is scored independently using either BERT or T5 respectively.
+We rerank the BM25 run files that contain ~1000 passages per query using monoT5.
+monoT5 is a pointwise reranker. This means that each document is scored independently using T5.
 
 ## Data Prepare
 
-Since we will use some scipts form Pygaggle to process data and evaluate evaluate results, we encourage you to install Pygaggle.
+Since we will use some scripts form Pygaggle to process data and evaluate results, you need to install Pygaggle.
 ```
 git clone --recursive https://github.com/castorini/pygaggle.git
 cd pygaggle
@@ -70,10 +70,10 @@ We will get two output files here:
 - `query_doc_pairs.dev.small.txt`: The query-doc pairs for monoT5 input.
 - `query_doc_pair_ids.dev.small.tsv`: The `query_id`s and `doc_id`s that mapping to the query-doc pairs. We will use this to map monoT5 output scores back to query-doc pairs.
 
-Note that there will be memory issue if the monoT5 input file is larger than 1,000,000 lines. Thus, we will split the input file into multiple files.
+Note that there will be a memory issue if the monoT5 input file is large. Thus, we will split the input file into multiple files.
 
 ```
-split --suffix-length 3 --numeric-suffixes --lines 999900 ${DATA_DIR}/query_doc_pairs.dev.small.txt ${DATA_DIR}/query_doc_pairs.dev.small.txt
+split --suffix-length 3 --numeric-suffixes --lines 1000000 ${DATA_DIR}/query_doc_pairs.dev.small.txt ${DATA_DIR}/query_doc_pairs.dev.small.txt
 ```
 
 For `query_doc_pairs.dev.small.txt`, we will get 7 files after split. i.e. (`query_doc_pairs.dev.small.txt000` to `query_doc_pairs.dev.small.txt006`)
