@@ -34,7 +34,11 @@ Then load Java module:
 ```
 module load java
 ```
-Then install PyGaggle by following the [instruction](https://github.com/castorini/pygaggle#installation). 
+Then install Pytorch.
+Then install PyGaggle by the following commend.
+```
+pip install -r requirement.txt
+```
 
 ## Models
 
