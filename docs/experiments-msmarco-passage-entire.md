@@ -30,12 +30,11 @@ To do this, first clone the repository recursively.
 ```
 git clone --recursive https://github.com/castorini/pygaggle.git
 ```
-
-Then install PyGaggle using:
-
+Then load Java module:
 ```
-pip install pygaggle/
+module load java
 ```
+Then install PyGaggle by following the [instruction](https://github.com/castorini/pygaggle#installation). 
 
 ## Models
 
