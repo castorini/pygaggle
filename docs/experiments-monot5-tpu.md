@@ -105,7 +105,7 @@ Then create a TPU.
 ```
 curl -O https://dl.google.com/cloud_tpu/ctpu/latest/linux/ctpu && chmod a+x ctpu
 
-./ctpu up --name=${TPU_NAME} --project=${PROJECT_NAME} --zone=europe-west4-a --tpu-size=v3-8 --tpu-only --tf-version=1.15 --noconf
+./ctpu up --name=${TPU_NAME} --project=${PROJECT_NAME} --zone=europe-west4-a --tpu-size=v3-8 --tpu-only --noconf
 ```
 
 ## Setup environment on VM
@@ -134,8 +134,8 @@ conda activate py36
 Install dependencies.
 ```
 conda install -c conda-forge httptools jsonnet --yes
-pip install tensorflow==1.15 tensorflow-text==1.15 t5[gcp]
-git clone https://github.com/ronakice/mesh.git
+pip install tensorflow tensorflow-text t5[gcp]
+git clone https://github.com/castorini/mesh.git
 pip install --editable mesh
 ```
 
@@ -202,7 +202,7 @@ python tools/eval/msmarco_eval.py ${DATA_DIR}/qrels.dev.small.tsv ${DATA_DIR}/ru
 The output should be:
 ```
 #####################
-MRR @10: 0.3980858575521913
+MRR @10: 0.3983799517896949
 QueriesRanked: 6980
 #####################
 ```
