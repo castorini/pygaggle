@@ -38,9 +38,7 @@ Here's how to initalize the T5 reranker from [Document Ranking with a Pretrained
 from pygaggle.rerank.base import Query, Text
 from pygaggle.rerank.transformer import MonoT5
 
-model_name = 'castorini/monot5-base-msmarco'
-tokenizer_name = 't5-base'
-reranker =  MonoT5(model_name, tokenizer_name)
+reranker =  MonoT5()
 ```
 
 Alternatively, here's the BERT reranker from [Passage Re-ranking with BERT](https://arxiv.org/pdf/1901.04085.pdf), which isn't as good as the T5 reranker:
@@ -49,9 +47,7 @@ Alternatively, here's the BERT reranker from [Passage Re-ranking with BERT](http
 from pygaggle.rerank.base import Query, Text
 from pygaggle.rerank.transformer import MonoBERT
 
-model_name = 'castorini/monobert-large-msmarco'
-tokenizer_name = 'bert-large-uncased'
-reranker =  MonoBERT(model_name, tokenizer_name)
+reranker =  MonoBERT()
 ```
 
 Either way, continue with a complete reranking example:

@@ -80,11 +80,10 @@ class DocumentRankingEvaluationOptions(BaseModel):
 
 
 def construct_t5(options: DocumentRankingEvaluationOptions) -> Reranker:
-    device = torch.device(options.device)
-    model = T5ForConditionalGeneration.from_pretrained(options.model,
-                                                       from_tf=options.from_tf).to(device).eval()
-    tokenizer = AutoTokenizer.from_pretrained(options.model_type)
-    tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
+    model = MonoT5.get_model(options.model,
+                             from_tf=options.from_tf,
+                             device=options.device)
+    tokenizer = MonoT5.get_tokenizer(options.model_type, batch_size=options.batch_size)
     return MonoT5(model, tokenizer)
 
 
@@ -102,10 +101,8 @@ def construct_transformer(options:
 
 def construct_seq_class_transformer(options: DocumentRankingEvaluationOptions
                                     ) -> Reranker:
-    model = AutoModelForSequenceClassification.from_pretrained(options.model, from_tf=options.from_tf)
-    device = torch.device(options.device)
-    model = model.to(device).eval()
-    tokenizer = AutoTokenizer.from_pretrained(options.tokenizer_name)
+    model = MonoBERT.get_model(options.model, from_tf=options.from_tf, device=options.device)
+    tokenizer = MonoBERT.get_tokenizer(options.tokenizer_name)
     return MonoBERT(model, tokenizer)
 
 
