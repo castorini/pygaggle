@@ -1,7 +1,7 @@
 # PyGaggle: Baselines on [MS MARCO Document Retrieval](https://github.com/microsoft/TREC-2019-Deep-Learning)
 
 This page contains instructions for running various neural reranking baselines on the MS MARCO *document* ranking task. 
-Note that there is also a separate [MS MARCO *passage* ranking task](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage.md).
+Note that there is also a separate [MS MARCO *passage* ranking task (dev subset)](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-subset.md) and a separate [MS MARCO *passage* ranking task (entrie dev set)](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-entire.md).
 
 Prior to running this, we suggest looking at our first-stage [BM25 ranking instructions](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-doc.md).
 We rerank the BM25 run files that contain ~1000 documents per query using monoT5.
@@ -123,3 +123,4 @@ If you were able to replicate these results, please submit a PR adding to the re
 + Results replicated by [@LizzyZhang-tutu](https://github.com/LizzyZhang-tutu) on 2020-09-09 (commit[`8eeefa5`](https://github.com/castorini/pygaggle/commit/8eeefa578c65e2da78be129c87dfb40beb74099c)) (Tesla T4 on Colab)
 + Results replicated by [@qguo96](https://github.com/qguo96) on 2020-09-10 (commit[`a1461f5`](https://github.com/castorini/pygaggle/commit/a1461f5e6bd7c2c5fd00d3586d9eef735d978f06)) (Tesla K80 on Colab)
 + Results replicated by [@wiltan-uw](https://github.com/wiltan-uw) on 2020-09-13 (commit[`41513a9`](https://github.com/castorini/pygaggle/commit/41513a9f496bd59523993ce134cc35a7b881e5a1)) (RTX 2070S)
++ Results replicated by [@jhuang265](https://github.com/jhuang265) on 2020-10-18 (commit[`e815051`](https://github.com/castorini/pygaggle/commit/e815051f2cee1af98b370ee030b66c07a8a287f3)) (Tesla P100 on Colab)

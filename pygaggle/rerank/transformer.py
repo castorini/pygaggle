@@ -7,7 +7,6 @@ from transformers import (AutoTokenizer,
                           PreTrainedTokenizer,
                           T5ForConditionalGeneration)
 import torch
-
 from .base import Reranker, Query, Text
 from .similarity import SimilarityMatrixProvider
 from pygaggle.model import (BatchTokenizer,
