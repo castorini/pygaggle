@@ -1,7 +1,7 @@
 """
 This script creates monoT5 input files for training,
 Each line in the monoT5 input file follows the format:
-    f'Query: {query} Document: {document} Relevant:\t {label}\n')
+    f'Query: {query} Document: {document} Relevant:\t{label}\n')
 """
 import argparse
 from tqdm import tqdm
