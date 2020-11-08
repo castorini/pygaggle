@@ -232,27 +232,27 @@ gsutil cp query_doc_pairs.train.tsv ${GS_FOLDER}/query_doc_pairs.train.tsv
 
 Recall the environment variables
 ```
-export MODEL=<t5 pretrain model, e.g. base, 3B>
+export MODEL=<t5 pretrain model, e.g. base, large, 3B>
 export GS_FOLDER=<gs folder to store checkpoints>
 export PROJECT_NAME=<gcloud project name>
 export TPU_NAME=<name of tpu to create>
+export BASE_CKPT=<initial model checkpoint, e.g. 999900>
 ```
 
 Copy pre-trained checkpoint to our target model
 ```
-echo "model_checkpoint_path: \"model.ckpt-999900\"" > checkpoint
+echo "model_checkpoint_path: \"model.ckpt-${BASE_CKPT}\"" > checkpoint
 gsutil cp checkpoint ${GS_FOLDER}
-gsutil cp gs://t5-data/pretrained_models/${MODEL}/model.ckpt-999900* ${GS_FOLDER}
+gsutil cp gs://t5-data/pretrained_models/${MODEL}/model.ckpt-${BASE_CKPT}* ${GS_FOLDER}
 ```
 
 ```
-export EXPNO=002
 nohup t5_mesh_transformer  \
   --tpu="${TPU_NAME}" \
   --gcp_project="${PROJECT_NAME}" \
   --tpu_zone="europe-west4-a" \
   --model_dir="${GS_FOLDER}" \
-  --gin_param="init_checkpoint = 'gs://t5-data/pretrained_models/${MODEL}/model.ckpt-999900'" \
+  --gin_param="init_checkpoint = 'gs://t5-data/pretrained_models/${MODEL}/model.ckpt-${BASE_CKPT}'" \
   --gin_file="dataset.gin" \
   --gin_file="models/bi_v1.gin" \
   --gin_file="gs://t5-data/pretrained_models/${MODEL}/operative_config.gin" \
@@ -263,9 +263,11 @@ nohup t5_mesh_transformer  \
   --gin_file="learning_rate_schedules/constant_0_001.gin" \
   --gin_param="run.train_steps = 1100000" \
   --gin_param="tokens_per_batch = 65536" \
-  >> out.log_exp${EXPNO} 2>&1 &
+  >> out.log_exp 2>&1 &
 
-tail -100f out.log_exp${EXPNO}
+tail -100f out.log_exp
 ```
+
+Training T5 base, large, and 3B take approximately 12, 48, and 160 hours overall, respectively, on a single TPU.
 
 ## Replication Log
