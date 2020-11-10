@@ -30,11 +30,14 @@ To do this, first clone the repository recursively.
 ```
 git clone --recursive https://github.com/castorini/pygaggle.git
 ```
-
-Then install PyGaggle using:
-
+Then load Java module:
 ```
-pip install pygaggle/
+module load java
+```
+Then install Pytorch.
+Then install PyGaggle by the following commend.
+```
+pip install -r requirement.txt
 ```
 
 ## Models
@@ -165,3 +168,4 @@ Please mention in your PR if you find any difference!
 ## Replication Log
 
 + Results replicated by [@qguo96](https://github.com/qguo96) on 2020-10-08 (commit [`3d4b7c0`](https://github.com/castorini/pygaggle/commit/3d4b7c0a51b5b26e5d39da7c7b9c0cec8e633950)) (Tesla V100 on Compute Canada)
++ Results replicated by [@stephaniewhoo](https://github.com/stephaniewhoo) on 2020-10-25 (commit[`e815051`](https://github.com/castorini/pygaggle/commit/e815051f2cee1af98b370ee030b66c07a8a287f3)) (Tesla V100 on Compute Canada)
