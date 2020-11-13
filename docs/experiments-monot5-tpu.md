@@ -37,7 +37,7 @@ cd ${DATA_DIR}
 wget https://storage.googleapis.com/duobert_git/triples.train.small.tar.gz
 tar -xvf triples.train.small.tar.gz
 rm triples.train.small.tar.gz
-cd ..
+cd ../../
 ```
 
 Then convert the train triples file to the monoT5 input format:
