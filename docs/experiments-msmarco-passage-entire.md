@@ -35,9 +35,16 @@ Then load Java module:
 module load java
 ```
 Then install Pytorch.
-Then install PyGaggle by the following commend.
 ```
-pip install -r requirement.txt
+pip install torch
+```
+Then install PyGaggle by the following command.
+```
+pip install -r requirements.txt
+```
+Note: On Compute Canada, you may have to install tensorflow separately by the following command.
+```
+pip install tensorflow_gpu 
 ```
 
 ## Models
