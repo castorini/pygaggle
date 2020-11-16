@@ -35,9 +35,16 @@ Then load Java module:
 module load java
 ```
 Then install Pytorch.
-Then install PyGaggle by the following commend.
 ```
-pip install -r requirement.txt
+pip install torch
+```
+Then install PyGaggle by the following command.
+```
+pip install -r requirements.txt
+```
+Note: On Compute Canada, you may have to install tensorflow separately by the following command.
+```
+pip install tensorflow_gpu 
 ```
 
 ## Models
@@ -169,3 +176,4 @@ Please mention in your PR if you find any difference!
 
 + Results replicated by [@qguo96](https://github.com/qguo96) on 2020-10-08 (commit [`3d4b7c0`](https://github.com/castorini/pygaggle/commit/3d4b7c0a51b5b26e5d39da7c7b9c0cec8e633950)) (Tesla V100 on Compute Canada)
 + Results replicated by [@stephaniewhoo](https://github.com/stephaniewhoo) on 2020-10-25 (commit[`e815051`](https://github.com/castorini/pygaggle/commit/e815051f2cee1af98b370ee030b66c07a8a287f3)) (Tesla V100 on Compute Canada)
++ Results replicated by [@rayyang29](https://github.com/rayyang29) on 2020-11-16 (commit[`d840b0c`](https://github.com/castorini/pygaggle/commit/d840b0c0fc2a5a0a6e10f87c94b31824964449f7))(Tesla V100 on Compute Canada)
