@@ -113,7 +113,7 @@ split --suffix-length 3 --numeric-suffixes --lines 800000 ${DATA_DIR}/query_doc_
 ```
 
 For `query_doc_pairs.dev.small.txt`, we will get 9 files after split. i.e. (`query_doc_pairs.dev.small.txt000` to `query_doc_pairs.dev.small.txt008`).
-Note that it is possible that running reranking might still result in OOM issues in which case split reduce the number of lines to a number smaller than `800000`.
+Note that it is possible that running reranking might still result in OOM issues in which case reduce the number of lines to smaller than `800000`.
 
 We copy these input files to Google Storage. TPU inference will read data directly from `gs`.
 ```
@@ -207,7 +207,7 @@ tail -100f out.log_eval_exp
 
 Using a TPU v3-8, it takes approximately 5 hours and 35 hours to rerank with monoT5-base and monoT5-3B respectively.
 
-Note that we strongly encourage you to run any of the long processes in `screen` to make sure they doesn't get interrupted.
+Note that we strongly encourage you to run any of the long processes in `screen` to make sure they don't get interrupted.
 
 ## Evaluate reranked results
 After reranking is done, let's copy the results from GS to our working directory, where we concatenate all the score files back into one file.
@@ -249,7 +249,7 @@ QueriesRanked: 6980
 If you were able to replicate any of these results, please submit a PR adding to the replication log, along with the model(s) you replicated. 
 Please mention in your PR if you note any differences.
 
-## Train a monoT5
+## Train a monoT5 reranker
 
 We use the following environment variables:
 
