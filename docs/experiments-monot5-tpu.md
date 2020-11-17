@@ -4,7 +4,7 @@ This page contains instructions for running monoT5 on the MS MARCO *passage* ran
 
 We will focus on using monoT5-3B to rerank, since it is difficult to run such a large model without a TPU.
 We also mention the changes required to run monoT5-base for those with a more constrained compute budget.
-- monoT5: Document Ranking with a Pretrained Sequence-to-Sequence Model [(Nogueira et al., 2020)](https://arxiv.org/pdf/2003.06713.pdf)
+- monoT5: Document Ranking with a Pretrained Sequence-to-Sequence Model [(Nogueira et al., 2020)](https://www.aclweb.org/anthology/2020.findings-emnlp.63.pdf)
 
 Note that there are also separate documents to run MS MARCO ranking tasks on regular GPU. Please see [MS MARCO *document* ranking task](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-document.md), [MS MARCO *passage* ranking task - Subset](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-subset.md) and [MS MARCO *passage* ranking task - Entire](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-entire.md).
 
@@ -109,12 +109,13 @@ The files are made available in our [bucket](https://console.cloud.google.com/st
 Note that there might be a memory issue if the monoT5 input file is too large for the memory in the instance. We thus split the input file into multiple files.
 
 ```
-split --suffix-length 3 --numeric-suffixes --lines 1000000 ${DATA_DIR}/query_doc_pairs.dev.small.txt ${DATA_DIR}/query_doc_pairs.dev.small.txt
+split --suffix-length 3 --numeric-suffixes --lines 800000 ${DATA_DIR}/query_doc_pairs.dev.small.txt ${DATA_DIR}/query_doc_pairs.dev.small.txt
 ```
 
-For `query_doc_pairs.dev.small.txt`, we will get 7 files after split. i.e. (`query_doc_pairs.dev.small.txt000` to `query_doc_pairs.dev.small.txt006`)
+For `query_doc_pairs.dev.small.txt`, we will get 9 files after split. i.e. (`query_doc_pairs.dev.small.txt000` to `query_doc_pairs.dev.small.txt008`).
+Note that it is possible that running reranking might still result in OOM issues in which case reduce the number of lines to smaller than `800000`.
 
-We copy these input files to Google Storage. TPU inference will read data directly from `gs`
+We copy these input files to Google Storage. TPU inference will read data directly from `gs`.
 ```
 export GS_FOLDER=<google storage folder to store input/output data>
 gsutil cp ${DATA_DIR}/query_doc_pairs.dev.small.txt??? ${GS_FOLDER}
@@ -133,110 +134,102 @@ export TPU_NAME=<name of tpu to create>
 
 Create the VM.
 ```
-gcloud beta compute --project=${PROJECT_NAME} instances create ${INSTANCE_NAME} --zone=europe-west4-a --machine-type=n1-standard-4 --subnet=default --network-tier=PREMIUM --maintenance-policy=MIGRATE --service-account=${PROJECT_ID}-compute@developer.gserviceaccount.com  --scopes=https://www.googleapis.com/auth/cloud-platform --image=debian-9-stretch-v20191014 --image-project=debian-cloud --boot-disk-size=200GB --boot-disk-type=pd-standard --boot-disk-device-name=${INSTANCE_NAME} --reservation-affinity=any
+gcloud beta compute --project=${PROJECT_NAME} instances create ${INSTANCE_NAME} --zone=europe-west4-a --machine-type=n1-standard-4 --subnet=default --network-tier=PREMIUM --maintenance-policy=MIGRATE --service-account=${PROJECT_ID}-compute@developer.gserviceaccount.com  --scopes=https://www.googleapis.com/auth/cloud-platform --image=debian-10-buster-v20201112 --image-project=debian-cloud --boot-disk-size=25GB --boot-disk-type=pd-standard --boot-disk-device-name=${INSTANCE_NAME} --reservation-affinity=any
 ```
 
+It is possible that the `image` and `machine-type` provided here are dated so feel free to update them to whichever fits your needs.
 After the VM created, we can `ssh` to the machine.  
+Make sure to initialize `PROJECT_NAME` and `TPU_NAME` from within the machine too.
 Then create a TPU.
 
 ```
 curl -O https://dl.google.com/cloud_tpu/ctpu/latest/linux/ctpu && chmod a+x ctpu
-
 ./ctpu up --name=${TPU_NAME} --project=${PROJECT_NAME} --zone=europe-west4-a --tpu-size=v3-8 --tpu-only --noconf
 ```
 
 ## Setup environment on VM
-Install required tools.
+
+Install required tools including [Miniconda](https://docs.conda.io/en/latest/miniconda.html).
 ```
 sudo apt-get update
 sudo apt-get install git gcc screen --yes
-```
-
-Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html).
-```
 curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash ./Miniconda3-latest-Linux-x86_64.sh
-```
-When installation finished, do:
-```
 source ~/.bashrc
 ```
-
-Then create a Python virtual environment for the experiments. 
+Then create a Python virtual environment for the experiments and install dependencies.
 ```
 conda init
 conda create --y --name py36 python=3.6
 conda activate py36
-```
-Install dependencies.
-```
 conda install -c conda-forge httptools jsonnet --yes
 pip install tensorflow tensorflow-text t5[gcp]
 git clone https://github.com/castorini/mesh.git
 pip install --editable mesh
 ```
 
-## Reranking with monoT5
-On the TPU machine define model type and checkpoint.  
-(Here we use our pretrained monoT5-3B as example)
+## Rerank with monoT5
+
+Let's first define the model type and checkpoint.
+
 ```
-export MODEL=3B
-export CHECKPOINT=gs://neuralresearcher_data/doc2query/experiments/363
+export MODEL_NAME=<base or 3B>
+export MODEL_DIR=gs://castorini/monot5/experiments/${MODEL_NAME}
 ```
 
 Then run following command to start the process in background and monitor the log
 ```
-export EXPNO=001
-for ITER in {000..006}; do
-  echo "Running iter: $ITER" >> out.log_eval_$EXPNO
+for ITER in {000..008}; do
+  echo "Running iter: $ITER" >> out.log_eval_exp
   nohup t5_mesh_transformer \
     --tpu="${TPU_NAME}" \
     --gcp_project=${PROJECT_NAME} \
     --tpu_zone="europe-west4-a" \
-    --model_dir="${CHECKPOINT}" \
-    --gin_file="gs://t5-data/pretrained_models/$MODEL/operative_config.gin" \
+    --model_dir="${MODEL_DIR}" \
+    --gin_file="gs://t5-data/pretrained_models/${MODEL_NAME}/operative_config.gin" \
     --gin_file="infer.gin" \
     --gin_file="beam_search.gin" \
     --gin_param="utils.tpu_mesh_shape.tpu_topology = '2x2'" \
     --gin_param="infer_checkpoint_step = 1100000" \
-    --gin_param="utils.run.sequence_length = {'inputs': 512, 'targets': 64}" \
-    --gin_param="Bitransformer.decode.max_decode_length = 64" \
+    --gin_param="utils.run.sequence_length = {'inputs': 512, 'targets': 2}" \
+    --gin_param="Bitransformer.decode.max_decode_length = 2" \
     --gin_param="input_filename = '${GS_FOLDER}/query_doc_pairs.dev.small.txt${ITER}'" \
     --gin_param="output_filename = '${GS_FOLDER}/query_doc_pair_scores.dev.small.txt${ITER}'" \
     --gin_param="tokens_per_batch = 65536" \
     --gin_param="Bitransformer.decode.beam_size = 1" \
     --gin_param="Bitransformer.decode.temperature = 0.0" \
     --gin_param="Unitransformer.sample_autoregressive.sampling_keep_top_k = -1" \
-    >> out.log_eval_exp${EXPNO} 2>&1
+    >> out.log_eval_exp 2>&1
 done &
 
-tail -100f out.log_eval_exp${EXPNO}
+tail -100f out.log_eval_exp
 ```
 
-It takes about 35 hours to rerank on a TPU v3-8.
+Using a TPU v3-8, it takes approximately 5 hours and 35 hours to rerank with monoT5-base and monoT5-3B respectively.
 
-NOTE: We strongly encourage you to run above processes in `screen` to make sure the processes doesn't get interrupted.
+Note that we strongly encourage you to run any of the long processes in `screen` to make sure they don't get interrupted.
 
-## Evaluate Result
-After rerank finished. Copy the results from GS to your work directory. And concate all score files back to one file.
+## Evaluate reranked results
+After reranking is done, let's copy the results from GS to our working directory, where we concatenate all the score files back into one file.
 ```
 gsutil cp ${GS_FOLDER}/query_doc_pair_scores.dev.small.txt???-1100000 ${DATA_DIR}/
 cat ${DATA_DIR}/query_doc_pair_scores.dev.small.txt???-1100000 > ${DATA_DIR}/query_doc_pair_scores.dev.small.txt
 ```
 
-Then convert the monoT5 output back to MSMARCO format.
+Then we convert the monoT5 output to the required MSMARCO format.
 ```
-python -m pygaggle.data.convert_t5_output_to_msmarco_run --t5_output ${DATA_DIR}/query_doc_pair_scores.dev.small.txt \
+python pygaggle/data/convert_t5_output_to_msmarco_run.py --t5_output ${DATA_DIR}/query_doc_pair_scores.dev.small.txt \
                                                 --t5_output_ids ${DATA_DIR}/query_doc_pair_ids.dev.small.tsv \
-                                                --msmarco_run ${DATA_DIR}/run.monot5_3b.dev.tsv
+                                                --msmarco_run ${DATA_DIR}/run.monot5_${MODEL_NAME}.dev.tsv
 ```
 
-Now we can evaluate the rerank results using the official MS MARCO evaluation script.
+Now we can evaluate the reranked results using the official MS MARCO evaluation script.
 ```
-python tools/eval/msmarco_eval.py ${DATA_DIR}/qrels.dev.small.tsv ${DATA_DIR}/run.monot5_3b.dev.tsv
+python tools/eval/msmarco_eval.py ${DATA_DIR}/qrels.dev.small.tsv ${DATA_DIR}/run.monot5_${MODEL_NAME}.dev.tsv
 ```
 
-The output should be:
+In the case of monoT5-3B, the output should be:
+
 ```
 #####################
 MRR @10: 0.3983799517896949
@@ -244,28 +237,38 @@ QueriesRanked: 6980
 #####################
 ```
 
-You should see the same result.
-
-If you were able to replicate these results, please submit a PR adding to the replication log! Please mention in your PR if you find any difference!
-
-## Train monoT5
-
-Recall the environment variables
+In the case of monoT5-base, the output should be:
 
 ```
-export MODEL=<t5 pretrain model, e.g. base, large, 3B>
+#####################
+MRR @10: 0.38160657433938283
+QueriesRanked: 6980
+#####################
+```
+
+If you were able to replicate any of these results, please submit a PR adding to the replication log, along with the model(s) you replicated. 
+Please mention in your PR if you note any differences.
+
+## Train a monoT5 reranker
+
+We use the following environment variables:
+
+```
+export MODEL_NAME=<t5 pretrain model, e.g. base, large, 3B>
 export GS_FOLDER=<gs folder to store checkpoints>
 export PROJECT_NAME=<gcloud project name>
 export TPU_NAME=<name of tpu to create>
-export BASE_CKPT=<initial model checkpoint, e.g. 999900>
+export MODEL_INIT_CKPT=<initial model checkpoint, e.g. 999900>
 ```
 
 Copy pre-trained checkpoint to our target model
 ```
-echo "model_checkpoint_path: \"model.ckpt-${BASE_CKPT}\"" > checkpoint
+echo "model_checkpoint_path: \"model.ckpt-${MODEL_INIT_CKPT}\"" > checkpoint
 gsutil cp checkpoint ${GS_FOLDER}
-gsutil cp gs://t5-data/pretrained_models/${MODEL}/model.ckpt-${BASE_CKPT}* ${GS_FOLDER}
+gsutil cp gs://t5-data/pretrained_models/${MODEL_NAME}/model.ckpt-${MODEL_INIT_CKPT}* ${GS_FOLDER}
 ```
+
+Finally, we can begin training.
 
 ```
 nohup t5_mesh_transformer  \
@@ -273,22 +276,24 @@ nohup t5_mesh_transformer  \
   --gcp_project="${PROJECT_NAME}" \
   --tpu_zone="europe-west4-a" \
   --model_dir="${GS_FOLDER}" \
-  --gin_param="init_checkpoint = 'gs://t5-data/pretrained_models/${MODEL}/model.ckpt-${BASE_CKPT}'" \
+  --gin_param="init_checkpoint = 'gs://t5-data/pretrained_models/${MODEL_NAME}/model.ckpt-${MODEL_INIT_CKPT}'" \
   --gin_file="dataset.gin" \
   --gin_file="models/bi_v1.gin" \
-  --gin_file="gs://t5-data/pretrained_models/${MODEL}/operative_config.gin" \
+  --gin_file="gs://t5-data/pretrained_models/${MODEL_NAME}/operative_config.gin" \
   --gin_param="utils.tpu_mesh_shape.model_parallelism = 1" \
   --gin_param="utils.tpu_mesh_shape.tpu_topology = '2x2'" \
   --gin_param="utils.run.train_dataset_fn = @t5.models.mesh_transformer.tsv_dataset_fn" \
-  --gin_param="tsv_dataset_fn.filename = '${GS_FOLDER}/query_doc_pairs.train.tsv'" \
+  --gin_param="tsv_dataset_fn.filename = 'gs://castorini/monot5/data/query_doc_pairs.train.tsv'" \
   --gin_file="learning_rate_schedules/constant_0_001.gin" \
   --gin_param="run.train_steps = 1100000" \
+  --gin_param="run.save_checkpoints_steps = 10000" \
   --gin_param="tokens_per_batch = 65536" \
   >> out.log_exp 2>&1 &
 
 tail -100f out.log_exp
 ```
 
-Training T5 base, large, and 3B take approximately 12, 48, and 160 hours overall, respectively, on a single TPU.
+In the case of monoT5-3B, set `utils.tpu_mesh_shape.model_parallelism` to 8 instead of 1.
+Training monoT5 base, large, and 3B take approximately 12, 48, and 160 hours overall, respectively, on a single TPU v3-8.
 
 ## Replication Log
