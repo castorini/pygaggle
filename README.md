@@ -6,7 +6,7 @@
 PyGaggle provides a gaggle of deep neural architectures for text ranking and question answering.
 It was designed for tight integration with [Pyserini](http://pyserini.io/), but can be easily adapted for other sources as well.
 
-Currently, this repo contains implementations of the rerankers for [CovidQA](https://github.com/castorini/pygaggle/blob/master/data/) on CORD-19, as described in ["Rapidly Bootstrapping a Question Answering Dataset for COVID-19"](https://arxiv.org/abs/2004.11339).
+Currently, this repo contains implementations of the rerankers for MS MARCO Passage Retrieval, MS MARCO Document Retrieval, TREC-COVID and [CovidQA](https://github.com/castorini/pygaggle/blob/master/data/).
 
 ## Installation
 
