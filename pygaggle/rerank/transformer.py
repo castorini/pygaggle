@@ -141,11 +141,12 @@ class MonoBERT(Reranker):
             ret = self.tokenizer.encode_plus(query.text,
                                              text.text,
                                              max_length=512,
+                                             truncation=True,
                                              return_token_type_ids=True,
                                              return_tensors='pt')
             input_ids = ret['input_ids'].to(self.device)
             tt_ids = ret['token_type_ids'].to(self.device)
-            output, = self.model(input_ids, token_type_ids=tt_ids)
+            output, = self.model(input_ids, token_type_ids=tt_ids, return_dict=False)
             if output.size(1) > 1:
                 text.score = torch.nn.functional.log_softmax(
                                 output, 1)[0, -1].item()
@@ -167,12 +168,14 @@ class QuestionAnsweringTransformerReranker(Reranker):
             ret = self.tokenizer.encode_plus(query.text,
                                              text.text,
                                              max_length=512,
+                                             truncation=True,
                                              return_tensors='pt',
                                              return_token_type_ids=True)
             input_ids = ret['input_ids'].to(self.device)
             tt_ids = ret['token_type_ids'].to(self.device)
             start_scores, end_scores = self.model(input_ids,
-                                                  token_type_ids=tt_ids)
+                                                  token_type_ids=tt_ids,
+                                                  return_dict=False)
             start_scores = start_scores[0]
             end_scores = end_scores[0]
             start_scores[(1 - tt_ids[0]).bool()] = -5000

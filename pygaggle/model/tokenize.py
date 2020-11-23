@@ -110,7 +110,8 @@ class T5BatchTokenizer(AppendEosTokenizerMixin, QueryDocumentBatchTokenizer):
     def __init__(self, *args, **kwargs):
         kwargs['pattern'] = 'Query: {query} Document: {document} Relevant:'
         kwargs['return_attention_mask'] = True
-        kwargs['pad_to_max_length'] = True
+        kwargs['padding'] = 'max_length'
+        kwargs["truncation"] = True
         kwargs['return_tensors'] = 'pt'
         kwargs['max_length'] = 512
         super().__init__(*args, **kwargs)
@@ -119,7 +120,8 @@ class T5BatchTokenizer(AppendEosTokenizerMixin, QueryDocumentBatchTokenizer):
 class SimpleBatchTokenizer(BatchTokenizer):
     def __init__(self, *args, **kwargs):
         kwargs['return_attention_mask'] = True
-        kwargs['pad_to_max_length'] = True
+        kwargs['padding'] = 'max_length'
+        kwargs['truncation'] = True
         super().__init__(*args, **kwargs)
 
 
