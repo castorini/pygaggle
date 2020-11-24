@@ -17,12 +17,13 @@ def greedy_decode(model: PreTrainedModel,
     decode_ids = torch.full((input_ids.size(0), 1),
                             model.config.decoder_start_token_id,
                             dtype=torch.long).to(input_ids.device)
-    past = model.get_encoder()(input_ids, attention_mask=attention_mask)
+    encoder_outputs = model.get_encoder()(input_ids, attention_mask=attention_mask)
     next_token_logits = None
     for _ in range(length):
         model_inputs = model.prepare_inputs_for_generation(
             decode_ids,
-            past=past,
+            encoder_outputs=encoder_outputs,
+            past=None,
             attention_mask=attention_mask,
             use_cache=True)
         outputs = model(**model_inputs)  # (batch_size, cur_len, vocab_size)
