@@ -93,7 +93,7 @@ def construct_transformer(options:
     model = AutoModel.from_pretrained(options.model,
                                       from_tf=options.from_tf).to(device).eval()
     tokenizer = SimpleBatchTokenizer(AutoTokenizer.from_pretrained(
-        options.tokenizer_name),
+        options.tokenizer_name, use_fast=False,),
         options.batch_size)
     provider = CosineSimilarityMatrixProvider()
     return UnsupervisedTransformerReranker(model, tokenizer, provider)

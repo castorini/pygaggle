@@ -139,7 +139,9 @@ def construct_qa_transformer(options: KaggleEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     model = model.to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(
-                    options.tokenizer_name, do_lower_case=options.do_lower_case)
+                    options.tokenizer_name, 
+                    do_lower_case=options.do_lower_case,
+                    use_fast=False)
     return QuestionAnsweringTransformerReranker(model, tokenizer)
 
 
