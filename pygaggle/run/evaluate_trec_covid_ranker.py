@@ -80,7 +80,7 @@ def construct_t5(options: DocumentRankingEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     model = T5ForConditionalGeneration.from_pretrained(options.model,
                                                        from_tf=options.from_tf).to(device).eval()
-    tokenizer = AutoTokenizer.from_pretrained(options.model_type)
+    tokenizer = AutoTokenizer.from_pretrained(options.model_type, use_fast=False)
     tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
     return T5Reranker(model, tokenizer)
 
@@ -91,7 +91,7 @@ def construct_transformer(options:
     model = AutoModel.from_pretrained(options.model,
                                       from_tf=options.from_tf).to(device).eval()
     tokenizer = SimpleBatchTokenizer(AutoTokenizer.from_pretrained(
-        options.tokenizer_name),
+        options.tokenizer_name, use_fast=False),
         options.batch_size)
     provider = CosineSimilarityMatrixProvider()
     return UnsupervisedTransformerReranker(model, tokenizer, provider)
@@ -102,7 +102,7 @@ def construct_seq_class_transformer(options: DocumentRankingEvaluationOptions
     model = AutoModelForSequenceClassification.from_pretrained(options.model, from_tf=options.from_tf)
     device = torch.device(options.device)
     model = model.to(device).eval()
-    tokenizer = AutoTokenizer.from_pretrained(options.tokenizer_name)
+    tokenizer = AutoTokenizer.from_pretrained(options.tokenizer_name, use_fast=False)
     return SequenceClassificationTransformerReranker(model, tokenizer)
 
 
