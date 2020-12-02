@@ -16,3 +16,4 @@ dependencies:
     - tokenizers==0.9.4
     - tqdm==4.45.0
     - transformers==4.0.0
+    - sentencepiece==0.1.94
