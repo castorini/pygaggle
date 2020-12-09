@@ -12,7 +12,7 @@ from pygaggle.model.writer import Writer
 
 from pygaggle.data.segmentation import SegmentProcessor
 
-__all__ = ['RerankerEvaluator', 'metric_names']
+__all__ = ['RerankerEvaluator', 'DuoRerankerEvaluator', 'metric_names']
 METRIC_MAP = OrderedDict()
 
 
@@ -164,6 +164,61 @@ class RerankerEvaluator:
                 self.writer.write(scores, example)
             for metric in metrics:
                 metric.accumulate(scores, example)
+        return metrics
+
+    def evaluate_by_segments(self,
+                             examples: List[RelevanceExample],
+                             seg_size: int,
+                             stride: int,
+                             aggregate_method: str) -> List[MetricAccumulator]:
+        metrics = [cls() for cls in self.metrics]
+        segment_processor = SegmentProcessor()
+        for example in tqdm(examples, disable=not self.use_tqdm):
+            segment_group = segment_processor.segment(example.documents, seg_size, stride)
+            segment_group.segments = self.reranker.rerank(example.query, segment_group.segments)
+            doc_scores = [x.score for x in segment_processor.aggregate(example.documents,
+                                                                       segment_group,
+                                                                       aggregate_method)]
+            if self.writer is not None:
+                self.writer.write(doc_scores, example)
+            for metric in metrics:
+                metric.accumulate(doc_scores, example)
+        return metrics
+
+
+class DuoRerankerEvaluator:
+    def __init__(self,
+                 mono_reranker: Reranker,
+                 duo_reranker: Reranker,
+                 metric_names: List[str],
+                 mono_hits: int = 50,
+                 use_tqdm: bool = True,
+                 writer: Optional[Writer] = None):
+        self.mono_reranker = mono_reranker
+        self.duo_reranker = duo_reranker
+        self.mono_hits = mono_hits
+        self.metrics = [METRIC_MAP[name] for name in metric_names]
+        self.use_tqdm = use_tqdm
+        self.writer = writer
+
+    def evaluate(self,
+                 examples: List[RelevanceExample]) -> List[MetricAccumulator]:
+        metrics = [cls() for cls in self.metrics]
+        mono_texts = []
+        scores = []
+        for ct, example in tqdm(enumerate(examples), total=len(examples), disable=not self.use_tqdm):
+            mono_out = self.mono_reranker.rerank(example.query, example.documents)
+            mono_texts.append(sorted(enumerate(mono_out), key=lambda x: x[1].score, reverse=True)[:self.mono_hits])
+            scores.append(np.array([x.score for x in mono_out]))
+        for ct, texts in tqdm(enumerate(mono_texts), total=len(mono_texts), disable=not self.use_tqdm):
+            duo_in = list(map(lambda x: x[1], texts))
+            duo_scores = [x.score for x in self.duo_reranker.rerank(examples[ct].query, duo_in)]
+
+            scores[ct][list(map(lambda x: x[0], texts))] = duo_scores
+            if self.writer is not None:
+                self.writer.write(list(scores[ct]), examples[ct])
+            for metric in metrics:
+                metric.accumulate(list(scores[ct]), examples[ct])
         return metrics
 
     def evaluate_by_segments(self,

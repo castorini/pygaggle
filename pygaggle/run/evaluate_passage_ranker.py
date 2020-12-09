@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Tuple
 from pathlib import Path
 import logging
 
@@ -16,6 +16,7 @@ from pygaggle.rerank.bm25 import Bm25Reranker
 from pygaggle.rerank.transformer import (
     UnsupervisedTransformerReranker,
     MonoT5,
+    DuoT5,
     MonoBERT
 )
 from pygaggle.rerank.random import RandomReranker
@@ -23,6 +24,7 @@ from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
 from pygaggle.model import (SimpleBatchTokenizer,
                             T5BatchTokenizer,
                             RerankerEvaluator,
+                            DuoRerankerEvaluator,
                             metric_names,
                             MsMarcoWriter)
 from pygaggle.data import MsMarcoDataset
@@ -31,7 +33,7 @@ from pygaggle.settings import MsMarcoSettings
 
 SETTINGS = MsMarcoSettings()
 METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer',
-                  'random')
+                  'random', 'duo_t5')
 
 
 class PassageRankingEvaluationOptions(BaseModel):
@@ -40,6 +42,7 @@ class PassageRankingEvaluationOptions(BaseModel):
     index_dir: Path
     method: str
     model: str
+    duo_model: str
     split: str
     batch_size: int
     device: str
@@ -83,6 +86,15 @@ def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
                              device=options.device)
     tokenizer = MonoT5.get_tokenizer(options.model_type, batch_size=options.batch_size)
     return MonoT5(model, tokenizer)
+
+
+def construct_duo_t5(options: PassageRankingEvaluationOptions) -> Tuple[Reranker, Reranker]:
+    mono_reranker = construct_t5(options)
+    model = DuoT5.get_model(options.duo_model,
+                             from_tf=options.from_tf,
+                             device=options.device)
+    tokenizer = DuoT5.get_tokenizer(options.model_type, batch_size=options.batch_size)
+    return mono_reranker, DuoT5(model, tokenizer)
 
 
 def construct_transformer(options:
@@ -165,11 +177,15 @@ def main():
     construct_map = dict(transformer=construct_transformer,
                          bm25=construct_bm25,
                          t5=construct_t5,
+                         duo_t5=construct_duo_t5,
                          seq_class_transformer=construct_seq_class_transformer,
                          random=lambda _: RandomReranker())
     reranker = construct_map[options.method](options)
     writer = MsMarcoWriter(args.output_file, args.overwrite_output)
-    evaluator = RerankerEvaluator(reranker, options.metrics, writer=writer)
+    if options.method == 'duo_t5':
+        evaluator = DuoRerankerEvaluator(reranker[0], reranker[1], options.metrics, writer=writer)
+    else:
+        evaluator = RerankerEvaluator(reranker, options.metrics, writer=writer)
     width = max(map(len, args.metrics)) + 1
     logging.info("Reranking:")
     for metric in evaluator.evaluate(examples):
