@@ -113,8 +113,8 @@ class DuoT5(Reranker):
             # 6136 and 1176 are the indexes of the tokens false and true in T5.
             batch_scores = batch_scores[:, [6136, 1176]]
             batch_scores = torch.nn.functional.softmax(batch_scores, dim=1)
-            batch_log_probs = batch_scores[:, 1].tolist()
-            for doc, score in zip(batch.doc_pairs, batch_log_probs):
+            batch_probs = batch_scores[:, 1].tolist()
+            for doc, score in zip(batch.doc_pairs, batch_probs):
                 scores[doc[0].metadata['docid']] += score
                 scores[doc[1].metadata['docid']] += (1 - score)
 

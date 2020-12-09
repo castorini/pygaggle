@@ -43,7 +43,7 @@ class PassageRankingEvaluationOptions(BaseModel):
     method: str
     model: str
     duo_model: str
-    top: int
+    mono_hits: int
     split: str
     batch_size: int
     device: str
@@ -153,7 +153,7 @@ def main():
                  opt('--duo_model',
                      type=str,
                      help='Path to pre-trained model or huggingface model name'),
-                 opt('--top',
+                 opt('--mono_hits',
                      type=int,
                      default=50,
                      help='Top k candidates from mono for duo reranking'),
