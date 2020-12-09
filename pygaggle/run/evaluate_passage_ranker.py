@@ -194,7 +194,7 @@ def main():
         evaluator = DuoRerankerEvaluator(mono_reranker=reranker[0],
                                          duo_reranker=reranker[1],
                                          metric_names=options.metrics,
-                                         mono_hits=options.top,
+                                         mono_hits=options.mono_hits,
                                          writer=writer)
     else:
         evaluator = RerankerEvaluator(reranker, options.metrics, writer=writer)
