@@ -43,6 +43,7 @@ class PassageRankingEvaluationOptions(BaseModel):
     method: str
     model: str
     duo_model: str
+    top: int
     split: str
     batch_size: int
     device: str
@@ -152,6 +153,9 @@ def main():
                  opt('--duo_model',
                      type=str,
                      help='Path to pre-trained model or huggingface model name'),
+                 opt('--top',
+                     type=int,
+                     help='Top k candidates from mono for duo reranking'),
                  opt('--output-file', type=Path, default='.'),
                  opt('--overwrite-output', action='store_true'),
                  opt('--split',
@@ -186,7 +190,11 @@ def main():
     reranker = construct_map[options.method](options)
     writer = MsMarcoWriter(args.output_file, args.overwrite_output)
     if options.method == 'duo_t5':
-        evaluator = DuoRerankerEvaluator(reranker[0], reranker[1], options.metrics, writer=writer)
+        evaluator = DuoRerankerEvaluator(mono_reranker=reranker[0],
+                                         duo_reranker=reranker[1],
+                                         metric_names=options.metrics,
+                                         mono_hits=options.top,
+                                         writer=writer)
     else:
         evaluator = RerankerEvaluator(reranker, options.metrics, writer=writer)
     width = max(map(len, args.metrics)) + 1
