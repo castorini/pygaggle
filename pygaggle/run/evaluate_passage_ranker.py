@@ -155,6 +155,7 @@ def main():
                      help='Path to pre-trained model or huggingface model name'),
                  opt('--top',
                      type=int,
+                     default=50,
                      help='Top k candidates from mono for duo reranking'),
                  opt('--output-file', type=Path, default='.'),
                  opt('--overwrite-output', action='store_true'),
