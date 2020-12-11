@@ -1,4 +1,6 @@
+from collections import defaultdict
 from copy import deepcopy
+from itertools import permutations
 from typing import List
 
 from transformers import (AutoTokenizer,
@@ -12,13 +14,16 @@ from .similarity import SimilarityMatrixProvider
 from pygaggle.model import (BatchTokenizer,
                             LongBatchEncoder,
                             QueryDocumentBatch,
+                            DuoQueryDocumentBatch,
                             QueryDocumentBatchTokenizer,
                             SpecialTokensCleaner,
                             T5BatchTokenizer,
+                            T5DuoBatchTokenizer,
                             greedy_decode)
 
 
 __all__ = ['MonoT5',
+           'DuoT5',
            'UnsupervisedTransformerReranker',
            'MonoBERT',
            'QuestionAnsweringTransformerReranker']
@@ -65,6 +70,56 @@ class MonoT5(Reranker):
             batch_log_probs = batch_scores[:, 1].tolist()
             for doc, score in zip(batch.documents, batch_log_probs):
                 doc.score = score
+        return texts
+
+
+class DuoT5(Reranker):
+    def __init__(self,
+                 model: T5ForConditionalGeneration = None,
+                 tokenizer: QueryDocumentBatchTokenizer = None):
+        self.model = model or self.get_model()
+        self.tokenizer = tokenizer or self.get_tokenizer()
+        self.device = next(self.model.parameters(), None).device
+
+    @staticmethod
+    def get_model(pretrained_model_name_or_path: str = 'castorini/duot5-base-msmarco',
+                  *args, device: str = None, **kwargs) -> T5ForConditionalGeneration:
+        device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
+        device = torch.device(device)
+        return T5ForConditionalGeneration.from_pretrained(pretrained_model_name_or_path, *args, **kwargs).to(device).eval()
+
+    @staticmethod
+    def get_tokenizer(pretrained_model_name_or_path: str = 't5-base',
+                      *args, batch_size: int = 8, **kwargs) -> T5DuoBatchTokenizer:
+        return T5DuoBatchTokenizer(
+            AutoTokenizer.from_pretrained(pretrained_model_name_or_path, use_fast=False, *args, **kwargs),
+            batch_size=batch_size
+        )
+
+    def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
+        texts = deepcopy(texts)
+        doc_pairs = list(permutations(texts, 2))
+        scores = defaultdict(float)
+        batch_input = DuoQueryDocumentBatch(query=query, doc_pairs=doc_pairs)
+        for batch in self.tokenizer.traverse_duo_query_document(batch_input):
+            input_ids = batch.output['input_ids'].to(self.device)
+            attn_mask = batch.output['attention_mask'].to(self.device)
+            _, batch_scores = greedy_decode(self.model,
+                                            input_ids,
+                                            length=1,
+                                            attention_mask=attn_mask,
+                                            return_last_logits=True)
+
+            # 6136 and 1176 are the indexes of the tokens false and true in T5.
+            batch_scores = batch_scores[:, [6136, 1176]]
+            batch_scores = torch.nn.functional.softmax(batch_scores, dim=1)
+            batch_probs = batch_scores[:, 1].tolist()
+            for doc, score in zip(batch.doc_pairs, batch_probs):
+                scores[doc[0].metadata['docid']] += score
+                scores[doc[1].metadata['docid']] += (1 - score)
+
+        for text in texts:
+            text.score = scores[text.metadata['docid']]
         return texts
 
 
