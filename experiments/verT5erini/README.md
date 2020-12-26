@@ -204,7 +204,7 @@ python evaluate/pipeline.py --gold claims_dev.jsonl \
 
 ## Result
 
-We can expect to see following results for the full pipeline evaluation of the development set
+We can expect to see the following results for the full pipeline evaluation of the development set:
 
 |          | sentence_selection | sentence_label | abstract_label_only | abstract_rationalized |
 |---|---|---|---|---|
@@ -213,7 +213,6 @@ We can expect to see following results for the full pipeline evaluation of the d
 |f1         |         0.606936  |   0.569364     |        0.650718        |       0.617225 |
 
 ## Replication Log
-
 
 
 
