@@ -4,19 +4,19 @@ import argparse
 from tqdm import tqdm
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--AR_result", type=str, required=True)
-parser.add_argument("--SS_result", type=str, required=True)
-parser.add_argument("--LP_result", type=str, required=True)
-# parser.add_argument("--SS_eval", type=str, required=True)
-parser.add_argument("--LP_eval", type=str, required=True)
+parser.add_argument("--ar_result", type=str, required=True)
+parser.add_argument("--ss_result", type=str, required=True)
+parser.add_argument("--lp_result", type=str, required=True)
+# parser.add_argument("--ss_eval", type=str, required=True)
+parser.add_argument("--lp_eval", type=str, required=True)
 args = parser.parse_args()
 
 
-claim_labels = jsonlines.open(args.LP_result)
-evaluate_file = jsonlines.open(args.LP_eval, mode="w")
-abstract_retrieval = jsonlines.open(args.AR_result)
-rationale_selection = jsonlines.open(args.SS_result)
-# rationale_selection_eval = jsonlines.open(args.SS_eval, mode="w")
+claim_labels = jsonlines.open(args.lp_result)
+evaluate_file = jsonlines.open(args.lp_eval, mode="w")
+abstract_retrieval = jsonlines.open(args.ar_result)
+rationale_selection = jsonlines.open(args.ss_result)
+# rationale_selection_eval = jsonlines.open(args.ss_eval, mode="w")
 
 selection_dict = {}
 for line in rationale_selection:
