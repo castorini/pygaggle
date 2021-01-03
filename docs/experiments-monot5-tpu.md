@@ -160,8 +160,8 @@ source ~/.bashrc
 Then create a Python virtual environment for the experiments and install dependencies.
 ```
 conda init
-conda create --y --name py36 python=3.6
-conda activate py36
+conda create --y --name py37 python=3.7
+conda activate py37
 conda install -c conda-forge httptools jsonnet --yes
 pip install tensorflow tensorflow-text t5[gcp]
 git clone https://github.com/castorini/mesh.git
