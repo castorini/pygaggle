@@ -32,6 +32,7 @@ SETTINGS = TRECCovidSettings()
 METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer',
                   'random')
 
+
 class DocumentRankingEvaluationOptions(BaseModel):
     task: str
     dataset: Path
@@ -165,20 +166,20 @@ def main():
                      help='The T5 tokenizer name.'),
                  opt('--tokenizer-name',
                      type=str,
-                     help = 'The name of the tokenizer to pull from huggingface using the AutoTokenizer class. If '
-                            'left empty, this will be set to the model name.'),
+                     help='The name of the tokenizer to pull from huggingface using the AutoTokenizer class. If '
+                     'left empty, this will be set to the model name.'),
                  opt('--seg-size',
                      type=int,
                      default=10,
                      help='The number of sentences in each segment. For example, given a document with sentences'
-                      '[1,2,3,4,5], a seg_size of 3, and a stride of 2, the document will be broken into segments'
-                       '[[1, 2, 3], [3, 4, 5], and [5]].'),
+                     '[1,2,3,4,5], a seg_size of 3, and a stride of 2, the document will be broken into segments'
+                     '[[1, 2, 3], [3, 4, 5], and [5]].'),
                  opt('--seg-stride',
                      type=int,
                      default=5,
                      help='The number of sentences to increment between each segment. For example, given a document'
-                      'with sentences [1,2,3,4,5], a seg_size of 3, and a stride of 2, the document will be broken into'
-                      'segments [[1, 2, 3], [3, 4, 5], and [5]].'),
+                     'with sentences [1,2,3,4,5], a seg_size of 3, and a stride of 2, the document will be broken into'
+                     'segments [[1, 2, 3], [3, 4, 5], and [5]].'),
                  opt('--aggregate-method',
                      type=str,
                      default="max",

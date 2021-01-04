@@ -45,9 +45,9 @@ class Text:
 
     def __init__(self,
                  text: str,
-                 title: str = '',
                  metadata: Mapping[str, Any] = None,
-                 score: Optional[float] = 0):
+                 score: Optional[float] = 0,
+                 title: str = ''):
         self.text = text
         if metadata is None:
             metadata = dict()

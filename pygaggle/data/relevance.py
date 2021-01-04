@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from functools import lru_cache
+import logging
 from typing import List, Optional
 import json
 import re
@@ -9,6 +10,7 @@ from pyserini.search import SimpleSearcher
 from pygaggle.rerank.base import Query, Text
 
 __all__ = ['RelevanceExample', 'Cord19DocumentLoader', 'Cord19AbstractLoader']
+
 
 @dataclass
 class RelevanceExample:
@@ -26,6 +28,7 @@ class Cord19Document:
     @property
     def all_text(self):
         return '\n'.join((self.abstract, self.body_text, self.ref_entries))
+
 
 @dataclass
 class Cord19Abstract:
