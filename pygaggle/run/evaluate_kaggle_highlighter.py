@@ -5,9 +5,7 @@ import logging
 from pydantic import BaseModel, validator
 from transformers import (AutoModel,
                           AutoModelForQuestionAnswering,
-                          AutoModelForSequenceClassification,
                           AutoTokenizer,
-                          BertForQuestionAnswering,
                           BertForSequenceClassification)
 import torch
 
@@ -22,10 +20,8 @@ from pygaggle.rerank.transformer import (
     )
 from pygaggle.rerank.random import RandomReranker
 from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
-from pygaggle.model import (CachedT5ModelLoader,
-                            RerankerEvaluator,
+from pygaggle.model import (RerankerEvaluator,
                             SimpleBatchTokenizer,
-                            T5BatchTokenizer,
                             metric_names)
 from pygaggle.data import LitReviewDataset
 from pygaggle.settings import Cord19Settings
@@ -72,16 +68,10 @@ class KaggleEvaluationOptions(BaseModel):
 
 
 def construct_t5(options: KaggleEvaluationOptions) -> Reranker:
-    loader = CachedT5ModelLoader(SETTINGS.t5_model_dir,
-                                 SETTINGS.cache_dir,
-                                 'ranker',
-                                 SETTINGS.t5_model_type,
-                                 SETTINGS.flush_cache)
-    device = torch.device(options.device)
-    model = loader.load().to(device).eval()
-    tokenizer = MonoT5.get_tokenizer(options.model_type,
-                                     do_lower_case=options.do_lower_case,
-                                     batch_size=options.batch_size)
+    model = MonoT5.get_model(options.model,
+                             from_tf=options.from_tf,
+                             device=options.device)
+    tokenizer = MonoT5.get_tokenizer(options.model_type, batch_size=options.batch_size)
     return MonoT5(model, tokenizer)
 
 
@@ -139,7 +129,7 @@ def construct_qa_transformer(options: KaggleEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     model = model.to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(
-                    options.tokenizer_name, 
+                    options.tokenizer_name,
                     do_lower_case=options.do_lower_case,
                     use_fast=False)
     return QuestionAnsweringTransformerReranker(model, tokenizer)
