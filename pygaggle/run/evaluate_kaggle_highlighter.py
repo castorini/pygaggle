@@ -5,9 +5,7 @@ import logging
 from pydantic import BaseModel, validator
 from transformers import (AutoModel,
                           AutoModelForQuestionAnswering,
-                          AutoModelForSequenceClassification,
                           AutoTokenizer,
-                          BertForQuestionAnswering,
                           BertForSequenceClassification)
 import torch
 
@@ -22,10 +20,8 @@ from pygaggle.rerank.transformer import (
     )
 from pygaggle.rerank.random import RandomReranker
 from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
-from pygaggle.model import (CachedT5ModelLoader,
-                            RerankerEvaluator,
+from pygaggle.model import (RerankerEvaluator,
                             SimpleBatchTokenizer,
-                            T5BatchTokenizer,
                             metric_names)
 from pygaggle.data import LitReviewDataset
 from pygaggle.settings import Cord19Settings
@@ -45,7 +41,7 @@ class KaggleEvaluationOptions(BaseModel):
     split: str
     do_lower_case: bool
     metrics: List[str]
-    model_name: Optional[str]
+    model: Optional[str]
     tokenizer_name: Optional[str]
 
     @validator('dataset')
@@ -53,13 +49,11 @@ class KaggleEvaluationOptions(BaseModel):
         assert v.exists(), 'dataset must exist'
         return v
 
-    @validator('model_name')
-    def model_name_sane(cls, v: Optional[str], values, **kwargs):
+    @validator('model')
+    def model_sane(cls, v: Optional[str], values, **kwargs):
         method = values['method']
         if method == 'transformer' and v is None:
             raise ValueError('transformer name must be specified')
-        elif method == 't5':
-            return SETTINGS.t5_model_type
         if v == 'biobert':
             return 'monologg/biobert_v1.1_pubmed'
         return v
@@ -67,30 +61,23 @@ class KaggleEvaluationOptions(BaseModel):
     @validator('tokenizer_name')
     def tokenizer_sane(cls, v: str, values, **kwargs):
         if v is None:
-            return values['model_name']
+            return values['model']
         return v
 
 
 def construct_t5(options: KaggleEvaluationOptions) -> Reranker:
-    loader = CachedT5ModelLoader(SETTINGS.t5_model_dir,
-                                 SETTINGS.cache_dir,
-                                 'ranker',
-                                 SETTINGS.t5_model_type,
-                                 SETTINGS.flush_cache)
-    device = torch.device(options.device)
-    model = loader.load().to(device).eval()
-    tokenizer = MonoT5.get_tokenizer(options.model_type,
-                                     do_lower_case=options.do_lower_case,
-                                     batch_size=options.batch_size)
+    model = MonoT5.get_model(options.model,
+                             device=options.device)
+    tokenizer = MonoT5.get_tokenizer(options.model, batch_size=options.batch_size)
     return MonoT5(model, tokenizer)
 
 
 def construct_transformer(options: KaggleEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     try:
-        model = AutoModel.from_pretrained(options.model_name).to(device).eval()
+        model = AutoModel.from_pretrained(options.model).to(device).eval()
     except OSError:
-        model = AutoModel.from_pretrained(options.model_name,
+        model = AutoModel.from_pretrained(options.model,
                                           from_tf=True).to(device).eval()
     tokenizer = SimpleBatchTokenizer(
                     AutoTokenizer.from_pretrained(
@@ -103,11 +90,11 @@ def construct_transformer(options: KaggleEvaluationOptions) -> Reranker:
 def construct_seq_class_transformer(options:
                                     KaggleEvaluationOptions) -> Reranker:
     try:
-        model = MonoBERT.get_model(options.model_name, device=options.device)
+        model = MonoBERT.get_model(options.model, device=options.device)
     except OSError:
         try:
             model = MonoBERT.get_model(
-                        options.model_name,
+                        options.model,
                         from_tf=True,
                         device=options.device)
         except AttributeError:
@@ -117,7 +104,7 @@ def construct_seq_class_transformer(options:
             BertForSequenceClassification.weight = torch.nn.Parameter(
                                                     torch.zeros(2, 768))
             model = BertForSequenceClassification.from_pretrained(
-                        options.model_name, from_tf=True)
+                        options.model, from_tf=True)
             model.classifier.weight = BertForSequenceClassification.weight
             model.classifier.bias = BertForSequenceClassification.bias
             device = torch.device(options.device)
@@ -132,14 +119,14 @@ def construct_qa_transformer(options: KaggleEvaluationOptions) -> Reranker:
     # Refactor
     try:
         model = AutoModelForQuestionAnswering.from_pretrained(
-                    options.model_name)
+                    options.model)
     except OSError:
         model = AutoModelForQuestionAnswering.from_pretrained(
-                    options.model_name, from_tf=True)
+                    options.model, from_tf=True)
     device = torch.device(options.device)
     model = model.to(device).eval()
     tokenizer = AutoTokenizer.from_pretrained(
-                    options.tokenizer_name, 
+                    options.tokenizer_name,
                     do_lower_case=options.do_lower_case,
                     use_fast=False)
     return QuestionAnsweringTransformerReranker(model, tokenizer)
@@ -157,7 +144,9 @@ def main():
                      required=True,
                      type=str,
                      choices=METHOD_CHOICES),
-                 opt('--model-name', type=str),
+                 opt('--model',
+                     type=str,
+                     help='Path to pre-trained model or huggingface model name'),
                  opt('--split', type=str, default='nq', choices=('nq', 'kq')),
                  opt('--batch-size', '-bsz', type=int, default=96),
                  opt('--device', type=str, default='cuda:0'),
@@ -167,7 +156,8 @@ def main():
                      type=str,
                      nargs='+',
                      default=metric_names(),
-                     choices=metric_names()))
+                     choices=metric_names()),
+                 opt('--model-type', type=str))
     args = apb.parser.parse_args()
     options = KaggleEvaluationOptions(**vars(args))
     ds = LitReviewDataset.from_file(str(options.dataset))

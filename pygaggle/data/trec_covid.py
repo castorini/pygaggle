@@ -88,7 +88,7 @@ class TRECCovidDataset(BaseModel):
 
     def query_document_tuples(self):
         return [((ex.qid, ex.text, ex.relevant_candidates), perm_pas)
-                for ex in self.examples 
+                for ex in self.examples
                 for perm_pas in permutations(ex.candidates, r=1)]
 
     def to_relevance_examples(self,
@@ -110,7 +110,7 @@ class TRECCovidDataset(BaseModel):
                      for passage in passages][0])
             except ValueError as e:
                 logging.error(e)
-                logging.warning(f'Skipping passages')
+                logging.warning('Skipping passages')
                 continue
             example_map[qid][3].append(cands[0] in rel_cands)
         mean_stats = defaultdict(list)
@@ -143,7 +143,7 @@ class TRECCovidDataset(BaseModel):
         for k, v in mean_stats.items():
             logging.info(f'{k}: {np.mean(v)}')
         rel = [RelevanceExample(Query(text=query_text, id=qid),
-                                list(map(lambda s: Text(s[1], s[2], dict(docid=s[0])), 
-                                          zip(cands, cands_text, title))),
-                                rel_cands) for qid, (query_text, cands, cands_text, rel_cands, title) in example_map.items()]
+                                list(map(lambda s: Text(s[1], dict(docid=s[0]), title=s[2]),
+                                         zip(cands, cands_text, title))), rel_cands)
+               for qid, (query_text, cands, cands_text, rel_cands, title) in example_map.items()]
         return rel
