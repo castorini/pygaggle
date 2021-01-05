@@ -149,6 +149,7 @@ def main():
                      help='Path to pre-trained model or huggingface model name'),
                  opt('--duo_model',
                      type=str,
+                     default='',
                      help='Path to pre-trained model or huggingface model name'),
                  opt('--mono_hits',
                      type=int,

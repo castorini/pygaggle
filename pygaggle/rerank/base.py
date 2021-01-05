@@ -41,13 +41,15 @@ class Text:
     score : Optional[float]
         The score of the text. For example, the score might be the BM25 score
         from an initial retrieval stage.
+    title : Optional[str]
+        The text's title.
     """
 
     def __init__(self,
                  text: str,
                  metadata: Mapping[str, Any] = None,
                  score: Optional[float] = 0,
-                 title: str = ''):
+                 title: Optional[str] = None):
         self.text = text
         if metadata is None:
             metadata = dict()
