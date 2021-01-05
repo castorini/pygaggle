@@ -148,7 +148,6 @@ def main():
                      type=str,
                      choices=METHOD_CHOICES),
                  opt('--model',
-                     required=True,
                      type=str,
                      help='Path to pre-trained model or huggingface model name'),
                  opt('--split', type=str, default='nq', choices=('nq', 'kq')),
