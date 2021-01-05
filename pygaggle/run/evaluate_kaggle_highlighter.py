@@ -54,8 +54,6 @@ class KaggleEvaluationOptions(BaseModel):
         method = values['method']
         if method == 'transformer' and v is None:
             raise ValueError('transformer name must be specified')
-        elif method == 't5':
-            return SETTINGS.t5_model_type
         if v == 'biobert':
             return 'monologg/biobert_v1.1_pubmed'
         return v
@@ -69,7 +67,6 @@ class KaggleEvaluationOptions(BaseModel):
 
 def construct_t5(options: KaggleEvaluationOptions) -> Reranker:
     model = MonoT5.get_model(options.model,
-                             from_tf=options.from_tf,
                              device=options.device)
     tokenizer = MonoT5.get_tokenizer(options.model, batch_size=options.batch_size)
     return MonoT5(model, tokenizer)

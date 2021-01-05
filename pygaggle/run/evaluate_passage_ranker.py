@@ -4,10 +4,7 @@ import logging
 
 from pydantic import BaseModel, validator
 from transformers import (AutoModel,
-                          AutoTokenizer,
-                          AutoModelForSequenceClassification,
-                          BertForSequenceClassification,
-                          T5ForConditionalGeneration)
+                          AutoTokenizer)
 import torch
 
 from .args import ArgumentParserBuilder, opt
@@ -22,7 +19,6 @@ from pygaggle.rerank.transformer import (
 from pygaggle.rerank.random import RandomReranker
 from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
 from pygaggle.model import (SimpleBatchTokenizer,
-                            T5BatchTokenizer,
                             RerankerEvaluator,
                             DuoRerankerEvaluator,
                             metric_names,
@@ -92,8 +88,8 @@ def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
 def construct_duo_t5(options: PassageRankingEvaluationOptions) -> Tuple[Reranker, Reranker]:
     mono_reranker = construct_t5(options)
     model = DuoT5.get_model(options.duo_model,
-                             from_tf=options.from_tf,
-                             device=options.device)
+                            from_tf=options.from_tf,
+                            device=options.device)
     tokenizer = DuoT5.get_tokenizer(options.model_type, batch_size=options.batch_size)
     return mono_reranker, DuoT5(model, tokenizer)
 
