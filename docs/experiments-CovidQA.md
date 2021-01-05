@@ -109,7 +109,8 @@ NL Question:
 ```
 python -um pygaggle.run.evaluate_kaggle_highlighter --method t5 \
                                                     --dataset data/kaggle-lit-review-0.2.json \
-                                                    --index-dir indexes/lucene-index-cord19-paragraph-2020-05-12
+                                                    --index-dir indexes/lucene-index-cord19-paragraph-2020-05-12 \
+                                                    --model castorini/monot5-base-msmarco-10k 
 ```
 
 The following output will be visible after it has finished:
@@ -129,7 +130,8 @@ Keyword Query:
 python -um pygaggle.run.evaluate_kaggle_highlighter --method t5 \
                                                      --split kq \
                                                      --dataset data/kaggle-lit-review-0.2.json \
-                                                     --index-dir indexes/lucene-index-cord19-paragraph-2020-05-12
+                                                     --index-dir indexes/lucene-index-cord19-paragraph-2020-05-12 \
+                                                     --model castorini/monot5-base-msmarco-10k
 ```
 
 The following output will be visible after it has finished:
