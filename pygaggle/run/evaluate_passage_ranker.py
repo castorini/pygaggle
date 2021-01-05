@@ -4,7 +4,8 @@ import logging
 
 from pydantic import BaseModel, validator
 from transformers import (AutoModel,
-                          AutoTokenizer)
+                          AutoTokenizer,
+                          BertForSequenceClassification)
 import torch
 
 from .args import ArgumentParserBuilder, opt
