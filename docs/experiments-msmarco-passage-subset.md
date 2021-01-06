@@ -170,3 +170,4 @@ If you were able to replicate these results, please submit a PR adding to the re
 + Results replicated by [@rayyang29](https://github.com/rayyang29) on 2020-11-05 (commit[`19b16d2`](https://github.com/castorini/pygaggle/commit/19b16d28b20bbcead359fc9b4086f33e5c7598f9)) (Tesla T4)
 + Results replicated by [@estella98](https://github.com/estella98) on 2020-11-10 (commit[`5e1e0dd`](https://github.com/castorini/pygaggle/commit/5e1e0dd37c71560e46e8a7f4aa1617b1affd23a7)) (Tesla T4 on Colab) 
 + Results replicated by [@rakeeb123](https://github.com/rakeeb123) on 2020-12-10 (commit[`9a1fe70`](https://github.com/castorini/pygaggle/commit/9a1fe703711011cde69cd78968cb3f00190a3144)) (GeForce 940MX and Tesla V100 on Compute Canada)
++ Results replicated by [@Dahlia-Chehata](https://github.com/Dahlia-Chehata) on 2021-01-01 (commit[`968363e`](https://github.com/castorini/pygaggle/commit/968363ee27bd3ec4d20bdf89eb5cd41e1a6410a5)) (Tesla P100 on Compute Canada)
