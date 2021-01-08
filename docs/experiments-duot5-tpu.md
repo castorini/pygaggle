@@ -1,16 +1,19 @@
-# Neural Pointwise Ranking Baselines on [MS MARCO Passage Retrieval](https://github.com/microsoft/MSMARCO-Passage-Ranking) - with TPU
+# Neural Pairwise Ranking Baselines on [MS MARCO Passage Retrieval](https://github.com/microsoft/MSMARCO-Passage-Ranking) - with TPU
 
-This page contains instructions for running monoT5 on the MS MARCO *passage* ranking task.
+This page contains instructions for running duoT5 on the MS MARCO *passage* ranking task.
 
-We will focus on using monoT5-3B to rerank, since it is difficult to run such a large model without a TPU.
-We also mention the changes required to run monoT5-base for those with a more constrained compute budget.
+We will focus on using duoT5-3B to rerank, since it is difficult to run such a large model without a TPU.
+We also mention the changes required to run duoT5-base for those with a more constrained compute budget.
 - monoT5: Document Ranking with a Pretrained Sequence-to-Sequence Model [(Nogueira et al., 2020)](https://www.aclweb.org/anthology/2020.findings-emnlp.63.pdf)
+- duoT5: ...
 
 Note that there are also separate documents to run MS MARCO ranking tasks on regular GPU. Please see [MS MARCO *document* ranking task](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-document.md), [MS MARCO *passage* ranking task - Subset](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-subset.md) and [MS MARCO *passage* ranking task - Entire](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-entire.md).
 
-Prior to running this, we suggest looking at our first-stage [BM25 ranking instructions](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-passage.md).
-We rerank the BM25 run files that contain ~1000 passages per query using monoT5.
-monoT5 is a pointwise reranker. This means that each document is scored independently using T5.
+Prior to running this, we suggest looking at our second-stage [pointwise ranking instructions](https://github.com/castorini/pygaggle/blob/master/docs/experiments-monot5-tpu.md).
+We rerank the monoT5 run files that contain ~1000 passages per query (of which we'll focus on the top 50 passages) using duoT5.
+duo5 is a pairwise reranker. 
+This means that the reranker estimates the probability that a document is more relevant than another.
+These scores are aggregated to get a single score for each document.
 
 ## Data Prep
 
@@ -27,30 +30,7 @@ export DATA_DIR=data/msmarco_passage
 mkdir ${DATA_DIR}
 ```
 
-We provide specific data prep instructions for the train and dev set.
-
-### Train Set
-
-First, download the MS MARCO train triples:
-```
-cd ${DATA_DIR}
-wget https://storage.googleapis.com/duobert_git/triples.train.small.tar.gz
-tar -xvf triples.train.small.tar.gz
-rm triples.train.small.tar.gz
-cd ../../
-```
-
-Then convert the train triples file to the monoT5 input format:
-```
-python pygaggle/data/create_msmarco_t5_training_pairs --triples_train ${DATA_DIR}/triples.train.small.tsv --output_to_t5 ${DATA_DIR}/query_doc_pairs.train.tsv
-```
-
-Next, copy the monoT5 input file to Google Storage. TPU training will read data directly from `gs`.
-```
-gsutil cp ${DATA_DIR}/query_doc_pairs.train.tsv ${GS_FOLDER}/
-```
-
-This file is made available in our [bucket](https://console.cloud.google.com/storage/browser/castorini/monot5/data).
+We provide specific data prep instructions for evaluating on the dev set.
 
 ### Dev Set
 
@@ -248,52 +228,5 @@ QueriesRanked: 6980
 
 If you were able to replicate any of these results, please submit a PR adding to the replication log, along with the model(s) you replicated. 
 Please mention in your PR if you note any differences.
-
-## Train a monoT5 reranker
-
-We use the following environment variables:
-
-```
-export MODEL_NAME=<t5 pretrain model, e.g. base, large, 3B>
-export GS_FOLDER=<gs folder to store checkpoints>
-export PROJECT_NAME=<gcloud project name>
-export TPU_NAME=<name of tpu to create>
-export MODEL_INIT_CKPT=<initial model checkpoint, e.g. 999900>
-```
-
-Copy pre-trained checkpoint to our target model
-```
-echo "model_checkpoint_path: \"model.ckpt-${MODEL_INIT_CKPT}\"" > checkpoint
-gsutil cp checkpoint ${GS_FOLDER}
-gsutil cp gs://t5-data/pretrained_models/${MODEL_NAME}/model.ckpt-${MODEL_INIT_CKPT}* ${GS_FOLDER}
-```
-
-Finally, we can begin training.
-
-```
-nohup t5_mesh_transformer  \
-  --tpu="${TPU_NAME}" \
-  --gcp_project="${PROJECT_NAME}" \
-  --tpu_zone="europe-west4-a" \
-  --model_dir="${GS_FOLDER}" \
-  --gin_param="init_checkpoint = 'gs://t5-data/pretrained_models/${MODEL_NAME}/model.ckpt-${MODEL_INIT_CKPT}'" \
-  --gin_file="dataset.gin" \
-  --gin_file="models/bi_v1.gin" \
-  --gin_file="gs://t5-data/pretrained_models/${MODEL_NAME}/operative_config.gin" \
-  --gin_param="utils.tpu_mesh_shape.model_parallelism = 1" \
-  --gin_param="utils.tpu_mesh_shape.tpu_topology = '2x2'" \
-  --gin_param="utils.run.train_dataset_fn = @t5.models.mesh_transformer.tsv_dataset_fn" \
-  --gin_param="tsv_dataset_fn.filename = 'gs://castorini/monot5/data/query_doc_pairs.train.tsv'" \
-  --gin_file="learning_rate_schedules/constant_0_001.gin" \
-  --gin_param="run.train_steps = 1100000" \
-  --gin_param="run.save_checkpoints_steps = 10000" \
-  --gin_param="tokens_per_batch = 65536" \
-  >> out.log_exp 2>&1 &
-
-tail -100f out.log_exp
-```
-
-In the case of monoT5-3B, set `utils.tpu_mesh_shape.model_parallelism` to 8 instead of 1.
-Training monoT5 base, large, and 3B take approximately 12, 48, and 160 hours overall, respectively, on a single TPU v3-8.
 
 ## Replication Log
