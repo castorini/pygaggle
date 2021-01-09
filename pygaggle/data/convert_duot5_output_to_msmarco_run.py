@@ -80,5 +80,5 @@ with open(args.duo_run, 'w') as fout:
         for rank, (doc_id, _) in enumerate(doc_ids_scores):
             fout.write(f'{query_id}\t{doc_id}\t{rank + 1}\n')
         mono_offset = len(doc_ids_scores)
-        for rank, (doc_id, _) in enumerate(mono_run[query_id]):
+        for rank, doc_id in enumerate(mono_run[query_id]):
             fout.write(f'{query_id}\t{doc_id}\t{mono_offset + rank + 1}\n')
