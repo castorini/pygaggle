@@ -193,15 +193,16 @@ Note that we strongly encourage you to run any of the long processes in `screen`
 ## Evaluate reranked results
 After reranking is done, let's copy the results from GS to our working directory, where we concatenate all the score files back into one file.
 ```
-gsutil cp ${GS_FOLDER}/query_doc_pair_scores.dev.small.txt???-1150000 ${DATA_DIR}/
-cat ${DATA_DIR}/query_doc_pair_scores.dev.small.txt???-1150000 > ${DATA_DIR}/query_doc_pair_scores.dev.small.txt
+gsutil cp ${GS_FOLDER}/query_docs_triple_scores.dev.small.txt???-1150000 ${DATA_DIR}/
+cat ${DATA_DIR}/query_docs_triple_scores.dev.small.txt???-1150000 > ${DATA_DIR}/query_docs_triple_scores.dev.small.txt
 ```
 
-Then we convert the monoT5 output to the required MSMARCO format.
+Then we convert the mT5 output to the required MSMARCO format.
 ```
-python pygaggle/data/convert_duot5_output_to_msmarco_run.py --t5_output ${DATA_DIR}/query_doc_pair_scores.dev.small.txt \
-                                                --t5_output_ids ${DATA_DIR}/query_doc_pair_ids.dev.small.tsv \
-                                                --msmarco_run ${DATA_DIR}/run.monot5_${MODEL_NAME}.dev.tsv
+python pygaggle/data/convert_duot5_output_to_msmarco_run.py --t5_output ${DATA_DIR}/query_docs_triple_scores.dev.small.txt \
+                                                --t5_output_ids ${DATA_DIR}/query_docs_triple_ids.dev.small.tsv \
+                                                --duo_run ${DATA_DIR}/run.duot5_${MODEL_NAME}.dev.tsv \
+                                                --mono_run ${DATA_DIR}/run.duot5_${MODEL_NAME}.dev.tsv
 ```
 
 Now we can evaluate the reranked results using the official MS MARCO evaluation script.
@@ -218,11 +219,11 @@ QueriesRanked: 6980
 #####################
 ```
 
-In the case of monoT5-base, the output should be:
+In the case of duoT5-base, the output should be:
 
 ```
 #####################
-MRR @10: 0.38160657433938283
+MRR @10: 0.3929155864829223
 QueriesRanked: 6980
 #####################
 ```

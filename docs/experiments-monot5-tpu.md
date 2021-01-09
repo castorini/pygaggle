@@ -220,7 +220,7 @@ Then we convert the monoT5 output to the required MSMARCO format.
 ```
 python pygaggle/data/convert_monot5_output_to_msmarco_run.py --t5_output ${DATA_DIR}/query_doc_pair_scores.dev.small.txt \
                                                 --t5_output_ids ${DATA_DIR}/query_doc_pair_ids.dev.small.tsv \
-                                                --msmarco_run ${DATA_DIR}/run.monot5_${MODEL_NAME}.dev.tsv
+                                                --mono_run ${DATA_DIR}/run.monot5_${MODEL_NAME}.dev.tsv
 ```
 
 Now we can evaluate the reranked results using the official MS MARCO evaluation script.
