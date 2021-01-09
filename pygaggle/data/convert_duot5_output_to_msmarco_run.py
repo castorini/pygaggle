@@ -57,13 +57,13 @@ with open(args.t5_output_ids) as f_gt, open(args.t5_output) as f_pred:
         _, score = line_pred.strip().split('\t')
         score = float(score)
         if int(ct_a) < args.top_k and int(ct_b) < args.top_k:
-            if doc_id_a not in examples[args.top_k][query_id]:
+            if doc_id_a not in examples[query_id]:
                 examples[query_id][doc_id_a] = 0
             if "log" not in args.aggregate:
                 score = np.exp(score)
             examples[query_id][doc_id_a] += score
             if "sym" in args.aggregate:
-                if doc_id_b not in examples[args.top_k][query_id]:
+                if doc_id_b not in examples[query_id]:
                     examples[query_id][doc_id_b] = 0
                 if "log" in args.aggregate:
                     score_b = np.log(1 - np.exp(score))
