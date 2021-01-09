@@ -72,7 +72,7 @@ QueriesRanked: 6980
 #####################
 ```
 
-Then, we prepare the query-doc pairs in the monoT5 input format.
+Then, we prepare the query-doc0-doc1 pairs in the duoT5 input format.
 ```
 python pygaggle/data/create_msmarco_duot5_input.py --queries ${DATA_DIR}/queries.dev.small.tsv \
                                       --run ${DATA_DIR}/run.dev.small.tsv \
@@ -85,21 +85,21 @@ We will get two output files here:
 - `query_docs_triples.dev.small.txt`: The query-doc0-doc1 triples for duoT5 input.
 - `query_docs_triple_ids.dev.small.tsv`: The `query_id`s,`doc_id_0`s, and `doc_id_1`s that map to the query-doc0-doc1 triples. We will use this to map query-doc0-doc1 triples to their corresponding duoT5 output scores.
 
-The files are made available in our [bucket](https://console.cloud.google.com/storage/browser/castorini/monot5/data).
+The files are made available in our [bucket](https://console.cloud.google.com/storage/browser/castorini/duot5/data).
 
-Note that there might be a memory issue if the monoT5 input file is too large for the memory in the instance. We thus split the input file into multiple files.
+Note that there might be a memory issue if the duoT5 input file is too large for the memory in the instance. We thus split the input file into multiple files.
 
 ```
 split --suffix-length 3 --numeric-suffixes --lines 500000 ${DATA_DIR}/query_docs_triples.dev.small.txt ${DATA_DIR}/query_docs_triples.dev.small.txt
 ```
 
-For `query_docs_triples.dev.small.txt`, we will get 9 files after split. i.e. (`query_docs_triples.dev.small.txt000` to `query_docs_triples.dev.small.txt008`).
-Note that it is possible that running reranking might still result in OOM issues in which case reduce the number of lines to smaller than `800000`.
+For `query_docs_triples.dev.small.txt`, we will get 9 files after split. i.e. (`query_docs_triples.dev.small.txt000` to `query_docs_triples.dev.small.txt034`).
+Note that it is possible that running reranking might still result in OOM issues in which case reduce the number of lines to smaller than `500000`.
 
 We copy these input files to Google Storage. TPU inference will read data directly from `gs`.
 ```
 export GS_FOLDER=<google storage folder to store input/output data>
-gsutil cp ${DATA_DIR}/query_doc_pairs.dev.small.txt??? ${GS_FOLDER}
+gsutil cp ${DATA_DIR}/query_docs_triples.dev.small.txt??? ${GS_FOLDER}
 ```
 These files can also be found in our [bucket](https://console.cloud.google.com/storage/browser/castorini/monot5/data).
 
@@ -186,20 +186,20 @@ done &
 tail -100f out.log_eval_exp
 ```
 
-Using a TPU v3-8, it takes approximately 5 hours and 35 hours to rerank with monoT5-base and monoT5-3B respectively.
+Using a TPU v3-8, it takes approximately 5 hours and 35 hours to rerank with duoT5-base and duoT5-3B respectively.
 
 Note that we strongly encourage you to run any of the long processes in `screen` to make sure they don't get interrupted.
 
 ## Evaluate reranked results
 After reranking is done, let's copy the results from GS to our working directory, where we concatenate all the score files back into one file.
 ```
-gsutil cp ${GS_FOLDER}/query_doc_pair_scores.dev.small.txt???-1100000 ${DATA_DIR}/
-cat ${DATA_DIR}/query_doc_pair_scores.dev.small.txt???-1100000 > ${DATA_DIR}/query_doc_pair_scores.dev.small.txt
+gsutil cp ${GS_FOLDER}/query_doc_pair_scores.dev.small.txt???-1150000 ${DATA_DIR}/
+cat ${DATA_DIR}/query_doc_pair_scores.dev.small.txt???-1150000 > ${DATA_DIR}/query_doc_pair_scores.dev.small.txt
 ```
 
 Then we convert the monoT5 output to the required MSMARCO format.
 ```
-python pygaggle/data/convert_t5_output_to_msmarco_run.py --t5_output ${DATA_DIR}/query_doc_pair_scores.dev.small.txt \
+python pygaggle/data/convert_duot5_output_to_msmarco_run.py --t5_output ${DATA_DIR}/query_doc_pair_scores.dev.small.txt \
                                                 --t5_output_ids ${DATA_DIR}/query_doc_pair_ids.dev.small.tsv \
                                                 --msmarco_run ${DATA_DIR}/run.monot5_${MODEL_NAME}.dev.tsv
 ```

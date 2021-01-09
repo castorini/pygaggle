@@ -49,7 +49,7 @@ def load_run(path):
     return sorted_run
 
 
-mono_run = load_run(path=args.run)
+mono_run = load_run(path=args.mono_run)
 examples = collections.defaultdict(dict)
 with open(args.t5_output_ids) as f_gt, open(args.t5_output) as f_pred:
     for line_gt, line_pred in zip(f_gt, f_pred):
