@@ -13,7 +13,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--queries", type=str, required=True,
                     help="tsv file with two columns, <query_id> and <query_text>")
 parser.add_argument("--run", type=str, required=True,
-                    help="tsv file with three columns <query_id>, <doc_id> and <rank>")
+                    help="tsv file with five columns <query_id>, <doc_id_a>, <doc_id_b>, <rank_a> and <rank_b>")
 parser.add_argument("--corpus", type=str, required=True)
 parser.add_argument("--t5_input", type=str, required=True,
                     help="path to store t5_input, txt format")

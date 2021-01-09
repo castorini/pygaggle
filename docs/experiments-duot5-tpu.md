@@ -74,25 +74,26 @@ QueriesRanked: 6980
 
 Then, we prepare the query-doc pairs in the monoT5 input format.
 ```
-python pygaggle/data/create_msmarco_monot5_input.py --queries ${DATA_DIR}/queries.dev.small.tsv \
+python pygaggle/data/create_msmarco_duot5_input.py --queries ${DATA_DIR}/queries.dev.small.tsv \
                                       --run ${DATA_DIR}/run.dev.small.tsv \
                                       --corpus ${DATA_DIR}/collection.tsv \
-                                      --t5_input ${DATA_DIR}/query_doc_pairs.dev.small.txt \
-                                      --t5_input_ids ${DATA_DIR}/query_doc_pair_ids.dev.small.tsv
+                                      --t5_input ${DATA_DIR}/query_docs_triples.dev.small.txt \
+                                      --t5_input_ids ${DATA_DIR}/query_docs_triple_ids.dev.small.tsv \
+                                      --top_k 50
 ```
 We will get two output files here:
-- `query_doc_pairs.dev.small.txt`: The query-doc pairs for monoT5 input.
-- `query_doc_pair_ids.dev.small.tsv`: The `query_id`s and `doc_id`s that map to the query-doc pairs. We will use this to map query-doc pairs to their corresponding monoT5 output scores.
+- `query_docs_triples.dev.small.txt`: The query-doc0-doc1 triples for duoT5 input.
+- `query_docs_triple_ids.dev.small.tsv`: The `query_id`s,`doc_id_0`s, and `doc_id_1`s that map to the query-doc0-doc1 triples. We will use this to map query-doc0-doc1 triples to their corresponding duoT5 output scores.
 
 The files are made available in our [bucket](https://console.cloud.google.com/storage/browser/castorini/monot5/data).
 
 Note that there might be a memory issue if the monoT5 input file is too large for the memory in the instance. We thus split the input file into multiple files.
 
 ```
-split --suffix-length 3 --numeric-suffixes --lines 800000 ${DATA_DIR}/query_doc_pairs.dev.small.txt ${DATA_DIR}/query_doc_pairs.dev.small.txt
+split --suffix-length 3 --numeric-suffixes --lines 500000 ${DATA_DIR}/query_docs_triples.dev.small.txt ${DATA_DIR}/query_docs_triples.dev.small.txt
 ```
 
-For `query_doc_pairs.dev.small.txt`, we will get 9 files after split. i.e. (`query_doc_pairs.dev.small.txt000` to `query_doc_pairs.dev.small.txt008`).
+For `query_docs_triples.dev.small.txt`, we will get 9 files after split. i.e. (`query_docs_triples.dev.small.txt000` to `query_docs_triples.dev.small.txt008`).
 Note that it is possible that running reranking might still result in OOM issues in which case reduce the number of lines to smaller than `800000`.
 
 We copy these input files to Google Storage. TPU inference will read data directly from `gs`.
@@ -154,27 +155,27 @@ Let's first define the model type and checkpoint.
 
 ```
 export MODEL_NAME=<base or 3B>
-export MODEL_DIR=gs://castorini/monot5/experiments/${MODEL_NAME}
+export MODEL_DIR=gs://castorini/duot5/experiments/${MODEL_NAME}
 ```
 
 Then run following command to start the process in background and monitor the log
 ```
-for ITER in {000..008}; do
+for ITER in {000..034}; do
   echo "Running iter: $ITER" >> out.log_eval_exp
   nohup t5_mesh_transformer \
     --tpu="${TPU_NAME}" \
-    --gcp_project=${PROJECT_NAME} \
+    --gcp_project="${PROJECT_NAME}" \
     --tpu_zone="europe-west4-a" \
     --model_dir="${MODEL_DIR}" \
     --gin_file="gs://t5-data/pretrained_models/${MODEL_NAME}/operative_config.gin" \
     --gin_file="infer.gin" \
     --gin_file="beam_search.gin" \
     --gin_param="utils.tpu_mesh_shape.tpu_topology = '2x2'" \
-    --gin_param="infer_checkpoint_step = 1100000" \
+    --gin_param="infer_checkpoint_step = 1150000" \
     --gin_param="utils.run.sequence_length = {'inputs': 512, 'targets': 2}" \
     --gin_param="Bitransformer.decode.max_decode_length = 2" \
-    --gin_param="input_filename = '${GS_FOLDER}/query_doc_pairs.dev.small.txt${ITER}'" \
-    --gin_param="output_filename = '${GS_FOLDER}/query_doc_pair_scores.dev.small.txt${ITER}'" \
+    --gin_param="input_filename = '${GS_FOLDER}/query_docs_triples.dev.small.txt${ITER}'" \
+    --gin_param="output_filename = '${GS_FOLDER}/query_docs_triple_scores.dev.small.txt${ITER}'" \
     --gin_param="tokens_per_batch = 65536" \
     --gin_param="Bitransformer.decode.beam_size = 1" \
     --gin_param="Bitransformer.decode.temperature = 0.0" \
