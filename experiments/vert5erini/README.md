@@ -201,6 +201,31 @@ python evaluate/pipeline.py --gold claims_dev.jsonl \
                         --corpus corpus.jsonl \
                         --prediction full_pipeline_eval.jsonl
 ```
+### Evaluate Each Step
+3. Evaluate abstract retrieval
+```
+python evaluate/abstract_retrieval.py --dataset claims_dev.jsonl \
+                                      --abstract-retrieval ar_dev.jsonl
+```
+
+4. Evaluate sentence selection
+```
+python evaluate/rationale_selection.py --corpus corpus.jsonl \
+                                       --dataset claims_dev.jsonl \
+                                       --rationale-selection ss_dev.jsonl
+```
+
+5. Evaluate label prediction
+```
+python evaluate/label_prediction.py --corpus corpus.jsonl \
+                                    --dataset claims_dev.jsonl \
+                                    --label-prediction lp_dev.jsonl
+```
+
+### Evaluate With Oracle Setting
+To evaluate with Oracle setting, just replace the input of each inference step by oracle files from SciFact.
+
+E.g. If you want to evaluate Sentence Selection in oracle setting, when you run `prepare_ss_input.py`, just replace the `ar_dev.jsonl` by oracle retrieval file that identical to SciFact.
 
 ## Result
 
