@@ -59,7 +59,7 @@ class SegmentProcessor:
             else:
                 for i in range(0, len(sentences), stride):
                     segment_text = ' '.join(sentences[i:i + seg_size])
-                    if not document.title == '':
+                    if document.title and (not document.title == ''):
                         segment_text = document.title + '. ' + segment_text
                     segmented_docs.append(Text(segment_text, dict(docid=document.metadata["docid"])))
                     if i + seg_size >= len(sentences):
