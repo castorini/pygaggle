@@ -202,7 +202,8 @@ Then we convert the mT5 output to the required MSMARCO format.
 python pygaggle/data/convert_duot5_output_to_msmarco_run.py --t5_output ${DATA_DIR}/query_docs_triple_scores.dev.small.txt \
                                                 --t5_output_ids ${DATA_DIR}/query_docs_triple_ids.dev.small.tsv \
                                                 --duo_run ${DATA_DIR}/run.duot5_${MODEL_NAME}.dev.tsv \
-                                                --mono_run ${DATA_DIR}/run.duot5_${MODEL_NAME}.dev.tsv
+                                                --mono_run ${DATA_DIR}/run.duot5_${MODEL_NAME}.dev.tsv \
+                                                --aggregate sym-sum
 ```
 
 Now we can evaluate the reranked results using the official MS MARCO evaluation script.
