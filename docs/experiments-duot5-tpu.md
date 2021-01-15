@@ -101,7 +101,7 @@ Note that there might be a memory issue if the duoT5 input file is too large for
 split --suffix-length 3 --numeric-suffixes --lines 500000 ${DATA_DIR}/query_docs_triples.dev.small.txt ${DATA_DIR}/query_docs_triples.dev.small.txt
 ```
 
-For `query_docs_triples.dev.small.txt`, we will get 9 files after split. i.e. (`query_docs_triples.dev.small.txt000` to `query_docs_triples.dev.small.txt034`).
+For `query_docs_triples.dev.small.txt`, we will get 35 files after split. i.e. (`query_docs_triples.dev.small.txt000` to `query_docs_triples.dev.small.txt034`).
 Note that it is possible that running reranking might still result in OOM issues in which case reduce the number of lines to smaller than `500000`.
 
 We copy these input files to Google Storage. TPU inference will read data directly from `gs`.
@@ -209,7 +209,7 @@ Then we convert the duoT5 output to the required MSMARCO format.
 python pygaggle/data/convert_duot5_output_to_msmarco_run.py --t5_output ${DATA_DIR}/query_docs_triple_scores.dev.small.txt \
                                                 --t5_output_ids ${DATA_DIR}/query_docs_triple_ids.dev.small.tsv \
                                                 --duo_run ${DATA_DIR}/run.duot5_${MODEL_NAME}.dev.tsv \
-                                                --mono_run ${DATA_DIR}/run.monot5_${MODEL_NAME}.dev.tsv \
+                                                --input_run ${DATA_DIR}/run.monot5_${MODEL_NAME}.dev.tsv \
                                                 --aggregate sym-sum
 ```
 

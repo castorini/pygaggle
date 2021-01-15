@@ -11,8 +11,8 @@ parser.add_argument("--t5_output", type=str, required=True,
                     help="tsv file with two columns, <label> and <score>")
 parser.add_argument("--t5_output_ids", type=str, required=True,
                     help="tsv file with five columns <query_id>, <doc_id_a>, <doc_id_b>, <rank_a> and <rank_b>")
-parser.add_argument("--mono_run", type=str, required=True,
-                    help="path to input mono run, tsv file, with <query_id>, <doc_id> and <rank>")
+parser.add_argument("--input_run", type=str, required=True,
+                    help="path to input run, tsv file, with <query_id>, <doc_id> and <rank>")
 parser.add_argument("--duo_run", type=str, required=True,
                     help="path to output duo run, tsv file, with <query_id>, <doc_id> and <rank>")
 parser.add_argument("--top_k", type=int, default=50,
@@ -49,7 +49,7 @@ def load_run(path):
     return sorted_run
 
 
-mono_run = load_run(path=args.mono_run)
+input_run = load_run(path=args.input_run)
 examples = collections.defaultdict(dict)
 with open(args.t5_output_ids) as f_gt, open(args.t5_output) as f_pred:
     for line_gt, line_pred in zip(f_gt, f_pred):
@@ -79,8 +79,8 @@ with open(args.duo_run, 'w') as fout:
         doc_ids_scores.sort(key=lambda x: x[1], reverse=True)
         for rank, (doc_id, _) in enumerate(doc_ids_scores):
             fout.write(f'{query_id}\t{doc_id}\t{rank + 1}\n')
-        mono_offset = len(doc_ids_scores)
-        for rank, doc_id in enumerate(mono_run[query_id]):
-            if rank < mono_offset:
+        input_offset = len(doc_ids_scores)
+        for rank, doc_id in enumerate(input_run[query_id]):
+            if rank < input_offset:
                 continue
             fout.write(f'{query_id}\t{doc_id}\t{rank + 1}\n')
