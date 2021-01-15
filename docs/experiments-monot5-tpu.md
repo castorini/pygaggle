@@ -1,4 +1,4 @@
-# Neural Ranking Baselines on [MS MARCO Passage Retrieval](https://github.com/microsoft/MSMARCO-Passage-Ranking) - with TPU
+# Neural Pointwise Ranking Baselines on [MS MARCO Passage Retrieval](https://github.com/microsoft/MSMARCO-Passage-Ranking) - with TPU
 
 This page contains instructions for running monoT5 on the MS MARCO *passage* ranking task.
 
@@ -183,7 +183,7 @@ for ITER in {000..008}; do
   echo "Running iter: $ITER" >> out.log_eval_exp
   nohup t5_mesh_transformer \
     --tpu="${TPU_NAME}" \
-    --gcp_project=${PROJECT_NAME} \
+    --gcp_project="${PROJECT_NAME}" \
     --tpu_zone="europe-west4-a" \
     --model_dir="${MODEL_DIR}" \
     --gin_file="gs://t5-data/pretrained_models/${MODEL_NAME}/operative_config.gin" \
@@ -218,9 +218,9 @@ cat ${DATA_DIR}/query_doc_pair_scores.dev.small.txt???-1100000 > ${DATA_DIR}/que
 
 Then we convert the monoT5 output to the required MSMARCO format.
 ```
-python pygaggle/data/convert_t5_output_to_msmarco_run.py --t5_output ${DATA_DIR}/query_doc_pair_scores.dev.small.txt \
+python pygaggle/data/convert_monot5_output_to_msmarco_run.py --t5_output ${DATA_DIR}/query_doc_pair_scores.dev.small.txt \
                                                 --t5_output_ids ${DATA_DIR}/query_doc_pair_ids.dev.small.tsv \
-                                                --msmarco_run ${DATA_DIR}/run.monot5_${MODEL_NAME}.dev.tsv
+                                                --mono_run ${DATA_DIR}/run.monot5_${MODEL_NAME}.dev.tsv
 ```
 
 Now we can evaluate the reranked results using the official MS MARCO evaluation script.
