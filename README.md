@@ -86,8 +86,9 @@ for i in range(0, 10):
 
 The following documents describe how to use Pygaggle on various IR test collections:
 
-+ [Experiments on CovidQA](https://github.com/castorini/pygaggle/blob/master/docs/experiments-CovidQA.md)
-+ [Experiments on MS MARCO Document Retrieval](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-document.md)
-+ [Experiments on MS MARCO Passage Retrieval - Dev Subset](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-subset.md)
-+ [Experiments on MS MARCO Passage Retrieval - Entire Dev Set](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-entire.md)
-+ [Experiments on MS MARCO Passage Retrieval - with TPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-monot5-tpu.md)
++ [Experiments on CovidQA - with GPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-CovidQA.md)
++ [Experiments on MS MARCO Document Retrieval - Dev Subset - with GPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-document.md)
++ [Experiments on MS MARCO Passage Retrieval - Dev Subset - with GPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-subset.md)
++ [Experiments on MS MARCO Passage Retrieval - Entire Dev Set - with GPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-entire.md)
++ [Experiments on MS MARCO Passage Retrieval using monoT5 - Entire Dev Set - with TPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-monot5-tpu.md)
++ [Experiments on MS MARCO Passage Retrieval using duoT5 - Entire Dev Set - with TPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-duot5-tpu.md)
