@@ -178,3 +178,4 @@ Please mention in your PR if you find any difference!
 + Results replicated by [@stephaniewhoo](https://github.com/stephaniewhoo) on 2020-10-25 (commit[`e815051`](https://github.com/castorini/pygaggle/commit/e815051f2cee1af98b370ee030b66c07a8a287f3)) (Tesla V100 on Compute Canada)
 + Results replicated by [@rayyang29](https://github.com/rayyang29) on 2020-11-16 (commit[`d840b0c`](https://github.com/castorini/pygaggle/commit/d840b0c0fc2a5a0a6e10f87c94b31824964449f7))(Tesla V100 on Compute Canada)
 + Results replicated by [@Dahlia-Chehata](https://github.com/Dahlia-Chehata) on 2021-01-10 (commit[`623285a`](https://github.com/castorini/pygaggle/commit/623285ae5092a9b27bc15a4a3b72bbe25910db49)) (Tesla V100 on Compute Canada)
++ Results replicated by [@KaiSun314](https://github.com/KaiSun314) on 2021-01-16 (commit[`1414e32`](https://github.com/castorini/pygaggle/commit/1414e324d1ab10f578aa24a1166d80ff3f763a47)) (Tesla V100 on Compute Canada)
