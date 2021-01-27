@@ -9,10 +9,10 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name='pygaggle',
-    version='0.0.1',
+    version='0.0.2',
     author='PyGaggle Gaggle',
-    author_email='r33tang@uwaterloo.ca',
-    description='A gaggle of rerankers for CovidQA, CORD-19 and MS-MARCO',
+    author_email='rpradeep@uwaterloo.ca',
+    description='A gaggle of rerankers for text ranking and question answering.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/castorini/pygaggle',
