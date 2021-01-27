@@ -82,12 +82,12 @@ python -um pygaggle.run.evaluate_document_ranker --split dev \
 The following output will be visible after it has finished:
 
 ```
-precision@1 0.16
-recall@3  0.44
+precision@1 0.2
+recall@3  0.56
 recall@50  0.84
 recall@1000 0.88
-mrr     0.33663
-mrr@10   0.33171
+mrr     0.38882
+mrr@10   0.38271
 ```
 
 It takes about 5 hours to re-rank this subset on MS MARCO using a P100. 
@@ -100,12 +100,12 @@ We can modify the argument for `--dataset` to `data/msmarco_doc_ans_small/sh` to
 The results are as follows:
 
 ```
-precision@1 0.24
+precision@1 0.28
 recall@3  0.32
-recall@50  0.76
+recall@50  0.8
 recall@1000 0.88
-mrr     0.31052
-mrr@10   0.29133
+mrr     0.33617
+mrr@10   0.31978
 ```
 
 
@@ -125,4 +125,4 @@ If you were able to replicate these results, please submit a PR adding to the re
 + Results replicated by [@wiltan-uw](https://github.com/wiltan-uw) on 2020-09-13 (commit[`41513a9`](https://github.com/castorini/pygaggle/commit/41513a9f496bd59523993ce134cc35a7b881e5a1)) (RTX 2070S)
 + Results replicated by [@jhuang265](https://github.com/jhuang265) on 2020-10-18 (commit[`e815051`](https://github.com/castorini/pygaggle/commit/e815051f2cee1af98b370ee030b66c07a8a287f3)) (Tesla P100 on Colab)
 + Results replicated by [@stephaniewhoo](https://github.com/stephaniewhoo) on 2020-10-25 (commit[`e815051`](https://github.com/castorini/pygaggle/commit/e815051f2cee1af98b370ee030b66c07a8a287f3)) (Tesla V100 on Compute Canada)
-+ Results replicated by [@Dahlia-Chehata](https://github.com/Dahlia-Chehata) on 2021-01-01 (commit[`968363e`](https://github.com/castorini/pygaggle/commit/968363ee27bd3ec4d20bdf89eb5cd41e1a6410a5)) (Tesla P100 on Compute Canada)
++ Results replicated by [@Dahlia-Chehata](https://github.com/Dahlia-Chehata) on 2021-01-20 (commit[`623285a`](https://github.com/castorini/pygaggle/commit/623285ae5092a9b27bc15a4a3b72bbe25910db49)) (Tesla K80 on Colab)
