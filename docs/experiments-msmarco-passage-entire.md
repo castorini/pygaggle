@@ -40,7 +40,7 @@ pip install torch
 ```
 Then install PyGaggle by the following command.
 ```
-pip install -r requirements.txt
+pip install -r pygaggle/requirements.txt
 ```
 Note: On Compute Canada, you may have to install tensorflow separately by the following command.
 ```
