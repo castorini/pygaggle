@@ -10,3 +10,8 @@ __pycache__
 # data
 data/lucene-index-covid-paragraph
 scratch
+
+# setup
+dist/
+pygaggle.egg-info/
+
