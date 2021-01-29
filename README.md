@@ -26,7 +26,7 @@ Currently, this repo contains implementations of the rerankers for MS MARCO Pass
 
 0. Make you sure you have an installation of [Python 3.6+](https://www.python.org/downloads/). All `python` commands below refer to this.
 
-0. For pip, do `pip install -r pygaggle/requirements.txt`
+0. For pip, do `pip install -r requirements.txt`
     * If you prefer Anaconda, use `conda env create -f environment.yml && conda activate pygaggle`.
 
 
