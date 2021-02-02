@@ -1,7 +1,8 @@
 from typing import List, Optional, Mapping, Any
 import abc
 
-from ..reranker.base import Query, Text
+from pygaggle.rerank.base import Query, Text
+
 
 class Answer:
     """

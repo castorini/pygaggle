@@ -5,9 +5,13 @@ import abc
 from sklearn.metrics import recall_score
 from tqdm import tqdm
 import numpy as np
+import string
+import regex as re
 
 from pygaggle.data.kaggle import RelevanceExample
+from pygaggle.data.retrieval import RetrievalExample
 from pygaggle.rerank.base import Reranker
+from pygaggle.reader.base import Reader
 from pygaggle.model.writer import Writer
 
 from pygaggle.data.segmentation import SegmentProcessor
@@ -239,3 +243,49 @@ class DuoRerankerEvaluator:
             for metric in metrics:
                 metric.accumulate(doc_scores, example)
         return metrics
+
+class ReaderEvaluator:
+    def __init__(
+        self,
+        reader: Reader,
+    ):
+        self.reader = reader
+
+    def evaluate(
+        self,
+        examples: List[RetrievalExample],
+    ):
+        ems = []
+        for example in tqdm(examples):
+            answers = self.reader.predict(example.query, example.texts)
+
+            bestAnswer = answers[0].text
+            groundTruthAnswers = example.groundTruthAnswers
+            em_hit = max([ReaderEvaluator.exact_match_score(bestAnswer, ga) for ga in groundTruthAnswers])
+            ems.append(em_hit)
+
+        return ems
+
+    @staticmethod
+    def exact_match_score(
+        prediction: str,
+        ground_truth: str,
+    ):
+        return ReaderEvaluator._normalize_answer(prediction) == ReaderEvaluator._normalize_answer(ground_truth)
+
+    @staticmethod
+    def _normalize_answer(s):
+        def remove_articles(text):
+            return re.sub(r'\b(a|an|the)\b', ' ', text)
+
+        def white_space_fix(text):
+            return ' '.join(text.split())
+
+        def remove_punc(text):
+            exclude = set(string.punctuation)
+            return ''.join(ch for ch in text if ch not in exclude)
+
+        def lower(text):
+            return text.lower()
+
+        return white_space_fix(remove_articles(remove_punc(lower(s))))
