@@ -11,9 +11,9 @@ class DensePassageRetrieverReader(Reader):
         self,
         model: DPRReader = None,
         tokenizer: DPRReaderTokenizer = None,
-        num_spans: int = 16,
-        max_answer_length: int = 64,
-        num_spans_per_passage: int = 4,
+        num_spans: int = 1,
+        max_answer_length: int = 10,
+        num_spans_per_passage: int = 10,
     ):
         self.model = model or self.get_model()
         self.tokenizer = tokenizer or self.get_tokenizer()
