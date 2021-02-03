@@ -29,9 +29,10 @@ class PassageReadingEvaluationOptions(BaseModel):
     num_spans: int
     max_answer_length: int
     num_spans_per_passage: int
+    device: str
 
 def construct_dpr(options: PassageReadingEvaluationOptions) -> Reader:
-    model = DensePassageRetrieverReader.get_model(options.model_name)
+    model = DensePassageRetrieverReader.get_model(options.model_name, options.device)
     tokenizer = DensePassageRetrieverReader.get_tokenizer(options.tokenizer_name)
 
     return DensePassageRetrieverReader(model,
@@ -56,6 +57,8 @@ def main():
         opt('--num-spans', type=int, default=1),
         opt('--max-answer-length', type=int, default=10),
         opt('--num-spans-per-passage', type=int, default=10),
+        opt('--output-file', type=Path, default=None),
+        opt('--device', type=str, default='cuda:0'),
     )
     args = apb.parser.parse_args()
     options = PassageReadingEvaluationOptions(**vars(args))
@@ -78,6 +81,10 @@ def main():
 
     ems = []
     nQueries = 0
+    if args.output_file is not None:
+        dpr_predictions = []
+    else:
+        dpr_predictions = None
 
     for idx, filename in enumerate(files):
         logging.info(f'Read {1000*idx} queries.')
@@ -95,11 +102,15 @@ def main():
                 )
             )
 
-        ems.extend(evaluator.evaluate(examples))
+        ems.extend(evaluator.evaluate(examples, dpr_predictions))
         display(ems)
 
     logging.info(f'Reader completed.\nRead {nQueries} queries.')
     display(ems)
+
+    if args.output_file is not None:
+        with open(args.output_file, 'w', encoding='utf-8', newline='\n') as f:
+            json.dump(dpr_predictions, f, indent=4)
 
 
 if __name__ == '__main__':

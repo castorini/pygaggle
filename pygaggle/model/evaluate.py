@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from typing import List, Optional
+from typing import List, Optional, Dict
 import abc
 
 from sklearn.metrics import recall_score
@@ -254,6 +254,7 @@ class ReaderEvaluator:
     def evaluate(
         self,
         examples: List[RetrievalExample],
+        dpr_predictions: Optional[List[Dict[str, str]]] = None,
     ):
         ems = []
         for example in tqdm(examples):
@@ -263,6 +264,12 @@ class ReaderEvaluator:
             groundTruthAnswers = example.groundTruthAnswers
             em_hit = max([ReaderEvaluator.exact_match_score(bestAnswer, ga) for ga in groundTruthAnswers])
             ems.append(em_hit)
+
+            if dpr_predictions is not None:
+                dpr_predictions.append({
+                    'question': example.query.text,
+                    'prediction': bestAnswer,
+                })
 
         return ems
 

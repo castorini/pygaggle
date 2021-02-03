@@ -1,4 +1,5 @@
-from typing import List
+from typing import List, Optional
+import torch
 
 from transformers import DPRReader, DPRReaderTokenizer
 
@@ -17,6 +18,7 @@ class DensePassageRetrieverReader(Reader):
     ):
         self.model = model or self.get_model()
         self.tokenizer = tokenizer or self.get_tokenizer()
+        self.device = next(self.model.parameters(), None).device
 
         self.num_spans = num_spans
         self.max_answer_length = max_answer_length
@@ -25,8 +27,11 @@ class DensePassageRetrieverReader(Reader):
     @staticmethod
     def get_model(
         pretrained_model_name_or_path: str = 'facebook/dpr-reader-single-nq-base',
+        device: Optional[str] = None,
     ) -> DPRReader:
-        return DPRReader.from_pretrained(pretrained_model_name_or_path)
+        device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
+        device = torch.device(device)
+        return DPRReader.from_pretrained(pretrained_model_name_or_path).to(device).eval()
 
     @staticmethod
     def get_tokenizer(
@@ -40,12 +45,19 @@ class DensePassageRetrieverReader(Reader):
         texts: List[Text],
     ) -> List[Answer]:
         encoded_inputs = self.tokenizer(
-            questions=[query.text],
+            questions=query.text,
             titles=list(map(lambda t: t.title, texts)),
             texts=list(map(lambda t: t.text, texts)),
             return_tensors='pt',
+            padding=True,
+            truncation=True,
         )
-        outputs = self.model(**encoded_inputs)
+        input_ids = encoded_inputs['input_ids'].to(self.device)
+        attention_mask = encoded_inputs['attention_mask'].to(self.device)
+        outputs = self.model(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+        )
 
         predicted_spans = self.tokenizer.decode_best_spans(
             encoded_inputs,
