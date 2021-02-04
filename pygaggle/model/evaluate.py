@@ -245,6 +245,14 @@ class DuoRerankerEvaluator:
         return metrics
 
 class ReaderEvaluator:
+    """Class for evaluating a reader.
+    Takes in a list of examples (query, texts, ground truth answers),
+    predicts a list of answers using the Reader passed in, and
+    collects the exact match accuracies between the best answer and
+    the ground truth answers given in the example.
+    Exact match scoring used is identical to the DPR repository.
+    """
+
     def __init__(
         self,
         reader: Reader,
@@ -274,10 +282,7 @@ class ReaderEvaluator:
         return ems
 
     @staticmethod
-    def exact_match_score(
-        prediction: str,
-        ground_truth: str,
-    ):
+    def exact_match_score(prediction, ground_truth):
         return ReaderEvaluator._normalize_answer(prediction) == ReaderEvaluator._normalize_answer(ground_truth)
 
     @staticmethod

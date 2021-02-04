@@ -8,6 +8,19 @@ from pygaggle.rerank.base import Query, Text
 
 
 class DensePassageRetrieverReader(Reader):
+    """Class containing the DPR Reader
+    Takes in a query and a list of the top passages selected by the retrieval model,
+    and predicts a list of the best answer spans from the most relevant passages, reranked.
+
+    Parameters
+    ----------
+    model : DPR Reader model for predicting start, end, and relevance logits
+    tokenizer : DPR Reader tokenizer for encoding input query and texts
+    num_spans : Number of answer spans to return
+    max_answer_length : Maximum length that an answer span can be
+    num_spans_per_passage : Maximum number of answer spans to return per passage
+    """
+
     def __init__(
         self,
         model: DPRReader = None,

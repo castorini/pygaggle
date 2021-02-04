@@ -48,17 +48,49 @@ def display(ems):
 def main():
     apb = ArgumentParserBuilder()
     apb.add_opts(
-        opt('--task', type=str, default='wikipedia'),
-        opt('--method', type=str, required=True, choices=METHOD_CHOICES),
-        opt('--retrieval-file', type=Path, required=True),
-        opt('--model-name', type=str, default='facebook/dpr-reader-single-nq-base'),
-        opt('--tokenizer-name', type=str, default='facebook/dpr-reader-single-nq-base'),
-        opt('--use-top-k-passages', type=int, default=50),
-        opt('--num-spans', type=int, default=1),
-        opt('--max-answer-length', type=int, default=10),
-        opt('--num-spans-per-passage', type=int, default=10),
-        opt('--output-file', type=Path, default=None),
-        opt('--device', type=str, default='cuda:0'),
+        opt('--task',
+            type=str,
+            default='wikipedia'),
+        opt('--method',
+            type=str,
+            required=True,
+            choices=METHOD_CHOICES),
+        opt('--retrieval-file',
+            type=Path,
+            required=True,
+            help='JSON file containing top passages selected by the retrieval model'),
+        opt('--model-name',
+            type=str,
+            default='facebook/dpr-reader-single-nq-base',
+            help='Pretrained model for reader'),
+        opt('--tokenizer-name',
+            type=str,
+            default='facebook/dpr-reader-single-nq-base',
+            help='Pretrained model for tokenizer'),
+        opt('--use-top-k-passages',
+            type=int,
+            default=50,
+            help='The top k passages by the retriever will be used by the reader'),
+        opt('--num-spans',
+            type=int,
+            default=1,
+            help='Number of answer spans to return'),
+        opt('--max-answer-length',
+            type=int,
+            default=10,
+            help='Maximum length that an answer span can be'),
+        opt('--num-spans-per-passage',
+            type=int,
+            default=10,
+            help='Maximum number of answer spans to return per passage'),
+        opt('--output-file',
+            type=Path,
+            default=None,
+            help='File to output predictions for each example; if no output file specified, this output will be discarded'),
+        opt('--device',
+            type=str,
+            default='cuda:0',
+            help='Device for model computations'),
     )
     args = apb.parser.parse_args()
     options = PassageReadingEvaluationOptions(**vars(args))
@@ -86,8 +118,8 @@ def main():
     else:
         dpr_predictions = None
 
-    for idx, filename in enumerate(files):
-        logging.info(f'Read {1000*idx} queries.')
+    for filename in files:
+        logging.info(f'Read {nQueries} queries.')
         with open(filename) as f:
             data = json.load(f)
 
