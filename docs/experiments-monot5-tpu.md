@@ -195,7 +195,7 @@ for ITER in {000..008}; do
     --gin_param="Bitransformer.decode.max_decode_length = 2" \
     --gin_param="input_filename = '${GS_FOLDER}/query_doc_pairs.dev.small.txt${ITER}'" \
     --gin_param="output_filename = '${GS_FOLDER}/query_doc_pair_scores.dev.small.txt${ITER}'" \
-    --gin_param="tokens_per_batch = 65536" \
+    --gin_param="utils.run.batch_size=('tokens_per_batch', 65536)" \
     --gin_param="Bitransformer.decode.beam_size = 1" \
     --gin_param="Bitransformer.decode.temperature = 0.0" \
     --gin_param="Unitransformer.sample_autoregressive.sampling_keep_top_k = -1" \
@@ -287,7 +287,7 @@ nohup t5_mesh_transformer  \
   --gin_file="learning_rate_schedules/constant_0_001.gin" \
   --gin_param="run.train_steps = 1100000" \
   --gin_param="run.save_checkpoints_steps = 10000" \
-  --gin_param="tokens_per_batch = 65536" \
+  --gin_param="utils.run.batch_size=('tokens_per_batch', 65536)" \
   >> out.log_exp 2>&1 &
 
 tail -100f out.log_exp
