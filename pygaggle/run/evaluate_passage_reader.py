@@ -42,7 +42,10 @@ def construct_dpr(options: PassageReadingEvaluationOptions) -> Reader:
                                        options.num_spans_per_passage)
 
 def display(ems):
-    em = np.mean(np.array(ems))
+    if len(ems) == 0:
+        em = -0.01
+    else:
+        em = np.mean(np.array(ems))
     logging.info(f'Exact Match Accuracy: {em * 100}')
 
 def main():
@@ -120,6 +123,7 @@ def main():
 
     for filename in files:
         logging.info(f'Read {nQueries} queries.')
+        display(ems)
         with open(filename) as f:
             data = json.load(f)
 
@@ -135,7 +139,6 @@ def main():
             )
 
         ems.extend(evaluator.evaluate(examples, dpr_predictions))
-        display(ems)
 
     logging.info(f'Reader completed.\nRead {nQueries} queries.')
     display(ems)
