@@ -52,8 +52,8 @@ python -um pygaggle.run.evaluate_passage_reader --task wikipedia \
 
 The final Exact Match (EM) score after 8757 queries should be `39.07730958090671`.
 
-It takes about 1-2 hours to read and answer all of the queries a V100. 
-The type of GPU will directly influence your inference time. 
+It should take about 1-2 hours to read and answer all of the queries on a GPU.
+The type of GPU will directly influence your inference time.
 
 If you were able to replicate these results, please submit a PR adding to the replication log!
 Please mention in your PR if you find any difference!
