@@ -43,10 +43,10 @@ def construct_dpr(options: PassageReadingEvaluationOptions) -> Reader:
 
 def display(ems):
     if len(ems) == 0:
-        em = -0.01
+        em = -1.
     else:
-        em = np.mean(np.array(ems))
-    logging.info(f'Exact Match Accuracy: {em * 100}')
+        em = np.mean(np.array(ems)) * 100.
+    logging.info(f'Exact Match Accuracy: {em}')
 
 def main():
     apb = ArgumentParserBuilder()
