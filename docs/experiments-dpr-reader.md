@@ -34,36 +34,18 @@ pip install tensorflow_gpu
 We download the queries, top passages from the retriever, and ground truth answers. We download the examples in `data/` using
 ```
 cd data/
-wget https://www.dropbox.com/s/59yksu3lpa7dhdm/retrieval.dpr.bf.json
+wget https://www.dropbox.com/s/5izln5ws7aqn8am/retrieval_dpr_50.json
 ```
 
-As a sanity check, the MD5sum of this file is `2f60d44cfa63fc24f249ab820120e973`.
+As a sanity check, the MD5sum of this file is `d0dd6edc9f7ac77956b5f9998b803fd2`.
 
-If you are experiencing RAM issues, we can split the retrieval file into multiple files in the `retrieval_dpr/` directory by running this Python script
-```
-import json
-import math
-
-with open('retrieval.dpr.bf.json', 'r') as f:
-    data = json.load(f)
-    l = len(data)
-    for i in range(int(math.ceil(l / 1000.))):
-        data2 = {}
-        for j in range(1000):
-            k = f"{1000*i+j}"
-            if k in data:
-                data2[k] = data[k]
-        with open(f'retrieval_dpr/batch_{i}', 'w', encoding='utf-8', newline='\n') as f2:
-            json.dump(data2, f2, indent=4)
-```
-
-Now, let's evaluate the DPR Reader. Run the following command, replacing `<Retrieval File>` with `data/retrieval.dpr.bf.json` or `data/retrieval_dpr/`, depending on the retrieval file/directory location.
+Now, let's evaluate the DPR Reader.
 
 ```
 cd ../
 python -um pygaggle.run.evaluate_passage_reader --task wikipedia \
                                                 --method dpr \ 
-                                                --retrieval-file <Retrieval File> \
+                                                --retrieval-file data/retrieval_dpr_50.json \
                                                 --output-file my_dpr_prediction.json \
                                                 --use-top-k-passages 10
 ```
