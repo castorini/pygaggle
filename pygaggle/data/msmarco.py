@@ -16,8 +16,8 @@ from pygaggle.data.unicode import convert_to_unicode
 
 __all__ = ['MsMarcoExample', 'MsMarcoDataset']
 
-# MsMarcoExample represents a query along with its ranked and re-ranked
-# candidates.
+
+# MsMarcoExample represents a query along with its ranked and re-ranked candidates.
 class MsMarcoExample(BaseModel):
     qid: str
     text: str
@@ -41,7 +41,7 @@ class MsMarcoDataset(BaseModel):
         return qrels
 
     # Load a run from the provided path.  The run file contains mappings from
-    # a query id and a doc title to a rank.  load_run returns a dictionary 
+    # a query id and a doc title to a rank.  load_run returns a dictionary
     # mapping query ids to lists of doc titles sorted by ascending rank.
     @classmethod
     def load_run(cls, path: str):

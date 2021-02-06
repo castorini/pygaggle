@@ -14,8 +14,10 @@ class Settings(BaseSettings):
 class MsMarcoSettings(Settings):
     pass
 
+
 class TRECCovidSettings(Settings):
     pass
+
 
 class Cord19Settings(Settings):
     # T5 model settings

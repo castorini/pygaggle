@@ -8,4 +8,4 @@ from pygaggle.rerank.base import Query, Text
 class RetrievalExample:
     query: Query
     texts: List[Text]
-    groundTruthAnswers: List[List[str]]
+    ground_truth_answers: List[List[str]]
