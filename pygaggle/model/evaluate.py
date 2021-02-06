@@ -1,13 +1,17 @@
 from collections import OrderedDict
-from typing import List, Optional
+from typing import List, Optional, Dict
 import abc
 
 from sklearn.metrics import recall_score
 from tqdm import tqdm
 import numpy as np
+import string
+import regex as re
 
 from pygaggle.data.kaggle import RelevanceExample
+from pygaggle.data.retrieval import RetrievalExample
 from pygaggle.rerank.base import Reranker
+from pygaggle.reader.base import Reader
 from pygaggle.model.writer import Writer
 
 from pygaggle.data.segmentation import SegmentProcessor
@@ -239,3 +243,61 @@ class DuoRerankerEvaluator:
             for metric in metrics:
                 metric.accumulate(doc_scores, example)
         return metrics
+
+class ReaderEvaluator:
+    """Class for evaluating a reader.
+    Takes in a list of examples (query, texts, ground truth answers),
+    predicts a list of answers using the Reader passed in, and
+    collects the exact match accuracies between the best answer and
+    the ground truth answers given in the example.
+    Exact match scoring used is identical to the DPR repository.
+    """
+
+    def __init__(
+        self,
+        reader: Reader,
+    ):
+        self.reader = reader
+
+    def evaluate(
+        self,
+        examples: List[RetrievalExample],
+        dpr_predictions: Optional[List[Dict[str, str]]] = None,
+    ):
+        ems = []
+        for example in tqdm(examples):
+            answers = self.reader.predict(example.query, example.texts)
+
+            bestAnswer = answers[0].text
+            groundTruthAnswers = example.groundTruthAnswers
+            em_hit = max([ReaderEvaluator.exact_match_score(bestAnswer, ga) for ga in groundTruthAnswers])
+            ems.append(em_hit)
+
+            if dpr_predictions is not None:
+                dpr_predictions.append({
+                    'question': example.query.text,
+                    'prediction': bestAnswer,
+                })
+
+        return ems
+
+    @staticmethod
+    def exact_match_score(prediction, ground_truth):
+        return ReaderEvaluator._normalize_answer(prediction) == ReaderEvaluator._normalize_answer(ground_truth)
+
+    @staticmethod
+    def _normalize_answer(s):
+        def remove_articles(text):
+            return re.sub(r'\b(a|an|the)\b', ' ', text)
+
+        def white_space_fix(text):
+            return ' '.join(text.split())
+
+        def remove_punc(text):
+            exclude = set(string.punctuation)
+            return ''.join(ch for ch in text if ch not in exclude)
+
+        def lower(text):
+            return text.lower()
+
+        return white_space_fix(remove_articles(remove_punc(lower(s))))
