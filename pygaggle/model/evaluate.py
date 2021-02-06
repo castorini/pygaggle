@@ -244,6 +244,7 @@ class DuoRerankerEvaluator:
                 metric.accumulate(doc_scores, example)
         return metrics
 
+
 class ReaderEvaluator:
     """Class for evaluating a reader.
     Takes in a list of examples (query, texts, ground truth answers),
@@ -268,15 +269,15 @@ class ReaderEvaluator:
         for example in tqdm(examples):
             answers = self.reader.predict(example.query, example.texts)
 
-            bestAnswer = answers[0].text
-            groundTruthAnswers = example.groundTruthAnswers
-            em_hit = max([ReaderEvaluator.exact_match_score(bestAnswer, ga) for ga in groundTruthAnswers])
+            best_answer = answers[0].text
+            ground_truth_answers = example.ground_truth_answers
+            em_hit = max([ReaderEvaluator.exact_match_score(best_answer, ga) for ga in ground_truth_answers])
             ems.append(em_hit)
 
             if dpr_predictions is not None:
                 dpr_predictions.append({
                     'question': example.query.text,
-                    'prediction': bestAnswer,
+                    'prediction': best_answer,
                 })
 
         return ems

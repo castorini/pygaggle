@@ -7,13 +7,15 @@ from pygaggle.rerank.base import Query, Text
 class Answer:
     """
     Class representing an answer.
-    A answer contains the answer text itself and potentially other metadata.
+    An answer contains the answer text itself and potentially other metadata.
     Parameters
     ----------
     text : str
         The answer text.
     metadata : Mapping[str, Any]
         Additional metadata and other annotations.
+    language: str
+        The language of the answer text.
     score : Optional[float]
         The score of the answer.
     ctx_score : Optional[float]
@@ -55,16 +57,16 @@ class Reader:
         texts: List[Text],
     ) -> List[Answer]:
         """
-            Find answers from a list of texts with respect to a query.
-            Parameters
-            ----------
-            query : Query
-                The query.
-            texts : List[Text]
-                The list of texts.
-            Returns
-            -------
-            List[Answer]
-                Predicted list of answers.
+        Find answers from a list of texts with respect to a query.
+        Parameters
+        ----------
+        query : Query
+            The query.
+        texts : List[Text]
+            The list of texts.
+        Returns
+        -------
+        List[Answer]
+            Predicted list of answers.
         """
         pass

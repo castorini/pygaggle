@@ -6,8 +6,6 @@ import os
 import numpy as np
 
 from pydantic import BaseModel
-from transformers import (DPRReader,
-                          DPRReaderTokenizer)
 
 from .args import ArgumentParserBuilder, opt
 from pygaggle.reader.base import Reader
@@ -30,6 +28,7 @@ class PassageReadingEvaluationOptions(BaseModel):
     max_answer_length: int
     num_spans_per_passage: int
     device: str
+
 
 def construct_dpr(options: PassageReadingEvaluationOptions) -> Reader:
     model = DensePassageRetrieverReader.get_model(options.model_name, options.device)
@@ -89,7 +88,7 @@ def main():
         opt('--output-file',
             type=Path,
             default=None,
-            help='File to output predictions for each example; if no output file specified, this output will be discarded'),
+            help='File to output predictions for each example; if not specified, this output will be discarded'),
         opt('--device',
             type=str,
             default='cuda:0',
@@ -133,8 +132,10 @@ def main():
             examples.append(
                 RetrievalExample(
                     query=Query(text=item["question"]),
-                    texts=list(map(lambda context: Text(text=context["text"].split('\n', 1)[1], title=context["text"].split('\n', 1)[0][1:-1]), item["contexts"]))[:options.use_top_k_passages],
-                    groundTruthAnswers=item["answers"],
+                    texts=list(map(lambda context: Text(text=context["text"].split('\n', 1)[1],
+                                                        title=context["text"].split('\n', 1)[0][1:-1]),
+                                   item["contexts"]))[:options.use_top_k_passages],
+                    ground_truth_answers=item["answers"],
                 )
             )
 

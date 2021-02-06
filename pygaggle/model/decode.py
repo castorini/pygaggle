@@ -31,7 +31,6 @@ def greedy_decode(model: PreTrainedModel,
         decode_ids = torch.cat([decode_ids,
                                 next_token_logits.max(1)[1].unsqueeze(-1)],
                                dim=-1)
-        past = outputs[1]
     if return_last_logits:
         return decode_ids, next_token_logits
     return decode_ids
