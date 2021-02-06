@@ -14,8 +14,6 @@ Currently, this repo contains implementations of the rerankers for MS MARCO Pass
 
 0. Install [PyTorch 1.4+](http://pytorch.org/).
 
-0. Download the index: `sh scripts/update-index.sh`.
-
 0. Make sure you have an installation of Java 11+: `javac --version`.
 
 0. Install [Anserini](https://github.com/castorini/anserini).
