@@ -4,9 +4,7 @@ import logging
 
 from pydantic import BaseModel, validator
 from transformers import (AutoModel,
-                          AutoTokenizer,
-                          AutoModelForSequenceClassification,
-                          T5ForConditionalGeneration)
+                          AutoTokenizer)
 import torch
 
 from .args import ArgumentParserBuilder, opt
@@ -20,7 +18,6 @@ from pygaggle.rerank.transformer import (
 from pygaggle.rerank.random import RandomReranker
 from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
 from pygaggle.model import (SimpleBatchTokenizer,
-                            T5BatchTokenizer,
                             RerankerEvaluator,
                             metric_names,
                             MsMarcoWriter)
@@ -168,6 +165,7 @@ def main():
                                                  options.seg_stride,
                                                  options.aggregate_method):
         logging.info(f'{metric.name:<{width}}{metric.value:.5}')
+
 
 if __name__ == '__main__':
     main()

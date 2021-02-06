@@ -40,12 +40,14 @@ def construct_dpr(options: PassageReadingEvaluationOptions) -> Reader:
                                        options.max_answer_length,
                                        options.num_spans_per_passage)
 
+
 def display(ems):
     if len(ems) == 0:
         em = -1.
     else:
         em = np.mean(np.array(ems)) * 100.
     logging.info(f'Exact Match Accuracy: {em}')
+
 
 def main():
     apb = ArgumentParserBuilder()

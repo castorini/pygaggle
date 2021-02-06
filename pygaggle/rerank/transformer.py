@@ -42,7 +42,8 @@ class MonoT5(Reranker):
                   *args, device: str = None, **kwargs) -> T5ForConditionalGeneration:
         device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
         device = torch.device(device)
-        return T5ForConditionalGeneration.from_pretrained(pretrained_model_name_or_path, *args, **kwargs).to(device).eval()
+        return T5ForConditionalGeneration.from_pretrained(pretrained_model_name_or_path,
+                                                          *args, **kwargs).to(device).eval()
 
     @staticmethod
     def get_tokenizer(pretrained_model_name_or_path: str = 't5-base',
@@ -86,7 +87,8 @@ class DuoT5(Reranker):
                   *args, device: str = None, **kwargs) -> T5ForConditionalGeneration:
         device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
         device = torch.device(device)
-        return T5ForConditionalGeneration.from_pretrained(pretrained_model_name_or_path, *args, **kwargs).to(device).eval()
+        return T5ForConditionalGeneration.from_pretrained(pretrained_model_name_or_path,
+                                                          *args, **kwargs).to(device).eval()
 
     @staticmethod
     def get_tokenizer(pretrained_model_name_or_path: str = 't5-base',
@@ -182,7 +184,8 @@ class MonoBERT(Reranker):
                   *args, device: str = None, **kwargs) -> AutoModelForSequenceClassification:
         device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
         device = torch.device(device)
-        return AutoModelForSequenceClassification.from_pretrained(pretrained_model_name_or_path, *args, **kwargs).to(device).eval()
+        return AutoModelForSequenceClassification.from_pretrained(pretrained_model_name_or_path,
+                                                                  *args, **kwargs).to(device).eval()
 
     @staticmethod
     def get_tokenizer(pretrained_model_name_or_path: str = 'bert-large-uncased',
