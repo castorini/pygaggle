@@ -2,6 +2,8 @@
 
 This page contains instructions for running monoT5 on the Robust 04 collection.
 
+Note that this collection uses [TREC Disks 4 & 5](https://trec.nist.gov/data/cd45/index.html), which are only available after you fill and sign a form from NIST. Therefore, only proceed with this documentation if you already have the corpus.
+
 We will focus on using monoT5-3B to rerank, since it is difficult to run such a large model without a TPU.
 We also mention the changes required to run monoT5-base for those with a more constrained compute budget.
 - monoT5: Document Ranking with a Pretrained Sequence-to-Sequence Model [(Nogueira et al., 2020)](https://www.aclweb.org/anthology/2020.findings-emnlp.63.pdf)
@@ -10,6 +12,7 @@ Prior to running this, we suggest looking at our first-stage [BM25 ranking instr
 We rerank the BM25 run files that contain ~1000 documents per query using monoT5.
 monoT5 is a pointwise reranker. This means that each document is scored independently using T5.
 
+Note that we do not train monoT5 on Robust04. Hence the results are **zero-shot**.
 
 ## Start a VM with TPU on Google Cloud
 
@@ -86,18 +89,18 @@ Let's start.
 ```
 cd ${DATA_DIR}
 wget https://storage.googleapis.com/duobert_git/run.bm25.dev.small.tsv
-wget https://www.dropbox.com/s/hq6xjhswiz60siu/queries.dev.small.tsv
-wget https://www.dropbox.com/s/5t6e2225rt6ikym/qrels.dev.small.tsv
-wget https://www.dropbox.com/s/m1n2wf80l1lb9j1/collection.tar.gz
-tar -xvf collection.tar.gz
-rm collection.tar.gz
-mv run.bm25.dev.small.tsv run.dev.small.tsv
+wget https://github.com/castorini/anserini/blob/master/src/main/resources/topics-and-qrels/qrels.robust04.txt
 cd ../../
 ```
 
-As a sanity check, we can evaluate the first-stage retrieved documents using the official MS MARCO evaluation script.
+Also extract the TREC disks 4 & 5 here (as already mentioned, this collection are only available at the NIST website):
 ```
-python tools/eval/msmarco_eval.py ${DATA_DIR}/qrels.dev.small.tsv ${DATA_DIR}/run.dev.small.tsv
+## TODO: add code here.
+```
+
+As a sanity check, we can evaluate the first-stage retrieved documents using the `trec_eval` tool:
+```
+
 ```
 
 The output should be:
@@ -110,33 +113,35 @@ QueriesRanked: 6980
 
 Then, we prepare the query-doc pairs in the monoT5 input format.
 ```
-python pygaggle/data/create_msmarco_monot5_input.py --queries ${DATA_DIR}/queries.dev.small.tsv \
-                                      --run ${DATA_DIR}/run.dev.small.tsv \
-                                      --corpus ${DATA_DIR}/collection.tsv \
-                                      --t5_input ${DATA_DIR}/query_doc_pairs.dev.small.txt \
-                                      --t5_input_ids ${DATA_DIR}/query_doc_pair_ids.dev.small.tsv
+python create_robust04_tsv_dev_pairs_t5_reranker.py \
+      --queries_path=${DATA_DIR}/topics.robust04.txt \
+      --run_path=${DATA_DIR}/run.dev.txt \
+      --corpus_path=${DATA_DIR}/trec_concat.txt \
+      --output_segment_texts_path=${DATA_DIR}/segment_texts.txt \
+      --output_segment_query_doc_ids_path=${DATA_DIR}/segment_query_doc_ids.tsv
+
 ```
 We will get two output files here:
-- `query_doc_pairs.dev.small.txt`: The query-doc pairs for monoT5 input.
-- `query_doc_pair_ids.dev.small.tsv`: The `query_id`s and `doc_id`s that map to the query-doc pairs. We will use this to map query-doc pairs to their corresponding monoT5 output scores.
+- `segment_texts.txt`: The query-doc pairs for monoT5 input.
+- `segment_query_doc_ids.tsv`: The `query_id`s and `doc_id`s that map to the query-doc pairs. We will use this to map query-doc pairs to their corresponding monoT5 output scores.
 
 The files are made available in our [bucket](https://console.cloud.google.com/storage/browser/castorini/monot5/data).
 
 Note that there might be a memory issue if the monoT5 input file is too large for the memory in the instance. We thus split the input file into multiple files.
 
 ```
-split --suffix-length 3 --numeric-suffixes --lines 800000 ${DATA_DIR}/query_doc_pairs.dev.small.txt ${DATA_DIR}/query_doc_pairs.dev.small.txt
+split --suffix-length 3 --numeric-suffixes --lines 500000 ${DATA_DIR}/segment_texts.txt ${DATA_DIR}/segment_texts.txt
 ```
 
-For `query_doc_pairs.dev.small.txt`, we will get 9 files after split. i.e. (`query_doc_pairs.dev.small.txt000` to `query_doc_pairs.dev.small.txt008`).
-Note that it is possible that running reranking might still result in OOM issues in which case reduce the number of lines to smaller than `800000`.
+For `segment_texts.txt`, we will get 5 files after split. i.e. (`segment_texts.txt000` to `segment_texts.txt004`).
+Note that it is possible that running reranking might still result in OOM issues in which case reduce the number of lines to smaller than `500000`.
 
 We copy these input files to Google Storage. TPU inference will read data directly from `gs`.
 ```
 export GS_FOLDER=<google storage folder to store input/output data>
-gsutil cp ${DATA_DIR}/query_doc_pairs.dev.small.txt??? ${GS_FOLDER}
+gsutil cp ${DATA_DIR}/segment_texts.txt??? ${GS_FOLDER}
 ```
-These files can also be found in our [bucket](https://console.cloud.google.com/storage/browser/castorini/monot5/data).
+These files can also be found in our [bucket](https://console.cloud.google.com/storage/browser/castorini/monot5/data/robust04).
 
 ## Rerank with monoT5
 
@@ -149,8 +154,8 @@ export MODEL_DIR=gs://castorini/monot5/experiments/${MODEL_NAME}
 
 Then run following command to start the process in background and monitor the log
 ```
-for ITER in {000..008}; do
-  echo "Running iter: $ITER" >> out.log_eval_exp
+for ITER in {000..004}; do
+  echo "Running iter: $ITER" >> out.log
   nohup t5_mesh_transformer \
     --tpu="${TPU_NAME}" \
     --gcp_project="${PROJECT_NAME}" \
@@ -163,34 +168,35 @@ for ITER in {000..008}; do
     --gin_param="infer_checkpoint_step = 1100000" \
     --gin_param="utils.run.sequence_length = {'inputs': 512, 'targets': 2}" \
     --gin_param="Bitransformer.decode.max_decode_length = 2" \
-    --gin_param="input_filename = '${GS_FOLDER}/query_doc_pairs.dev.small.txt${ITER}'" \
-    --gin_param="output_filename = '${GS_FOLDER}/query_doc_pair_scores.dev.small.txt${ITER}'" \
+    --gin_param="input_filename = '${GS_FOLDER}/segment_texts.txt${ITER}'" \
+    --gin_param="output_filename = '${GS_FOLDER}/t5_scores.txt${ITER}'" \
     --gin_param="utils.run.batch_size=('tokens_per_batch', 65536)" \
     --gin_param="Bitransformer.decode.beam_size = 1" \
     --gin_param="Bitransformer.decode.temperature = 0.0" \
     --gin_param="Unitransformer.sample_autoregressive.sampling_keep_top_k = -1" \
-    >> out.log_eval_exp 2>&1
+    >> out.log 2>&1
 done &
 
-tail -100f out.log_eval_exp
+tail -100f out.log_eval
 ```
 
-Using a TPU v3-8, it takes approximately 5 hours and 35 hours to rerank with monoT5-base and monoT5-3B respectively.
+Using a TPU v3-8, it takes approximately XXX hours and YYY hours to rerank with monoT5-base and monoT5-3B respectively.
 
 Note that we strongly encourage you to run any of the long processes in `screen` to make sure they don't get interrupted.
 
 ## Evaluate reranked results
 After reranking is done, let's copy the results from GS to our working directory, where we concatenate all the score files back into one file.
 ```
-gsutil cp ${GS_FOLDER}/query_doc_pair_scores.dev.small.txt???-1100000 ${DATA_DIR}/
-cat ${DATA_DIR}/query_doc_pair_scores.dev.small.txt???-1100000 > ${DATA_DIR}/query_doc_pair_scores.dev.small.txt
+gsutil cp ${GS_FOLDER}/scores.txt???-1100000 ${DATA_DIR}/
+cat ${DATA_DIR}/scores..txt???-1100000 > ${DATA_DIR}/scores.txt
 ```
 
-Then we convert the monoT5 output to the required MSMARCO format.
+Then we convert the monoT5 output to the required `trec_tool` format.
 ```
-python pygaggle/data/convert_monot5_output_to_msmarco_run.py --t5_output ${DATA_DIR}/query_doc_pair_scores.dev.small.txt \
-                                                --t5_output_ids ${DATA_DIR}/query_doc_pair_ids.dev.small.tsv \
-                                                --mono_run ${DATA_DIR}/run.monot5_${MODEL_NAME}.dev.tsv
+python pygaggle/data/convert_run_from_t5_to_trec_format.py \
+    --predictions_path=${DATA_DIR}/score.txt \
+    --query_run_ids=${DATA_DIR}/segment_query_doc_ids.tsv \
+    --output_path=${DATA_DIR}/run.monot5_${MODEL_NAME}.tsv
 ```
 
 Now we can evaluate the reranked results using the official MS MARCO evaluation script.
@@ -219,52 +225,6 @@ QueriesRanked: 6980
 If you were able to replicate any of these results, please submit a PR adding to the replication log, along with the model(s) you replicated. 
 Please mention in your PR if you note any differences.
 
-## Train a monoT5 reranker
-
-We use the following environment variables:
-
-```
-export MODEL_NAME=<t5 pretrain model, e.g. base, large, 3B>
-export GS_FOLDER=<gs folder to store checkpoints>
-export PROJECT_NAME=<gcloud project name>
-export TPU_NAME=<name of tpu to create>
-export MODEL_INIT_CKPT=<initial model checkpoint, e.g. 999900>
-```
-
-Copy pre-trained checkpoint to our target model
-```
-echo "model_checkpoint_path: \"model.ckpt-${MODEL_INIT_CKPT}\"" > checkpoint
-gsutil cp checkpoint ${GS_FOLDER}
-gsutil cp gs://t5-data/pretrained_models/${MODEL_NAME}/model.ckpt-${MODEL_INIT_CKPT}* ${GS_FOLDER}
-```
-
-Finally, we can begin training.
-
-```
-nohup t5_mesh_transformer  \
-  --tpu="${TPU_NAME}" \
-  --gcp_project="${PROJECT_NAME}" \
-  --tpu_zone="europe-west4-a" \
-  --model_dir="${GS_FOLDER}" \
-  --gin_param="init_checkpoint = 'gs://t5-data/pretrained_models/${MODEL_NAME}/model.ckpt-${MODEL_INIT_CKPT}'" \
-  --gin_file="dataset.gin" \
-  --gin_file="models/bi_v1.gin" \
-  --gin_file="gs://t5-data/pretrained_models/${MODEL_NAME}/operative_config.gin" \
-  --gin_param="utils.tpu_mesh_shape.model_parallelism = 1" \
-  --gin_param="utils.tpu_mesh_shape.tpu_topology = '2x2'" \
-  --gin_param="utils.run.train_dataset_fn = @t5.models.mesh_transformer.tsv_dataset_fn" \
-  --gin_param="tsv_dataset_fn.filename = 'gs://castorini/monot5/data/query_doc_pairs.train.tsv'" \
-  --gin_file="learning_rate_schedules/constant_0_001.gin" \
-  --gin_param="run.train_steps = 1100000" \
-  --gin_param="run.save_checkpoints_steps = 10000" \
-  --gin_param="utils.run.batch_size=('tokens_per_batch', 65536)" \
-  >> out.log_exp 2>&1 &
-
-tail -100f out.log_exp
-```
-
-In the case of monoT5-3B, set `utils.tpu_mesh_shape.model_parallelism` to 8 instead of 1.
-Training monoT5 base, large, and 3B take approximately 12, 48, and 160 hours overall, respectively, on a single TPU v3-8.
 
 ## Replication Log
 
