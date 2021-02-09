@@ -28,6 +28,7 @@ class PassageReadingEvaluationOptions(BaseModel):
     max_answer_length: int
     num_spans_per_passage: int
     device: str
+    batch_size: int
 
 
 def construct_dpr(options: PassageReadingEvaluationOptions) -> Reader:
@@ -38,7 +39,8 @@ def construct_dpr(options: PassageReadingEvaluationOptions) -> Reader:
                                        tokenizer,
                                        options.num_spans,
                                        options.max_answer_length,
-                                       options.num_spans_per_passage)
+                                       options.num_spans_per_passage,
+                                       options.batch_size)
 
 
 def display(ems):
@@ -95,6 +97,10 @@ def main():
             type=str,
             default='cuda:0',
             help='Device for model computations'),
+        opt('--batch-size',
+            type=int,
+            default=16,
+            help='batch size of reader inference'),
     )
     args = apb.parser.parse_args()
     options = PassageReadingEvaluationOptions(**vars(args))
