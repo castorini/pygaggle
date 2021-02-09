@@ -16,7 +16,6 @@ from pygaggle.rerank.base import Query, Text
 from pygaggle.model.evaluate import ReaderEvaluator
 
 METHOD_CHOICES = ('dpr')
-TOP_K_ACCURACY = [10, 20, 50, 100]
 
 
 class PassageReadingEvaluationOptions(BaseModel):
@@ -89,6 +88,11 @@ def main():
             type=str,
             default='cuda:0',
             help='Device for model computations'),
+        opt('--topk',
+            type=int,
+            default=[],
+            nargs='+',
+            help='Values of k to print the topk accuracy of the retrieval file'),
     )
     args = apb.parser.parse_args()
     options = PassageReadingEvaluationOptions(**vars(args))
@@ -97,16 +101,14 @@ def main():
     with open(options.retrieval_file) as f:
         data = json.load(f)
 
-    logging.info("Evaluating Topk Accuracies")
-    nPassages = len(list(data.values())[0]["contexts"])
-    for k in TOP_K_ACCURACY:
-        if k <= nPassages:
-            subprocess.call(['python',
-                             'tools/scripts/dpr/evaluate_retrieval.py',
-                             '--retrieval',
-                             options.retrieval_file,
-                             '--topk',
-                             str(k)])
+    if args.topk:
+        logging.info("Evaluating Topk Accuracies")
+        subprocess.call(['python',
+                         'tools/scripts/dpr/evaluate_retrieval.py',
+                         '--retrieval',
+                         options.retrieval_file,
+                         '--topk',
+                         *map(str, args.topk)])
 
     logging.info("Loading Reader Model and Tokenizer")
     construct_map = dict(
@@ -121,8 +123,8 @@ def main():
         examples.append(
             RetrievalExample(
                 query=Query(text=item["question"]),
-                texts=list(map(lambda context: Text(text=context["text"].split('\n', 1)[1],
-                                                    title=context["text"].split('\n', 1)[0][1:-1]),
+                texts=list(map(lambda context: Text(text=context["text"].split('\n', 1)[1].replace('""', '"'),
+                                                    title=context["text"].split('\n', 1)[0].replace('"', '')),
                                item["contexts"]))[:options.use_top_k_passages],
                 ground_truth_answers=item["answers"],
             )
