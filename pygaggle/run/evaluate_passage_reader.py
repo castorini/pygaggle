@@ -88,7 +88,7 @@ def main():
             type=str,
             default='cuda:0',
             help='Device for model computations'),
-        opt('--topk',
+        opt('--topk-retrieval',
             type=int,
             default=[],
             nargs='+',
