@@ -50,8 +50,7 @@ class TestSearch(unittest.TestCase):
         self.assertTrue(isinstance(texts[0], Text))
 
         for i in range(0, len(hits)):
-            self.assertEqual(hits[i].raw, texts[i].raw)
-            self.assertEqual(hits[i].contents, texts[i].contents)
+            self.assertEqual(hits[i].raw, texts[i].text)
             self.assertAlmostEqual(hits[i].score, texts[i].score, places=5)
 
         query = Query('dummy query')
@@ -62,15 +61,14 @@ class TestSearch(unittest.TestCase):
 
         # Check that reranked output is indeed the same as the input
         for i in range(0, len(hits)):
-            self.assertEqual(texts[i].raw, output[i].raw)
-            self.assertEqual(texts[i].contents, hits[i].contents)
-            self.assertAlmostEqual(texts[i].score, hits[i].score, places=5)
+            self.assertEqual(texts[i].text, output[i].text)
+            self.assertEqual(texts[i].metadata, output[i].metadata)
+            self.assertAlmostEqual(texts[i].score, output[i].score, places=5)
 
         # Check that the identity rerank was not destructive
         texts = []
         for i in range(0, len(hits)):
-            self.assertEqual(hits[i].raw, output[i].raw)
-            self.assertEqual(hits[i].contents, output[i].contents)
+            self.assertEqual(hits[i].raw, output[i].text)
             self.assertAlmostEqual(hits[i].score, output[i].score, places=5)
 
     def tearDown(self):
