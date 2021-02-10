@@ -12,12 +12,6 @@ Currently, this repo contains implementations of the rerankers for MS MARCO Pass
 
 0. Install via PyPI `pip install pygaggle`. Requires [Python 3.6+](https://www.python.org/downloads/)
 
-0. Install [PyTorch 1.4+](http://pytorch.org/).
-
-0. Make sure you have an installation of Java 11+: `javac --version`.
-
-0. Install [Anserini](https://github.com/castorini/anserini).
-
 ## Additional Instructions
 
 0. Clone the repo with `git clone --recursive https://github.com/castorini/pygaggle.git`
@@ -82,12 +76,18 @@ for i in range(0, 10):
 
 ## Experiments on IR collections
 
-The following documents describe how to use Pygaggle on various IR test collections:
+The following documents describe how to use PyGaggle on various IR test collections:
 
-+ [Experiments on CovidQA - with GPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-CovidQA.md)
++ [Experiments on CovidQA - with GPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-covidqa.md)
 + [Experiments on MS MARCO Document Retrieval - Dev Subset - with GPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-document.md)
 + [Experiments on MS MARCO Passage Retrieval - Dev Subset - with GPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-subset.md)
 + [Experiments on MS MARCO Passage Retrieval - Entire Dev Set - with GPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-entire.md)
 + [Experiments on MS MARCO Passage Retrieval using monoT5 - Entire Dev Set - with TPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-monot5-tpu.md)
 + [Experiments on MS MARCO Passage Retrieval using duoT5 - Entire Dev Set - with TPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-duot5-tpu.md)
 + [Experiments on Robust04 using monoT5 - with TPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-robust04-monot5-tpu.md)
+
+## Experiments on QA collections
+
+The following documents describe how to use PyGaggle for QA:
+
++ [Experiments on Natural Questions using the Dense Passage Retrieval (DPR) Reader - with GPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-dpr-reader.md)

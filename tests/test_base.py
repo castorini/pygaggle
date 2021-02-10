@@ -6,7 +6,7 @@ from random import randint
 from typing import List
 from urllib.request import urlretrieve
 
-from pyserini.pyclass import JSimpleSearcherResult
+from pyserini.search import JSimpleSearcherResult
 from pyserini.search import pysearch
 
 from pygaggle.rerank import to_texts, Text, Query, Reranker
