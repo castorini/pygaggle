@@ -4,6 +4,7 @@ import logging
 import json
 import os
 import numpy as np
+import subprocess
 
 from pydantic import BaseModel
 
@@ -41,14 +42,6 @@ def construct_dpr(options: PassageReadingEvaluationOptions) -> Reader:
                                        options.max_answer_length,
                                        options.num_spans_per_passage,
                                        options.batch_size)
-
-
-def display(ems):
-    if len(ems) == 0:
-        em = -1.
-    else:
-        em = np.mean(np.array(ems)) * 100.
-    logging.info(f'Exact Match Accuracy: {em}')
 
 
 def main():
@@ -101,11 +94,29 @@ def main():
             type=int,
             default=16,
             help='batch size of reader inference'),
+        opt('--topk-retrieval',
+            type=int,
+            default=[],
+            nargs='+',
+            help='Values of k to print the topk accuracy of the retrieval file'),
     )
     args = apb.parser.parse_args()
     options = PassageReadingEvaluationOptions(**vars(args))
 
-    logging.info("Loading Reader Model and Tokenizer.")
+    logging.info("Loading the Retrieval File")
+    with open(options.retrieval_file) as f:
+        data = json.load(f)
+
+    if args.topk_retrieval:
+        logging.info("Evaluating Topk Accuracies")
+        subprocess.call(['python',
+                         'tools/scripts/dpr/evaluate_retrieval.py',
+                         '--retrieval',
+                         options.retrieval_file,
+                         '--topk',
+                         *map(str, args.topk_retrieval)])
+
+    logging.info("Loading Reader Model and Tokenizer")
     construct_map = dict(
         dpr=construct_dpr,
     )
@@ -113,44 +124,25 @@ def main():
 
     evaluator = ReaderEvaluator(reader)
 
-    retrievalFile = options.retrieval_file
-    if os.path.isfile(retrievalFile):
-        files = [retrievalFile]
-    else:
-        files = os.listdir(retrievalFile)
-        files.sort()
-        files = map(lambda filename: os.path.join(retrievalFile, filename), files)
-
-    ems = []
-    nQueries = 0
-    if args.output_file is not None:
-        dpr_predictions = []
-    else:
-        dpr_predictions = None
-
-    for filename in files:
-        logging.info(f'Read {nQueries} queries.')
-        display(ems)
-        with open(filename) as f:
-            data = json.load(f)
-
-        nQueries += len(data)
-        examples = []
-        for _, item in data.items():
-            examples.append(
-                RetrievalExample(
-                    query=Query(text=item["question"]),
-                    texts=list(map(lambda context: Text(text=context["text"].split('\n', 1)[1],
-                                                        title=context["text"].split('\n', 1)[0][1:-1]),
-                                   item["contexts"]))[:options.use_top_k_passages],
-                    ground_truth_answers=item["answers"],
-                )
+    examples = []
+    for _, item in data.items():
+        examples.append(
+            RetrievalExample(
+                query=Query(text=item["question"]),
+                texts=list(map(lambda context: Text(text=context["text"].split('\n', 1)[1].replace('""', '"'),
+                                                    title=context["text"].split('\n', 1)[0].replace('"', '')),
+                               item["contexts"]))[:options.use_top_k_passages],
+                ground_truth_answers=item["answers"],
             )
+        )
+    dpr_predictions = [] if args.output_file is not None else None
 
-        ems.extend(evaluator.evaluate(examples, dpr_predictions))
+    ems = evaluator.evaluate(examples, dpr_predictions)
 
-    logging.info(f'Reader completed.\nRead {nQueries} queries.')
-    display(ems)
+    logging.info(f'Reader completed')
+
+    em = np.mean(np.array(ems)) * 100.
+    logging.info(f'Exact Match Accuracy: {em}')
 
     if args.output_file is not None:
         with open(args.output_file, 'w', encoding='utf-8', newline='\n') as f:
