@@ -101,14 +101,14 @@ def main():
     with open(options.retrieval_file) as f:
         data = json.load(f)
 
-    if args.topk:
+    if args.topk_retrieval:
         logging.info("Evaluating Topk Accuracies")
         subprocess.call(['python',
                          'tools/scripts/dpr/evaluate_retrieval.py',
                          '--retrieval',
                          options.retrieval_file,
                          '--topk',
-                         *map(str, args.topk)])
+                         *map(str, args.topk_retrieval)])
 
     logging.info("Loading Reader Model and Tokenizer")
     construct_map = dict(
