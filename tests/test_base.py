@@ -9,7 +9,7 @@ from urllib.request import urlretrieve
 from pyserini.search import JSimpleSearcherResult
 from pyserini.search import SimpleSearcher
 
-from pygaggle.rerank import to_texts, Text, Query, Reranker
+from pygaggle.rerank import hits_to_texts, Text, Query, Reranker
 from pygaggle.rerank import IdentityReranker
 
 
@@ -44,7 +44,7 @@ class TestSearch(unittest.TestCase):
         self.assertEqual(1532, len(hits[0].raw))
         self.assertAlmostEqual(4.76550, hits[0].score, places=5)
 
-        texts = to_texts(hits)
+        texts = hits_to_texts(hits)
         self.assertEqual(len(hits), len(texts))
         self.assertTrue(isinstance(texts, List))
         self.assertTrue(isinstance(texts[0], Text))
