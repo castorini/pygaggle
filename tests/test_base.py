@@ -9,7 +9,7 @@ from urllib.request import urlretrieve
 from pyserini.search import JSimpleSearcherResult
 from pyserini.search import SimpleSearcher
 
-from pygaggle.rerank import hits_to_texts, Text, Query, Reranker
+from pygaggle.rerank.base import hits_to_texts, Text, Query, Reranker
 from pygaggle.rerank import IdentityReranker
 
 
