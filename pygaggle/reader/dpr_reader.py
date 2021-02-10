@@ -28,6 +28,7 @@ class DensePassageRetrieverReader(Reader):
         num_spans: int = 1,
         max_answer_length: int = 10,
         num_spans_per_passage: int = 10,
+        batch_size: int = 16,
     ):
         self.model = model or self.get_model()
         self.tokenizer = tokenizer or self.get_tokenizer()
@@ -36,6 +37,8 @@ class DensePassageRetrieverReader(Reader):
         self.num_spans = num_spans
         self.max_answer_length = max_answer_length
         self.num_spans_per_passage = num_spans_per_passage
+
+        self.batch_size = batch_size
 
     @staticmethod
     def get_model(
@@ -52,42 +55,39 @@ class DensePassageRetrieverReader(Reader):
     ) -> DPRReaderTokenizer:
         return DPRReaderTokenizer.from_pretrained(pretrained_tokenizer_name_or_path)
 
-    def predict(
-        self,
-        query: Query,
-        texts: List[Text],
-    ) -> List[Answer]:
-        encoded_inputs = self.tokenizer(
-            questions=query.text,
-            titles=list(map(lambda t: t.title, texts)),
-            texts=list(map(lambda t: t.text, texts)),
-            return_tensors='pt',
-            padding=True,
-            truncation=True,
-        )
-        input_ids = encoded_inputs['input_ids'].to(self.device)
-        attention_mask = encoded_inputs['attention_mask'].to(self.device)
-        outputs = self.model(
-            input_ids=input_ids,
-            attention_mask=attention_mask,
-        )
-
-        predicted_spans = self.tokenizer.decode_best_spans(
-            encoded_inputs,
-            outputs,
-            self.num_spans,
-            self.max_answer_length,
-            self.num_spans_per_passage,
-        )
-
+    def predict(self, query: Query, texts: List[Text]) -> List[Answer]:
         answers = []
-        for idx, span in enumerate(predicted_spans):
-            answers.append(
-                Answer(
-                    text=span.text,
-                    score=span.span_score,
-                    ctx_score=span.relevance_score,
-                )
+        for i in range(0, len(texts), self.batch_size):
+            encoded_inputs = self.tokenizer(
+                questions=query.text,
+                titles=list(map(lambda t: t.title, texts[i: i+self.batch_size])),
+                texts=list(map(lambda t: t.text, texts[i: i+self.batch_size])),
+                return_tensors='pt',
+                padding=True,
+                truncation=True,
+            )
+            input_ids = encoded_inputs['input_ids'].to(self.device)
+            attention_mask = encoded_inputs['attention_mask'].to(self.device)
+            outputs = self.model(
+                input_ids=input_ids,
+                attention_mask=attention_mask,
             )
 
-        return answers
+            predicted_spans = self.tokenizer.decode_best_spans(
+                encoded_inputs,
+                outputs,
+                self.num_spans,
+                self.max_answer_length,
+                self.num_spans_per_passage,
+            )
+
+            for idx, span in enumerate(predicted_spans):
+                answers.append(
+                    Answer(
+                        text=span.text,
+                        score=float(span.span_score.cpu().detach().numpy()),
+                        ctx_score=float(span.relevance_score.cpu().detach().numpy()),
+                    )
+                )
+        answers = sorted(answers, key=lambda x: (-x.ctx_score, -x.score))
+        return answers[: self.num_spans]
