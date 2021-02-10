@@ -90,3 +90,4 @@ The following documents describe how to use Pygaggle on various IR test collecti
 + [Experiments on MS MARCO Passage Retrieval - Entire Dev Set - with GPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-entire.md)
 + [Experiments on MS MARCO Passage Retrieval using monoT5 - Entire Dev Set - with TPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-monot5-tpu.md)
 + [Experiments on MS MARCO Passage Retrieval using duoT5 - Entire Dev Set - with TPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-duot5-tpu.md)
++ [Experiments on Robust04 using monoT5 - with TPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-robust04-monot5-tpu.md)
