@@ -6,11 +6,11 @@ from random import randint
 from typing import List
 from urllib.request import urlretrieve
 
-from pyserini.pyclass import JSimpleSearcherResult
-from pyserini.search import pysearch
+from pyserini.search import JSimpleSearcherResult
+from pyserini.search import SimpleSearcher
 
-from pygaggle.rerank import to_texts, Text, Query, Reranker
-from pygaggle.rerank import IdentityReranker
+from pygaggle.rerank.base import hits_to_texts, Text, Query, Reranker
+from pygaggle.rerank.identity import IdentityReranker
 
 
 class TestSearch(unittest.TestCase):
@@ -29,7 +29,7 @@ class TestSearch(unittest.TestCase):
         tarball.extractall(self.index_dir)
         tarball.close()
 
-        self.searcher = pysearch.SimpleSearcher(
+        self.searcher = SimpleSearcher(
             f'{self.index_dir}lucene-index.cacm')
 
     def test_basic(self):
@@ -44,14 +44,13 @@ class TestSearch(unittest.TestCase):
         self.assertEqual(1532, len(hits[0].raw))
         self.assertAlmostEqual(4.76550, hits[0].score, places=5)
 
-        texts = to_texts(hits)
+        texts = hits_to_texts(hits)
         self.assertEqual(len(hits), len(texts))
         self.assertTrue(isinstance(texts, List))
         self.assertTrue(isinstance(texts[0], Text))
 
         for i in range(0, len(hits)):
-            self.assertEqual(hits[i].raw, texts[i].raw)
-            self.assertEqual(hits[i].contents, texts[i].contents)
+            self.assertEqual(hits[i].raw, texts[i].text)
             self.assertAlmostEqual(hits[i].score, texts[i].score, places=5)
 
         query = Query('dummy query')
@@ -62,15 +61,14 @@ class TestSearch(unittest.TestCase):
 
         # Check that reranked output is indeed the same as the input
         for i in range(0, len(hits)):
-            self.assertEqual(texts[i].raw, output[i].raw)
-            self.assertEqual(texts[i].contents, hits[i].contents)
-            self.assertAlmostEqual(texts[i].score, hits[i].score, places=5)
+            self.assertEqual(texts[i].text, output[i].text)
+            self.assertEqual(texts[i].metadata, output[i].metadata)
+            self.assertAlmostEqual(texts[i].score, output[i].score, places=5)
 
         # Check that the identity rerank was not destructive
         texts = []
         for i in range(0, len(hits)):
-            self.assertEqual(hits[i].raw, output[i].raw)
-            self.assertEqual(hits[i].contents, output[i].contents)
+            self.assertEqual(hits[i].raw, output[i].text)
             self.assertAlmostEqual(hits[i].score, output[i].score, places=5)
 
     def tearDown(self):
