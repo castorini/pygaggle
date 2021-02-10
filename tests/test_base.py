@@ -7,7 +7,7 @@ from typing import List
 from urllib.request import urlretrieve
 
 from pyserini.search import JSimpleSearcherResult
-from pyserini.search import pysearch
+from pyserini.search import SimpleSearcher
 
 from pygaggle.rerank import to_texts, Text, Query, Reranker
 from pygaggle.rerank import IdentityReranker
@@ -29,7 +29,7 @@ class TestSearch(unittest.TestCase):
         tarball.extractall(self.index_dir)
         tarball.close()
 
-        self.searcher = pysearch.SimpleSearcher(
+        self.searcher = SimpleSearcher(
             f'{self.index_dir}lucene-index.cacm')
 
     def test_basic(self):
