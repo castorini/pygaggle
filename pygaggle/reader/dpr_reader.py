@@ -74,6 +74,7 @@ class DensePassageRetrieverReader(Reader):
                     return_tensors='pt',
                     padding=True,
                     truncation=True,
+                    max_length=350,
                 )
                 input_ids = encoded_inputs['input_ids'].to(self.device)
                 attention_mask = encoded_inputs['attention_mask'].to(self.device)
