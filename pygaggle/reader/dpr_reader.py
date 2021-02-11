@@ -29,6 +29,7 @@ class DensePassageRetrieverReader(Reader):
         max_answer_length: int = 10,
         num_spans_per_passage: int = 10,
         batch_size: int = 16,
+        topk_em: List[int] = [50],
     ):
         self.model = model or self.get_model()
         self.tokenizer = tokenizer or self.get_tokenizer()
@@ -39,6 +40,9 @@ class DensePassageRetrieverReader(Reader):
         self.num_spans_per_passage = num_spans_per_passage
 
         self.batch_size = batch_size
+
+        self.topk_em = topk_em
+        self.topk_em.sort()
 
     @staticmethod
     def get_model(
@@ -56,38 +60,48 @@ class DensePassageRetrieverReader(Reader):
         return DPRReaderTokenizer.from_pretrained(pretrained_tokenizer_name_or_path)
 
     def predict(self, query: Query, texts: List[Text]) -> List[Answer]:
-        answers = []
-        for i in range(0, len(texts), self.batch_size):
-            encoded_inputs = self.tokenizer(
-                questions=query.text,
-                titles=list(map(lambda t: t.title, texts[i: i+self.batch_size])),
-                texts=list(map(lambda t: t.text, texts[i: i+self.batch_size])),
-                return_tensors='pt',
-                padding=True,
-                truncation=True,
-            )
-            input_ids = encoded_inputs['input_ids'].to(self.device)
-            attention_mask = encoded_inputs['attention_mask'].to(self.device)
-            outputs = self.model(
-                input_ids=input_ids,
-                attention_mask=attention_mask,
-            )
+        answers = {}
+        topk_answers = []
+        prev_k = 0
 
-            predicted_spans = self.tokenizer.decode_best_spans(
-                encoded_inputs,
-                outputs,
-                self.num_spans,
-                self.max_answer_length,
-                self.num_spans_per_passage,
-            )
-
-            for idx, span in enumerate(predicted_spans):
-                answers.append(
-                    Answer(
-                        text=span.text,
-                        score=float(span.span_score.cpu().detach().numpy()),
-                        ctx_score=float(span.relevance_score.cpu().detach().numpy()),
-                    )
+        for k in self.topk_em:
+            topk_texts = texts[prev_k: k]
+            for i in range(0, len(topk_texts), self.batch_size):
+                encoded_inputs = self.tokenizer(
+                    questions=query.text,
+                    titles=list(map(lambda t: t.title, topk_texts[i: i+self.batch_size])),
+                    texts=list(map(lambda t: t.text, topk_texts[i: i+self.batch_size])),
+                    return_tensors='pt',
+                    padding=True,
+                    truncation=True,
                 )
-        answers = sorted(answers, key=lambda x: (-x.ctx_score, -x.score))
-        return answers[: self.num_spans]
+                input_ids = encoded_inputs['input_ids'].to(self.device)
+                attention_mask = encoded_inputs['attention_mask'].to(self.device)
+                outputs = self.model(
+                    input_ids=input_ids,
+                    attention_mask=attention_mask,
+                )
+
+                predicted_spans = self.tokenizer.decode_best_spans(
+                    encoded_inputs,
+                    outputs,
+                    self.num_spans,
+                    self.max_answer_length,
+                    self.num_spans_per_passage,
+                )
+
+                for span in predicted_spans:
+                    topk_answers.append(
+                        Answer(
+                            text=span.text,
+                            score=float(span.span_score.cpu().detach().numpy()),
+                            ctx_score=float(span.relevance_score.cpu().detach().numpy()),
+                        )
+                    )
+
+            topk_answers = sorted(topk_answers, key=lambda x: (-x.ctx_score, -x.score))
+            answers[k] = topk_answers[: self.num_spans]
+
+            prev_k = k
+
+        return answers
