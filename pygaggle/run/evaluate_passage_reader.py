@@ -41,8 +41,7 @@ def construct_dpr(options: PassageReadingEvaluationOptions) -> Reader:
                                        options.num_spans,
                                        options.max_answer_length,
                                        options.num_spans_per_passage,
-                                       options.batch_size,
-                                       options.topk_em)
+                                       options.batch_size)
 
 
 def main():
@@ -79,10 +78,10 @@ def main():
             type=int,
             default=10,
             help='Maximum number of answer spans to return per passage'),
-        opt('--output-dir',
+        opt('--output-file',
             type=Path,
             default=None,
-            help='Directory to output predictions for each example; if not specified, this output will be discarded'),
+            help='File to output predictions for each example; if not specified, this output will be discarded'),
         opt('--device',
             type=str,
             default='cuda:0',
@@ -138,9 +137,9 @@ def main():
                 ground_truth_answers=item["answers"],
             )
         )
-    dpr_predictions = { k : [] for k in options.topk_em } if args.output_dir is not None else None
+    dpr_predictions = [] if args.output_file is not None else None
 
-    ems = evaluator.evaluate(examples, dpr_predictions)
+    ems = evaluator.evaluate(examples, options.topk_em, dpr_predictions)
 
     logging.info(f'Reader completed')
 
@@ -148,11 +147,9 @@ def main():
         em = np.mean(np.array(ems[k])) * 100.
         logging.info(f'Top{k}\tExact Match Accuracy: {em}')
 
-    if args.output_dir is not None:
-        os.makedirs(args.output_dir, exist_ok=True)
-        for k in options.topk_em:
-            with open(os.path.join(args.output_dir, f'dpr_predictions_top{k}'), 'w', encoding='utf-8', newline='\n') as f:
-                json.dump(dpr_predictions[k], f, indent=4)
+    if args.output_file is not None:
+        with open(args.output_file, 'w', encoding='utf-8', newline='\n') as f:
+            json.dump(dpr_predictions, f, indent=4)
 
 
 if __name__ == '__main__':

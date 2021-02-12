@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict
 import torch
 
 from transformers import DPRReader, DPRReaderTokenizer
@@ -29,7 +29,6 @@ class DensePassageRetrieverReader(Reader):
         max_answer_length: int = 10,
         num_spans_per_passage: int = 10,
         batch_size: int = 16,
-        topk_em: List[int] = [50],
     ):
         self.model = model or self.get_model()
         self.tokenizer = tokenizer or self.get_tokenizer()
@@ -40,9 +39,6 @@ class DensePassageRetrieverReader(Reader):
         self.num_spans_per_passage = num_spans_per_passage
 
         self.batch_size = batch_size
-
-        self.topk_em = topk_em
-        self.topk_em.sort()
 
     @staticmethod
     def get_model(
@@ -59,18 +55,26 @@ class DensePassageRetrieverReader(Reader):
     ) -> DPRReaderTokenizer:
         return DPRReaderTokenizer.from_pretrained(pretrained_tokenizer_name_or_path)
 
-    def predict(self, query: Query, texts: List[Text]) -> List[Answer]:
-        answers = {}
-        topk_answers = []
-        prev_k = 0
+    def predict(
+        self,
+        query: Query,
+        texts: List[Text],
+        milestones: Optional[List[int]] = None,
+    ) -> Dict[int, List[Answer]]:
+        if milestones is None:
+            milestones = [len(texts)]
 
-        for k in self.topk_em:
-            topk_texts = texts[prev_k: k]
-            for i in range(0, len(topk_texts), self.batch_size):
+        answers = {}
+        top_answers = []
+        prev_milestone = 0
+
+        for milestone in milestones:
+            added_texts = texts[prev_milestone: milestone]
+            for i in range(0, len(added_texts), self.batch_size):
                 encoded_inputs = self.tokenizer(
                     questions=query.text,
-                    titles=list(map(lambda t: t.title, topk_texts[i: i+self.batch_size])),
-                    texts=list(map(lambda t: t.text, topk_texts[i: i+self.batch_size])),
+                    titles=list(map(lambda t: t.title, added_texts[i: i+self.batch_size])),
+                    texts=list(map(lambda t: t.text, added_texts[i: i+self.batch_size])),
                     return_tensors='pt',
                     padding=True,
                     truncation=True,
@@ -92,7 +96,7 @@ class DensePassageRetrieverReader(Reader):
                 )
 
                 for span in predicted_spans:
-                    topk_answers.append(
+                    top_answers.append(
                         Answer(
                             text=span.text,
                             score=float(span.span_score.cpu().detach().numpy()),
@@ -100,9 +104,9 @@ class DensePassageRetrieverReader(Reader):
                         )
                     )
 
-            topk_answers = sorted(topk_answers, key=lambda x: (-x.ctx_score, -x.score))
-            answers[k] = topk_answers[: self.num_spans]
+            top_answers = sorted(top_answers, key=lambda x: (-x.ctx_score, -x.score))
+            answers[milestone] = top_answers[: self.num_spans]
 
-            prev_k = k
+            prev_milestone = milestone
 
         return answers

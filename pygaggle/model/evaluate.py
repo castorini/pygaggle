@@ -263,23 +263,28 @@ class ReaderEvaluator:
     def evaluate(
         self,
         examples: List[RetrievalExample],
+        topk_em: List[int] = [50],
         dpr_predictions: Optional[Dict[int, List[Dict[str, str]]]] = None,
     ):
-        ems = { k : [] for k in self.reader.topk_em }
+        ems = { k : [] for k in topk_em }
         for example in tqdm(examples):
-            answers = self.reader.predict(example.query, example.texts)
+            answers = self.reader.predict(example.query, example.texts, topk_em)
             ground_truth_answers = example.ground_truth_answers
 
-            for k in self.reader.topk_em:
+            topk_prediction = {}
+
+            for k in topk_em:
                 best_answer = answers[k][0].text
                 em_hit = max([ReaderEvaluator.exact_match_score(best_answer, ga) for ga in ground_truth_answers])
                 ems[k].append(em_hit)
 
-                if dpr_predictions is not None:
-                    dpr_predictions[k].append({
-                        'question': example.query.text,
-                        'prediction': best_answer,
-                    })
+                topk_prediction[f'top{k}'] = best_answer
+
+            if dpr_predictions is not None:
+                dpr_predictions.append({
+                    'question': example.query.text,
+                    'prediction': topk_prediction,
+                })
 
         return ems
 
