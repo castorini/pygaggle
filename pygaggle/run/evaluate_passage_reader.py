@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 from pathlib import Path
 import logging
 import json
@@ -24,12 +24,12 @@ class PassageReadingEvaluationOptions(BaseModel):
     retrieval_file: Path
     model_name: Optional[str]
     tokenizer_name: Optional[str]
-    use_top_k_passages: int
     num_spans: int
     max_answer_length: int
     num_spans_per_passage: int
     device: str
     batch_size: int
+    topk_em: List[int]
 
 
 def construct_dpr(options: PassageReadingEvaluationOptions) -> Reader:
@@ -66,10 +66,6 @@ def main():
             type=str,
             default='facebook/dpr-reader-single-nq-base',
             help='Pretrained model for tokenizer'),
-        opt('--use-top-k-passages',
-            type=int,
-            default=50,
-            help='The top k passages by the retriever will be used by the reader'),
         opt('--num-spans',
             type=int,
             default=1,
@@ -99,6 +95,11 @@ def main():
             default=[],
             nargs='+',
             help='Values of k to print the topk accuracy of the retrieval file'),
+        opt('--topk-em',
+            type=int,
+            default=[50],
+            nargs='+',
+            help='Values of k to print the topk exact match score'),
     )
     args = apb.parser.parse_args()
     options = PassageReadingEvaluationOptions(**vars(args))
@@ -108,7 +109,7 @@ def main():
         data = json.load(f)
 
     if args.topk_retrieval:
-        logging.info("Evaluating Topk Accuracies")
+        logging.info("Evaluating Topk Retrieval Accuracies")
         subprocess.call(['python',
                          'tools/scripts/dpr/evaluate_retrieval.py',
                          '--retrieval',
@@ -124,6 +125,7 @@ def main():
 
     evaluator = ReaderEvaluator(reader)
 
+    max_topk_passages = max(options.topk_em)
     examples = []
     for _, item in data.items():
         examples.append(
@@ -131,18 +133,19 @@ def main():
                 query=Query(text=item["question"]),
                 texts=list(map(lambda context: Text(text=context["text"].split('\n', 1)[1].replace('""', '"'),
                                                     title=context["text"].split('\n', 1)[0].replace('"', '')),
-                               item["contexts"]))[:options.use_top_k_passages],
+                               item["contexts"]))[: max_topk_passages],
                 ground_truth_answers=item["answers"],
             )
         )
     dpr_predictions = [] if args.output_file is not None else None
 
-    ems = evaluator.evaluate(examples, dpr_predictions)
+    ems = evaluator.evaluate(examples, options.topk_em, dpr_predictions)
 
     logging.info(f'Reader completed')
 
-    em = np.mean(np.array(ems)) * 100.
-    logging.info(f'Exact Match Accuracy: {em}')
+    for k in options.topk_em:
+        em = np.mean(np.array(ems[k])) * 100.
+        logging.info(f'Top{k}\tExact Match Accuracy: {em}')
 
     if args.output_file is not None:
         with open(args.output_file, 'w', encoding='utf-8', newline='\n') as f:

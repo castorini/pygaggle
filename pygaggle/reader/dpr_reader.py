@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict
 import torch
 
 from transformers import DPRReader, DPRReaderTokenizer
@@ -55,39 +55,58 @@ class DensePassageRetrieverReader(Reader):
     ) -> DPRReaderTokenizer:
         return DPRReaderTokenizer.from_pretrained(pretrained_tokenizer_name_or_path)
 
-    def predict(self, query: Query, texts: List[Text]) -> List[Answer]:
-        answers = []
-        for i in range(0, len(texts), self.batch_size):
-            encoded_inputs = self.tokenizer(
-                questions=query.text,
-                titles=list(map(lambda t: t.title, texts[i: i+self.batch_size])),
-                texts=list(map(lambda t: t.text, texts[i: i+self.batch_size])),
-                return_tensors='pt',
-                padding=True,
-                truncation=True,
-            )
-            input_ids = encoded_inputs['input_ids'].to(self.device)
-            attention_mask = encoded_inputs['attention_mask'].to(self.device)
-            outputs = self.model(
-                input_ids=input_ids,
-                attention_mask=attention_mask,
-            )
+    def predict(
+        self,
+        query: Query,
+        texts: List[Text],
+        milestones: Optional[List[int]] = None,
+    ) -> Dict[int, List[Answer]]:
+        if milestones is None:
+            milestones = [len(texts)]
 
-            predicted_spans = self.tokenizer.decode_best_spans(
-                encoded_inputs,
-                outputs,
-                self.num_spans,
-                self.max_answer_length,
-                self.num_spans_per_passage,
-            )
+        answers = {}
+        top_answers = []
+        prev_milestone = 0
 
-            for idx, span in enumerate(predicted_spans):
-                answers.append(
-                    Answer(
-                        text=span.text,
-                        score=float(span.span_score.cpu().detach().numpy()),
-                        ctx_score=float(span.relevance_score.cpu().detach().numpy()),
-                    )
+        for milestone in milestones:
+            added_texts = texts[prev_milestone: milestone]
+            for i in range(0, len(added_texts), self.batch_size):
+                encoded_inputs = self.tokenizer(
+                    questions=query.text,
+                    titles=list(map(lambda t: t.title, added_texts[i: i+self.batch_size])),
+                    texts=list(map(lambda t: t.text, added_texts[i: i+self.batch_size])),
+                    return_tensors='pt',
+                    padding=True,
+                    truncation=True,
+                    max_length=350,
                 )
-        answers = sorted(answers, key=lambda x: (-x.ctx_score, -x.score))
-        return answers[: self.num_spans]
+                input_ids = encoded_inputs['input_ids'].to(self.device)
+                attention_mask = encoded_inputs['attention_mask'].to(self.device)
+                outputs = self.model(
+                    input_ids=input_ids,
+                    attention_mask=attention_mask,
+                )
+
+                predicted_spans = self.tokenizer.decode_best_spans(
+                    encoded_inputs,
+                    outputs,
+                    self.num_spans,
+                    self.max_answer_length,
+                    self.num_spans_per_passage,
+                )
+
+                for span in predicted_spans:
+                    top_answers.append(
+                        Answer(
+                            text=span.text,
+                            score=float(span.span_score.cpu().detach().numpy()),
+                            ctx_score=float(span.relevance_score.cpu().detach().numpy()),
+                        )
+                    )
+
+            top_answers = sorted(top_answers, key=lambda x: (-x.ctx_score, -x.score))
+            answers[milestone] = top_answers[: self.num_spans]
+
+            prev_milestone = milestone
+
+        return answers
