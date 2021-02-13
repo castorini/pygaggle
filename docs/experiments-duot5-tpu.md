@@ -59,7 +59,7 @@ As a sanity check, we can evaluate the second-stage retrieved documents using th
 We  choose one of the monoT5-base run file to rerank with duoT5-base and the monoT5-3B run file to rerank with duoT5-3B.
 ```
 export MODEL_NAME=<base or 3B>
-python tools/eval/msmarco_eval.py ${DATA_DIR}/qrels.dev.small.tsv ${DATA_DIR}/run.monot5_${MODEL_NAME}.dev.tsv
+python tools/scripts/msmarco/msmarco_passage_eval.py ${DATA_DIR}/qrels.dev.small.tsv ${DATA_DIR}/run.monot5_${MODEL_NAME}.dev.tsv
 ```
 
 In the case of monoT5-3B, the output should be:
@@ -215,7 +215,7 @@ python pygaggle/data/convert_duot5_output_to_msmarco_run.py --t5_output ${DATA_D
 
 Now we can evaluate the reranked results using the official MS MARCO evaluation script.
 ```
-python tools/eval/msmarco_eval.py ${DATA_DIR}/qrels.dev.small.tsv ${DATA_DIR}/run.duot5_${MODEL_NAME}.dev.tsv
+python tools/scripts/msmarco/msmarco_passage_eval.py ${DATA_DIR}/qrels.dev.small.tsv ${DATA_DIR}/run.duot5_${MODEL_NAME}.dev.tsv
 ```
 
 In the case of duoT5-3B, the output should be:

@@ -67,7 +67,7 @@ Note: Please rename `run.bm25.dev.small.tsv` to `run.dev.small.tsv`.
 As a sanity check, we can evaluate the first-stage retrieved documents using the official MS MARCO evaluation script.
 
 ```
-python tools/eval/msmarco_eval.py data/msmarco_ans_entire/qrels.dev.small.tsv data/msmarco_ans_entire/run.dev.small.tsv
+python tools/scripts/msmarco/msmarco_passage_eval.py data/msmarco_ans_entire/qrels.dev.small.tsv data/msmarco_ans_entire/run.dev.small.tsv
 ```
 
 The output should be:
@@ -123,7 +123,7 @@ The re-ranked run file `run.monobert.ans_entire.dev.tsv` will also be available 
 We can use the official MS MARCO evaluation script to verify the MRR@10:
 
 ```
-python tools/eval/msmarco_eval.py data/msmarco_ans_entire/qrels.dev.small.tsv runs/run.monobert.ans_entire.dev.tsv
+python tools/scripts/msmarco/msmarco_passage_eval.py data/msmarco_ans_entire/qrels.dev.small.tsv runs/run.monobert.ans_entire.dev.tsv
 ```
 
 You should see the same result. Great, let's move on to monoT5!
@@ -163,7 +163,7 @@ Upon completion, the re-ranked run file `run.monot5.ans_entire.dev.tsv` will be 
 We can use the official MS MARCO evaluation script to verify the MRR@10:
 
 ```
-python tools/eval/msmarco_eval.py data/msmarco_ans_entire/qrels.dev.small.tsv runs/run.monot5.ans_entire.dev.tsv
+python tools/scripts/msmarco/msmarco_passage_eval.py data/msmarco_ans_entire/qrels.dev.small.tsv runs/run.monot5.ans_entire.dev.tsv
 ```
 
 You should see the same result.
