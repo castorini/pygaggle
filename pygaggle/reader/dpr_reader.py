@@ -86,6 +86,9 @@ class DensePassageRetrieverReader(Reader):
                     input_ids=input_ids,
                     attention_mask=attention_mask,
                 )
+                outputs.start_logits = outputs.start_logits.cpu().detach().numpy()
+                outputs.end_logits = outputs.end_logits.cpu().detach().numpy()
+                outputs.relevance_logits = outputs.relevance_logits.cpu().detach().numpy()
 
                 predicted_spans = self.tokenizer.decode_best_spans(
                     encoded_inputs,
@@ -99,8 +102,8 @@ class DensePassageRetrieverReader(Reader):
                     top_answers.append(
                         Answer(
                             text=span.text,
-                            score=float(span.span_score.cpu().detach().numpy()),
-                            ctx_score=float(span.relevance_score.cpu().detach().numpy()),
+                            score=span.span_score,
+                            ctx_score=span.relevance_score,
                         )
                     )
 

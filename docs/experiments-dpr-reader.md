@@ -46,8 +46,9 @@ cd ../
 python -um pygaggle.run.evaluate_passage_reader --task wikipedia \
                                                 --method dpr \ 
                                                 --retrieval-file data/retrieval_dpr_50.json \
-                                                --output-file my_dpr_prediction.json \
-                                                --use-top-k-passages 10
+                                                --output-file dpr_prediction.json \
+                                                --topk-retrieval 10 20 50 \
+                                                --topk-em 10 20 50
 ```
 
 The final Exact Match (EM) score after 8757 queries should be `39.328537170263786`.
