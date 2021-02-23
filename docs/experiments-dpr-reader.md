@@ -46,11 +46,24 @@ cd ../
 python -um pygaggle.run.evaluate_passage_reader --task wikipedia \
                                                 --method dpr \ 
                                                 --retrieval-file data/retrieval_dpr_50.json \
-                                                --output-file my_dpr_prediction.json \
-                                                --use-top-k-passages 10
+                                                --output-file dpr_prediction.json \
+                                                --topk-retrieval 10 20 50 \
+                                                --topk-em 10 20 50
 ```
 
-The final Exact Match (EM) score after 8757 queries should be `39.328537170263786`.
+The Topk Retrieval Accuracies should be
+```
+Top10	accuracy: 0.7362110311750599
+Top20	accuracy: 0.7813178029005368
+Top50	accuracy: 0.829736211031175
+```
+
+The Topk Exact Match (EM) scores after 8757 queries should be
+```
+Top10	Exact Match Accuracy: 39.328537170263786
+Top20	Exact Match Accuracy: 39.96802557953637
+Top50	Exact Match Accuracy: 39.96802557953637
+```
 
 It should take about 1-2 hours to read and answer all of the queries on a GPU.
 The type of GPU will directly influence your inference time.
@@ -61,4 +74,4 @@ Please mention in your PR if you find any difference!
 
 ## Replication Log
 
-+ Results replicated by [@KaiSun314](https://github.com/KaiSun314) on 2021-02-05 (commit[`de20456`](https://github.com/castorini/pygaggle/commit/de2045635106abf104cd7adaf07525fd4f173a3b)) (Tesla V100 on Compute Canada)
++ Results replicated by [@KaiSun314](https://github.com/KaiSun314) on 2021-02-22 (commit[`7c0ebbe`](https://github.com/castorini/pygaggle/commit/7c0ebbeb20dc867ee68d21c6ac7da84073bdb6f6)) (Tesla T4 on Colab)
