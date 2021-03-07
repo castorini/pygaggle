@@ -105,7 +105,8 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--queries', type=str, required=True,
                     help='Path to TREC-formatted queries (topics) file.')
 parser.add_argument('--run', type=str, required=True,
-                    help='Path to TREC-formatted run file containing the candidates from the first stage retrieval (e.g., BM25).')
+                    help='Path to TREC-formatted run file containing the candidates'
+                         ' from the first stage retrieval (e.g., BM25).')
 parser.add_argument('--corpus', type=str, required=True,
                     help='path to a single file containing all TREC Disks 4 and 5 documents.')
 parser.add_argument('--output_segment_texts', type=str, required=True,
