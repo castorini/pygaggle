@@ -9,7 +9,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name='pygaggle',
-    version='0.0.3',
+    version='0.0.3.1',
     author='PyGaggle Gaggle',
     author_email='rpradeep@uwaterloo.ca',
     description='A gaggle of rerankers for text ranking and question answering.',
