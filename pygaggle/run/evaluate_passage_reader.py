@@ -2,7 +2,6 @@ from typing import List, Optional
 from pathlib import Path
 import logging
 import json
-import os
 import numpy as np
 import subprocess
 
@@ -141,7 +140,7 @@ def main():
 
     ems = evaluator.evaluate(examples, options.topk_em, dpr_predictions)
 
-    logging.info(f'Reader completed')
+    logging.info('Reader completed')
 
     for k in options.topk_em:
         em = np.mean(np.array(ems[k])) * 100.

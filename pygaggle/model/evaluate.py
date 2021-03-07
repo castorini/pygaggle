@@ -13,7 +13,6 @@ from pygaggle.data.retrieval import RetrievalExample
 from pygaggle.rerank.base import Reranker
 from pygaggle.reader.base import Reader
 from pygaggle.model.writer import Writer
-
 from pygaggle.data.segmentation import SegmentProcessor
 
 __all__ = ['RerankerEvaluator', 'DuoRerankerEvaluator', 'metric_names']
@@ -266,7 +265,7 @@ class ReaderEvaluator:
         topk_em: List[int] = [50],
         dpr_predictions: Optional[Dict[int, List[Dict[str, str]]]] = None,
     ):
-        ems = { k : [] for k in topk_em }
+        ems = {k: [] for k in topk_em}
         for example in tqdm(examples):
             answers = self.reader.predict(example.query, example.texts, topk_em)
             ground_truth_answers = example.ground_truth_answers
