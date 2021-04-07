@@ -67,7 +67,6 @@ for i in range(0, 10):
 
 # Finally, rerank:
 reranked = reranker.rerank(query, texts)
-reranked.sort(key=lambda x: x.score, reverse=True)
 
 # Print out reranked results:
 for i in range(0, 10):
