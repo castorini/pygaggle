@@ -265,23 +265,25 @@ class ReaderEvaluator:
         topk_em: List[int] = [50],
         dpr_predictions: Optional[Dict[int, List[Dict[str, str]]]] = None,
     ):
-        ems = {k: [] for k in topk_em}
+        ems = {str(setting): {k: [] for k in topk_em} for setting in self.reader.reader_settings}
         for example in tqdm(examples):
             answers = self.reader.predict(example.query, example.texts, topk_em)
             ground_truth_answers = example.ground_truth_answers
 
-            topk_prediction = {}
+            topk_prediction = {str(setting): {} for setting in self.reader.reader_settings}
 
-            for k in topk_em:
-                best_answer = answers[k][0].text
-                em_hit = max([ReaderEvaluator.exact_match_score(best_answer, ga) for ga in ground_truth_answers])
-                ems[k].append(em_hit)
+            for setting in self.reader.reader_settings:
+                for k in topk_em:
+                    best_answer = answers[str(setting)][k][0].text
+                    em_hit = max([ReaderEvaluator.exact_match_score(best_answer, ga) for ga in ground_truth_answers])
+                    ems[str(setting)][k].append(em_hit)
 
-                topk_prediction[f'top{k}'] = best_answer
+                    topk_prediction[f'{str(setting)}'][f'top{k}'] = best_answer
 
             if dpr_predictions is not None:
                 dpr_predictions.append({
                     'question': example.query.text,
+                    'answers': ground_truth_answers,
                     'prediction': topk_prediction,
                 })
 

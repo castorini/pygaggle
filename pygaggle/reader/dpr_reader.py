@@ -4,6 +4,7 @@ import torch
 from transformers import DPRReader, DPRReaderTokenizer
 
 from .base import Reader, Answer
+from .reader_settings import DPRBaseSettings, DPRSettings
 from pygaggle.rerank.base import Query, Text
 
 
@@ -25,6 +26,7 @@ class DensePassageRetrieverReader(Reader):
         self,
         model: DPRReader = None,
         tokenizer: DPRReaderTokenizer = None,
+        reader_settings: List[DPRBaseSettings] = [DPRSettings()],
         num_spans: int = 1,
         max_answer_length: int = 10,
         num_spans_per_passage: int = 10,
@@ -33,6 +35,8 @@ class DensePassageRetrieverReader(Reader):
         self.model = model or self.get_model()
         self.tokenizer = tokenizer or self.get_tokenizer()
         self.device = next(self.model.parameters(), None).device
+
+        self.reader_settings = reader_settings
 
         self.num_spans = num_spans
         self.max_answer_length = max_answer_length
@@ -55,6 +59,50 @@ class DensePassageRetrieverReader(Reader):
     ) -> DPRReaderTokenizer:
         return DPRReaderTokenizer.from_pretrained(pretrained_tokenizer_name_or_path)
 
+    def compute_spans(
+        self,
+        query: Query,
+        texts: List[Text],
+    ):
+        spans_by_text = []
+
+        for i in range(0, len(texts), self.batch_size):
+            encoded_inputs = self.tokenizer(
+                questions=query.text,
+                titles=list(map(lambda t: t.title, texts[i: i+self.batch_size])),
+                texts=list(map(lambda t: t.text, texts[i: i+self.batch_size])),
+                return_tensors='pt',
+                padding=True,
+                truncation=True,
+                max_length=350,
+            )
+            input_ids = encoded_inputs['input_ids'].to(self.device)
+            attention_mask = encoded_inputs['attention_mask'].to(self.device)
+            outputs = self.model(
+                input_ids=input_ids,
+                attention_mask=attention_mask,
+            )
+            outputs.start_logits = outputs.start_logits.cpu().detach().numpy()
+            outputs.end_logits = outputs.end_logits.cpu().detach().numpy()
+            outputs.relevance_logits = outputs.relevance_logits.cpu().detach().numpy()
+
+            predicted_spans = self.tokenizer.decode_best_spans(
+                encoded_inputs,
+                outputs,
+                self.batch_size * self.num_spans_per_passage,
+                self.max_answer_length,
+                self.num_spans_per_passage,
+            )
+
+            batch_spans_by_text = [[] for k in range(len(outputs.relevance_logits))]
+            for span in predicted_spans:
+                batch_spans_by_text[span.doc_id].append(span)
+
+            for k in range(len(outputs.relevance_logits)):
+                spans_by_text.append(sorted(batch_spans_by_text[k], reverse=True, key=lambda span: span.span_score))
+
+        return spans_by_text
+
     def predict(
         self,
         query: Query,
@@ -64,51 +112,18 @@ class DensePassageRetrieverReader(Reader):
         if milestones is None:
             milestones = [len(texts)]
 
-        answers = {}
+        answers = {str(setting): {} for setting in self.reader_settings}
         top_answers = []
         prev_milestone = 0
+        for setting in self.reader_settings:
+            setting.reset()
+
+        spans_by_text = self.compute_spans(query, texts)
 
         for milestone in milestones:
-            added_texts = texts[prev_milestone: milestone]
-            for i in range(0, len(added_texts), self.batch_size):
-                encoded_inputs = self.tokenizer(
-                    questions=query.text,
-                    titles=list(map(lambda t: t.title, added_texts[i: i+self.batch_size])),
-                    texts=list(map(lambda t: t.text, added_texts[i: i+self.batch_size])),
-                    return_tensors='pt',
-                    padding=True,
-                    truncation=True,
-                    max_length=350,
-                )
-                input_ids = encoded_inputs['input_ids'].to(self.device)
-                attention_mask = encoded_inputs['attention_mask'].to(self.device)
-                outputs = self.model(
-                    input_ids=input_ids,
-                    attention_mask=attention_mask,
-                )
-                outputs.start_logits = outputs.start_logits.cpu().detach().numpy()
-                outputs.end_logits = outputs.end_logits.cpu().detach().numpy()
-                outputs.relevance_logits = outputs.relevance_logits.cpu().detach().numpy()
-
-                predicted_spans = self.tokenizer.decode_best_spans(
-                    encoded_inputs,
-                    outputs,
-                    self.num_spans,
-                    self.max_answer_length,
-                    self.num_spans_per_passage,
-                )
-
-                for span in predicted_spans:
-                    top_answers.append(
-                        Answer(
-                            text=span.text,
-                            score=span.span_score,
-                            ctx_score=span.relevance_score,
-                        )
-                    )
-
-            top_answers = sorted(top_answers, key=lambda x: (-x.ctx_score, -x.score))
-            answers[milestone] = top_answers[: self.num_spans]
+            for setting in self.reader_settings:
+                setting.add_answers(spans_by_text[prev_milestone: milestone], texts[prev_milestone: milestone])
+                answers[str(setting)][milestone] = setting.top_answers(self.num_spans)
 
             prev_milestone = milestone
 
