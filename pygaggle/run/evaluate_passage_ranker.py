@@ -156,6 +156,7 @@ def main():
                      default=50,
                      help='Top k candidates from mono for duo reranking'),
                  opt('--output-file', type=Path, default='.'),
+                 opt('--mono-cache-dir', type=Path, default='.'),
                  opt('--overwrite-output', action='store_true'),
                  opt('--split',
                      type=str,
@@ -193,7 +194,8 @@ def main():
                                          duo_reranker=reranker[1],
                                          metric_names=options.metrics,
                                          mono_hits=options.mono_hits,
-                                         writer=writer)
+                                         writer=writer,
+                                         mono_cache_dir=args.mono_cache_dir)
     else:
         evaluator = RerankerEvaluator(reranker, options.metrics, writer=writer)
     width = max(map(len, args.metrics)) + 1

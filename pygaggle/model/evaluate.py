@@ -1,5 +1,7 @@
 from collections import OrderedDict
 from typing import List, Optional, Dict
+from pathlib import Path
+import os
 import abc
 
 from sklearn.metrics import recall_score
@@ -12,7 +14,7 @@ from pygaggle.data.kaggle import RelevanceExample
 from pygaggle.data.retrieval import RetrievalExample
 from pygaggle.rerank.base import Reranker
 from pygaggle.reader.base import Reader
-from pygaggle.model.writer import Writer
+from pygaggle.model.writer import (Writer, MsMarcoWriter)
 from pygaggle.data.segmentation import SegmentProcessor
 
 __all__ = ['RerankerEvaluator', 'DuoRerankerEvaluator', 'metric_names']
@@ -196,13 +198,16 @@ class DuoRerankerEvaluator:
                  metric_names: List[str],
                  mono_hits: int = 50,
                  use_tqdm: bool = True,
-                 writer: Optional[Writer] = None):
+                 writer: Optional[Writer] = None,
+                 mono_cache_dir: Optional[Path] = None):
         self.mono_reranker = mono_reranker
         self.duo_reranker = duo_reranker
         self.mono_hits = mono_hits
         self.metrics = [METRIC_MAP[name] for name in metric_names]
         self.use_tqdm = use_tqdm
         self.writer = writer
+        os.makedirs(mono_cache_dir, exist_ok = True)
+        self.mono_cache_writer = MsMarcoWriter(mono_cache_dir / ("mono_cache_" + str(mono_hits) + "hits.tsv"))
 
     def evaluate(self,
                  examples: List[RelevanceExample]) -> List[MetricAccumulator]:
@@ -213,6 +218,8 @@ class DuoRerankerEvaluator:
             mono_out = self.mono_reranker.rerank(example.query, example.documents)
             mono_texts.append(sorted(enumerate(mono_out), key=lambda x: x[1].score, reverse=True)[:self.mono_hits])
             scores.append(np.array([x.score for x in mono_out]))
+            if self.mono_cache_writer is not None:
+                self.mono_cache_writer.write(list(scores[ct]), examples[ct])
         for ct, texts in tqdm(enumerate(mono_texts), total=len(mono_texts), disable=not self.use_tqdm):
             duo_in = list(map(lambda x: x[1], texts))
             duo_scores = [x.score for x in self.duo_reranker.rerank(examples[ct].query, duo_in)]
