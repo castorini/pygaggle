@@ -141,10 +141,10 @@ def main():
     max_topk_passages = max(options.topk_em)
     examples = []
     for _, item in data.items():
-        topk_contexts = sorted(item['contexts'], reverse=True, key=lambda context: context[options.retriever])[: max_topk_passages]
+        topk_contexts = sorted(item['contexts'], reverse=True, key=lambda context: float(context[options.retriever]))[: max_topk_passages]
         texts = list(map(lambda context: Text(text=context['text'].split('\n', 1)[1].replace('""', '"'),
                                               title=context['text'].split('\n', 1)[0].replace('"', ''),
-                                              score=context[options.retriever]),
+                                              score=float(context[options.retriever])),
                          topk_contexts))
         examples.append(
             RetrievalExample(
