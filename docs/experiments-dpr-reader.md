@@ -30,7 +30,7 @@ pip install tensorflow_gpu
 + Dense Passage Retrieval for Open-Domain Question Answering [(Karpukhin et al., 2020)](https://arxiv.org/pdf/2004.04906.pdf)
 
 ## Natrual Questions (NQ)
-End to end answer prediction using **DPR Retrieval**
+End-to-end answer prediction using **DPR Retrieval**
 
 We first download the retrieval results from Pyserini
 ```bash
