@@ -88,7 +88,7 @@ Top500      Exact Match Accuracy: 38.337950138504155
 
 End to end answer prediction using **Hybrid Retrieval**
 
-We first download the retrieval results from Pyserini
+We first download the retrieval results from Pyserini:
 ```bash
 $ wget https://www.dropbox.com/s/35l5hbtie7gztjf/run.dpr.nq-test.single.bf.bm25.json -P data
 ```
