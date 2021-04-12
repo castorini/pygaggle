@@ -147,7 +147,7 @@ Top500	Exact Match Accuracy: 59.4890833554318
 
 End to end answer prediction using **BM25 Retrieval**
 
-We first download the retrieval results from Pyserini
+We first download the retrieval results from Pyserini:
 ```bash
 $ wget https://www.dropbox.com/s/vaoyo1zq3h8har5/run.dpr.trivia-test.bm25.json -P data
 ```
