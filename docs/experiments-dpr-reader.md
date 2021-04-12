@@ -118,7 +118,7 @@ Top180	Exact Match Accuracy: 44.01662049861496
 ## TriviaQA 
 End to end answer prediction using **DPR Retrieval**
 
-We first download the retrieval results from Pyserini
+We first download the retrieval results from Pyserini:
 ```bash
 $ wget https://www.dropbox.com/s/376e4y5pe00symw/run.dpr.trivia-test.multi.bf.json -P data
 ```
