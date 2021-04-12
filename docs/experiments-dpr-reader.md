@@ -32,7 +32,7 @@ pip install tensorflow_gpu
 ## Natrual Questions (NQ)
 End-to-end answer prediction using **DPR Retrieval**
 
-We first download the retrieval results from Pyserini
+We first download the retrieval results from Pyserini:
 ```bash
 $ wget https://www.dropbox.com/s/flby7nmthaqbzxo/run.dpr.nq-test.single.bf.json -P data
 ```
