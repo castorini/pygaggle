@@ -60,7 +60,7 @@ Top180      Exact Match Accuracy: 43.46260387811635
 End to end answer prediction using **BM25 Retrieval**
 
 
-We first download the retrieval results from Pyserini
+We first download the retrieval results from Pyserini:
 ```bash
 $ wget https://www.dropbox.com/s/0ufwszz6son8e2j/run.dpr.nq-test.bm25.json -P data
 ```
