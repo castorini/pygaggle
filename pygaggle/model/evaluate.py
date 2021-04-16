@@ -65,7 +65,7 @@ class TopkMixin(TruncatingMixin):
         rel_idxs = sorted(list(enumerate(scores)),
                           key=lambda x: x[1], reverse=True)[self.top_k:]
         scores = np.array(scores)
-        scores[[x[0] for x in rel_idxs]] = 0
+        scores[[x[0] for x in rel_idxs]] = -1
         return scores
 
 
@@ -81,7 +81,8 @@ class DynamicThresholdingMixin(TruncatingMixin):
 class RecallAccumulator(TruncatingMixin, MeanAccumulator):
     def accumulate(self, scores: List[float], gold: RelevanceExample):
         score_rels = self.truncated_rels(scores)
-        score_rels[score_rels != 0] = 1
+        score_rels[score_rels != -1] = 1
+        score_rels[score_rels == -1] = 0
         gold_rels = np.array(gold.labels, dtype=int)
         score = recall_score(gold_rels, score_rels, zero_division=0)
         self.scores.append(score)
@@ -90,7 +91,8 @@ class RecallAccumulator(TruncatingMixin, MeanAccumulator):
 class PrecisionAccumulator(TruncatingMixin, MeanAccumulator):
     def accumulate(self, scores: List[float], gold: RelevanceExample):
         score_rels = self.truncated_rels(scores)
-        score_rels[score_rels != 0] = 1
+        score_rels[score_rels != -1] = 1
+        score_rels[score_rels == -1] = 0
         score_rels = score_rels.astype(int)
         gold_rels = np.array(gold.labels, dtype=int)
         sum_score = score_rels.sum()
@@ -199,7 +201,8 @@ class DuoRerankerEvaluator:
                  mono_hits: int = 50,
                  use_tqdm: bool = True,
                  writer: Optional[Writer] = None,
-                 mono_cache_dir: Optional[Path] = None):
+                 mono_cache_dir: Optional[Path] = None,
+                 skip_mono: bool = False):
         self.mono_reranker = mono_reranker
         self.duo_reranker = duo_reranker
         self.mono_hits = mono_hits
@@ -208,18 +211,25 @@ class DuoRerankerEvaluator:
         self.writer = writer
         os.makedirs(mono_cache_dir, exist_ok = True)
         self.mono_cache_writer = MsMarcoWriter(mono_cache_dir / ("mono_cache_" + str(mono_hits) + "hits.tsv"))
+        self.skip_mono = skip_mono
 
     def evaluate(self,
                  examples: List[RelevanceExample]) -> List[MetricAccumulator]:
         metrics = [cls() for cls in self.metrics]
         mono_texts = []
         scores = []
-        for ct, example in tqdm(enumerate(examples), total=len(examples), disable=not self.use_tqdm):
-            mono_out = self.mono_reranker.rerank(example.query, example.documents)
-            mono_texts.append(sorted(enumerate(mono_out), key=lambda x: x[1].score, reverse=True)[:self.mono_hits])
-            scores.append(np.array([x.score for x in mono_out]))
-            if self.mono_cache_writer is not None:
-                self.mono_cache_writer.write(list(scores[ct]), examples[ct])
+        if not self.skip_mono:
+            for ct, example in tqdm(enumerate(examples), total=len(examples), disable=not self.use_tqdm):
+                mono_out = self.mono_reranker.rerank(example.query, example.documents)
+                mono_texts.append(sorted(enumerate(mono_out), key=lambda x: x[1].score, reverse=True)[:self.mono_hits])
+                scores.append(np.array([x.score for x in mono_out]))
+                if self.mono_cache_writer is not None:
+                    self.mono_cache_writer.write(list(scores[ct]), examples[ct])
+        else:
+            for ct, example in tqdm(enumerate(examples), total=len(examples), disable=not self.use_tqdm):
+                mono_out = example.documents
+                mono_texts.append(list(enumerate(mono_out))[:self.mono_hits])
+                scores.append(np.array([x.score for x in mono_out]))
         for ct, texts in tqdm(enumerate(mono_texts), total=len(mono_texts), disable=not self.use_tqdm):
             duo_in = list(map(lambda x: x[1], texts))
             duo_scores = [x.score for x in self.duo_reranker.rerank(examples[ct].query, duo_in)]
