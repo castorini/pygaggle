@@ -8,11 +8,10 @@ import subprocess
 from pydantic import BaseModel
 
 from .args import ArgumentParserBuilder, opt
-from pygaggle.reader.base import Reader
-from pygaggle.reader.dpr_reader import DensePassageRetrieverReader
-from pygaggle.reader.reader_settings import parse_reader_settings
+from pygaggle.qa.base import Reader, Question, Context
+from pygaggle.qa.dpr_reader import DprReader
+from pygaggle.qa.span_selection import DprSelection, GarSelection, DprFusionSelection, GarFusionSelection
 from pygaggle.data.retrieval import RetrievalExample
-from pygaggle.rerank.base import Query, Text
 from pygaggle.model.evaluate import ReaderEvaluator
 
 READER_CHOICES = ('dpr')
@@ -35,18 +34,31 @@ class PassageReadingEvaluationOptions(BaseModel):
 
 
 def construct_dpr(options: PassageReadingEvaluationOptions) -> Reader:
-    model = DensePassageRetrieverReader.get_model(options.model_name, options.device)
-    tokenizer = DensePassageRetrieverReader.get_tokenizer(options.tokenizer_name)
+    model = options.model_name
+    tokenizer = options.tokenizer_name
 
-    reader_settings = [parse_reader_settings(setting) for setting in options.settings]
+    span_selection_rules = [parse_span_selection_rules(setting) for setting in options.settings]
 
-    return DensePassageRetrieverReader(model,
-                                       tokenizer,
-                                       reader_settings,
-                                       options.num_spans,
-                                       options.max_answer_length,
-                                       options.num_spans_per_passage,
-                                       options.batch_size)
+    return DprReader(model,
+                     tokenizer,
+                     span_selection_rules,
+                     options.num_spans,
+                     options.max_answer_length,
+                     options.num_spans_per_passage,
+                     options.batch_size,
+                     options.device)
+
+
+def parse_span_selection_rules(settings):
+    settings = settings.split('_')
+
+    settings_map = dict(
+        dpr=DprSelection,
+        dprfusion=DprFusionSelection,
+        gar=GarSelection,
+        garfusion=GarFusionSelection,
+    )
+    return settings_map[settings[0]](*settings[1:])
 
 
 def main():
@@ -141,15 +153,16 @@ def main():
     max_topk_passages = max(options.topk_em)
     examples = []
     for _, item in data.items():
-        topk_contexts = sorted(item['contexts'], reverse=True, key=lambda context: float(context[options.retriever]))[: max_topk_passages]
-        texts = list(map(lambda context: Text(text=context['text'].split('\n', 1)[1].replace('""', '"'),
-                                              title=context['text'].split('\n', 1)[0].replace('"', ''),
-                                              score=float(context[options.retriever])),
+        topk_contexts = sorted(item['contexts'], reverse=True, key=lambda context: float(context[options.retriever]))[
+                        : max_topk_passages]
+        texts = list(map(lambda context: Context(text=context['text'].split('\n', 1)[1].replace('""', '"'),
+                                                 title=context['text'].split('\n', 1)[0].replace('"', ''),
+                                                 score=float(context[options.retriever])),
                          topk_contexts))
         examples.append(
             RetrievalExample(
-                query=Query(text=item['question']),
-                texts=texts,
+                question=Question(text=item['question']),
+                contexts=texts,
                 ground_truth_answers=item['answers'],
             )
         )
@@ -159,7 +172,7 @@ def main():
 
     logging.info('Reader completed')
 
-    for setting in reader.reader_settings:
+    for setting in reader.span_selection_rules:
         logging.info(f'Setting: {str(setting)}')
         for k in options.topk_em:
             em = np.mean(np.array(ems[str(setting)][k])) * 100.
