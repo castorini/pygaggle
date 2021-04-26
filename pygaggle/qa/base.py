@@ -62,11 +62,11 @@ class Answer:
     def __init__(
             self,
             text: str,
-            docid: Optional[str] = None,
+            context: Optional[Context] = None,
             score: Optional[float] = 0.0,
     ):
         self.text = text
-        self.docid = docid
+        self.context = context
         self.score = score
 
 

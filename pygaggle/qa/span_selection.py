@@ -33,7 +33,7 @@ class DprSelection(SpanSelection):
         for spans, text in zip(spans_by_text, texts):
             for span in spans:
                 self.answers.append(Answer(text=span.text,
-                                           docid=text.docid,
+                                           context=text,
                                            score=self.score(span, text)))
 
     def top_answers(self, num_spans):

@@ -13,7 +13,8 @@ class OpenBookQA:
         hits = self.retriever.search(question, topk)
         contexts = self._hits_to_contexts(hits)
         answer = self.reader.predict(question, contexts)
-        return answer[str(self.reader.span_selection_rules[0])][topk][0].text
+        answer = answer[str(self.reader.span_selection_rules[0])][topk][0]
+        return self._parse_answer(answer)
 
     def _hits_to_contexts(self, hits, title_delimiter='\n'):
         """
@@ -29,3 +30,12 @@ class OpenBookQA:
             else:
                 contexts.append(Context(t, None, docid, hits[i].score))
         return contexts
+
+    @staticmethod
+    def _parse_answer(answer):
+        return {"answer": answer.text,
+                "context": {
+                    "docid": answer.context.docid,
+                    "title": answer.context.title,
+                    "text": answer.context.text}
+                }
