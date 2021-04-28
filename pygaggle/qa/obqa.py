@@ -1,5 +1,6 @@
 import json
 from .base import Context
+import time
 
 
 class OpenBookQA:
@@ -9,11 +10,16 @@ class OpenBookQA:
         self.retriever = retriever
         self.corpus = corpus
 
-    def predict(self, question, topk=10):
+    def predict(self, question, topk=20):
+        time0 = time.time()
         hits = self.retriever.search(question, topk)
         contexts = self._hits_to_contexts(hits)
+        time1 = time.time()
         answer = self.reader.predict(question, contexts)
         answer = answer[str(self.reader.span_selection_rules[0])][topk][0]
+        time2 = time.time()
+        print(time1 - time0)
+        print(time2 - time1)
         return self._parse_answer(answer)
 
     def _hits_to_contexts(self, hits, title_delimiter='\n'):
