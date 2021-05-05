@@ -53,7 +53,7 @@ class MonoT5(Reranker):
             batch_size=batch_size
         )
 
-    def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
+    def rescore(self, query: Query, texts: List[Text]) -> List[Text]:
         texts = deepcopy(texts)
         batch_input = QueryDocumentBatch(query=query, documents=texts)
         for batch in self.tokenizer.traverse_query_document(batch_input):
@@ -72,7 +72,6 @@ class MonoT5(Reranker):
             for doc, score in zip(batch.documents, batch_log_probs):
                 doc.score = score
 
-        texts.sort(key=lambda x: x.score, reverse=True)
         return texts
 
 
@@ -100,7 +99,7 @@ class DuoT5(Reranker):
             batch_size=batch_size
         )
 
-    def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
+    def rescore(self, query: Query, texts: List[Text]) -> List[Text]:
         texts = deepcopy(texts)
         doc_pairs = list(permutations(texts, 2))
         scores = defaultdict(float)
@@ -124,8 +123,6 @@ class DuoT5(Reranker):
 
         for text in texts:
             text.score = scores[text.metadata['docid']]
-
-        texts.sort(key=lambda x: x.score, reverse=True)
 
         return texts
 
@@ -155,7 +152,7 @@ class UnsupervisedTransformerReranker(Reranker):
         self.argmax_only = argmax_only
 
     @torch.no_grad()
-    def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
+    def rescore(self, query: Query, texts: List[Text]) -> List[Text]:
         encoded_query = self.encoder.encode_single(query)
         encoded_documents = self.encoder.encode(texts)
         texts = deepcopy(texts)
@@ -173,8 +170,6 @@ class UnsupervisedTransformerReranker(Reranker):
             for text in texts:
                 if text.score != max_score:
                     text.score = max_score - 10000
-
-        texts.sort(key=lambda x: x.score, reverse=True)
 
         return texts
 
@@ -201,7 +196,7 @@ class MonoBERT(Reranker):
         return AutoTokenizer.from_pretrained(pretrained_model_name_or_path, use_fast=False, *args, **kwargs)
 
     @torch.no_grad()
-    def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
+    def rescore(self, query: Query, texts: List[Text]) -> List[Text]:
         texts = deepcopy(texts)
         for text in texts:
             ret = self.tokenizer.encode_plus(query.text,
@@ -215,11 +210,9 @@ class MonoBERT(Reranker):
             output, = self.model(input_ids, token_type_ids=tt_ids, return_dict=False)
             if output.size(1) > 1:
                 text.score = torch.nn.functional.log_softmax(
-                                output, 1)[0, -1].item()
+                    output, 1)[0, -1].item()
             else:
                 text.score = output.item()
-
-        texts.sort(key=lambda x: x.score, reverse=True)
 
         return texts
 
@@ -231,7 +224,7 @@ class QuestionAnsweringTransformerReranker(Reranker):
         self.device = next(model.parameters()).device
 
     @torch.no_grad()
-    def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
+    def rescore(self, query: Query, texts: List[Text]) -> List[Text]:
         texts = deepcopy(texts)
         for text in texts:
             ret = self.tokenizer.encode_plus(query.text,
@@ -252,7 +245,5 @@ class QuestionAnsweringTransformerReranker(Reranker):
             smax_val, smax_idx = start_scores.max(0)
             emax_val, emax_idx = end_scores.max(0)
             text.score = max(smax_val.item(), emax_val.item())
-
-        texts.sort(key=lambda x: x.score, reverse=True)
 
         return texts

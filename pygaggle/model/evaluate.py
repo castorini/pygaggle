@@ -161,8 +161,8 @@ class RerankerEvaluator:
                  examples: List[RelevanceExample]) -> List[MetricAccumulator]:
         metrics = [cls() for cls in self.metrics]
         for example in tqdm(examples, disable=not self.use_tqdm):
-            scores = [x.score for x in self.reranker.rerank(example.query,
-                                                            example.documents)]
+            scores = [x.score for x in self.reranker.rescore(example.query,
+                                                             example.documents)]
             if self.writer is not None:
                 self.writer.write(scores, example)
             for metric in metrics:
@@ -178,7 +178,7 @@ class RerankerEvaluator:
         segment_processor = SegmentProcessor()
         for example in tqdm(examples, disable=not self.use_tqdm):
             segment_group = segment_processor.segment(example.documents, seg_size, stride)
-            segment_group.segments = self.reranker.rerank(example.query, segment_group.segments)
+            segment_group.segments = self.reranker.rescore(example.query, segment_group.segments)
             doc_scores = [x.score for x in segment_processor.aggregate(example.documents,
                                                                        segment_group,
                                                                        aggregate_method)]
@@ -210,12 +210,12 @@ class DuoRerankerEvaluator:
         mono_texts = []
         scores = []
         for ct, example in tqdm(enumerate(examples), total=len(examples), disable=not self.use_tqdm):
-            mono_out = self.mono_reranker.rerank(example.query, example.documents)
+            mono_out = self.mono_reranker.rescore(example.query, example.documents)
             mono_texts.append(sorted(enumerate(mono_out), key=lambda x: x[1].score, reverse=True)[:self.mono_hits])
             scores.append(np.array([x.score for x in mono_out]))
         for ct, texts in tqdm(enumerate(mono_texts), total=len(mono_texts), disable=not self.use_tqdm):
             duo_in = list(map(lambda x: x[1], texts))
-            duo_scores = [x.score for x in self.duo_reranker.rerank(examples[ct].query, duo_in)]
+            duo_scores = [x.score for x in self.duo_reranker.rescore(examples[ct].query, duo_in)]
 
             scores[ct][list(map(lambda x: x[0], texts))] = duo_scores
             if self.writer is not None:
@@ -233,7 +233,7 @@ class DuoRerankerEvaluator:
         segment_processor = SegmentProcessor()
         for example in tqdm(examples, disable=not self.use_tqdm):
             segment_group = segment_processor.segment(example.documents, seg_size, stride)
-            segment_group.segments = self.reranker.rerank(example.query, segment_group.segments)
+            segment_group.segments = self.reranker.rescore(example.query, segment_group.segments)
             doc_scores = [x.score for x in segment_processor.aggregate(example.documents,
                                                                        segment_group,
                                                                        aggregate_method)]
