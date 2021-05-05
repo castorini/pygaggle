@@ -66,10 +66,10 @@ class Reranker:
     (i.e., does not alter the original input list of texts).
     """
 
-    def rerank(self, texts: List[Text]) -> List[Text]:
+    def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
         """Sorts a list of texts
         """
-        return deepcopy(texts.sort(lambda x: x.score))
+        return sorted(self.rescore(query, texts), key=lambda x: x.score)
 
     @abc.abstractmethod
     def rescore(self, query: Query, texts: List[Text]) -> List[Text]:
