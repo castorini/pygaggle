@@ -7,5 +7,5 @@ __all__ = ['IdentityReranker']
 
 
 class IdentityReranker(Reranker):
-    def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
+    def rescore(self, query: Query, texts: List[Text]) -> List[Text]:
         return texts

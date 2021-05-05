@@ -26,7 +26,7 @@ class Bm25Reranker(Reranker):
             self.use_corpus_estimator = True
             self.index_utils = IndexReader(index_path)
 
-    def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
+    def rescore(self, query: Query, texts: List[Text]) -> List[Text]:
         query_words = self.analyzer.analyze(query.text)
         sentences = list(map(self.analyzer.analyze, (t.text for t in texts)))
 
@@ -45,7 +45,7 @@ class Bm25Reranker(Reranker):
             if self.use_corpus_estimator:
                 idfs = {w:
                         self.index_utils.compute_bm25_term_weight(
-                                text.metadata['docid'], w) for w in tf}
+                            text.metadata['docid'], w) for w in tf}
             score = sum(idfs[w] * tf[w] * (self.k1 + 1) /
                         (tf[w] + self.k1 * (1 - self.b + self.b *
                                             (d_len / mean_len))) for w in tf)
