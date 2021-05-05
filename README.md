@@ -66,7 +66,7 @@ for i in range(0, 10):
     print(f'{i+1:2} {texts[i].metadata["docid"]:15} {texts[i].score:.5f} {texts[i].text}')
 
 # Finally, rerank:
-reranked = reranker.rescore(query, texts)
+reranked = reranker.rerank(query, texts)
 
 # Print out reranked results:
 for i in range(0, 10):
