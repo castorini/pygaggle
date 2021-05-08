@@ -175,3 +175,4 @@ If you were able to replicate these results, please submit a PR adding to the re
 + Results replicated by [@wongalvis14](https://github.com/wongalvis14) on 2021-02-22 (commit[`7c0ebbe`](https://github.com/castorini/pygaggle/commit/7c0ebbeb20dc867ee68d21c6ac7da84073bdb6f6)) (GeForce RTX 2080 Ti on Hydra)
 + Results replicated by [@saileshnankani](https://github.com/saileshnankani) on 2021-05-05 (commit[`95b3da7`](https://github.com/castorini/pygaggle/commit/95b3da7cf2822f3581a2b1891dd5f54b258a04e4)) (Tesla T4 on Colab)
 + Results replicated by [@andrewyguo](https://github.com/andrewyguo) on 2021-05-05 (commit[`6f0381e`](https://github.com/castorini/pygaggle/commit/6f0381e6a3f6ea5f0d284abb156c549bb4c54578)) (Tesla T4 on Colab)
++ Results replicated by [@larryli1999](https://github.com/larryli1999) on 2021-05-05 (commit[`53b77f4`](https://github.com/castorini/pygaggle/commit/53b77f4219fc990d77e94007b36be6a20678e4d2)) (Tesla T4 on Colab)
