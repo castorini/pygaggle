@@ -10,16 +10,19 @@ from pydantic import BaseModel
 from .args import ArgumentParserBuilder, opt
 from pygaggle.reader.base import Reader
 from pygaggle.reader.dpr_reader import DensePassageRetrieverReader
+from pygaggle.reader.reader_settings import parse_reader_settings
 from pygaggle.data.retrieval import RetrievalExample
 from pygaggle.rerank.base import Query, Text
 from pygaggle.model.evaluate import ReaderEvaluator
 
-METHOD_CHOICES = ('dpr')
+READER_CHOICES = ('dpr')
 
 
 class PassageReadingEvaluationOptions(BaseModel):
     task: str
-    method: str
+    retriever: str
+    reader: str
+    settings: List[str]
     retrieval_file: Path
     model_name: Optional[str]
     tokenizer_name: Optional[str]
@@ -35,8 +38,11 @@ def construct_dpr(options: PassageReadingEvaluationOptions) -> Reader:
     model = DensePassageRetrieverReader.get_model(options.model_name, options.device)
     tokenizer = DensePassageRetrieverReader.get_tokenizer(options.tokenizer_name)
 
+    reader_settings = [parse_reader_settings(setting) for setting in options.settings]
+
     return DensePassageRetrieverReader(model,
                                        tokenizer,
+                                       reader_settings,
                                        options.num_spans,
                                        options.max_answer_length,
                                        options.num_spans_per_passage,
@@ -49,10 +55,18 @@ def main():
         opt('--task',
             type=str,
             default='wikipedia'),
-        opt('--method',
+        opt('--retriever',
             type=str,
             required=True,
-            choices=METHOD_CHOICES),
+            help='Retriever score field to rank the input passages to the reader'),
+        opt('--reader',
+            type=str,
+            required=True,
+            choices=READER_CHOICES),
+        opt('--settings',
+            type=str,
+            nargs='+',
+            default='dpr'),
         opt('--retrieval-file',
             type=Path,
             required=True,
@@ -103,12 +117,12 @@ def main():
     args = apb.parser.parse_args()
     options = PassageReadingEvaluationOptions(**vars(args))
 
-    logging.info("Loading the Retrieval File")
+    logging.info('Loading the Retrieval File')
     with open(options.retrieval_file) as f:
         data = json.load(f)
 
     if args.topk_retrieval:
-        logging.info("Evaluating Topk Retrieval Accuracies")
+        logging.info('Evaluating Topk Retrieval Accuracies')
         subprocess.call(['python',
                          'tools/scripts/dpr/evaluate_retrieval.py',
                          '--retrieval',
@@ -116,24 +130,27 @@ def main():
                          '--topk',
                          *map(str, args.topk_retrieval)])
 
-    logging.info("Loading Reader Model and Tokenizer")
+    logging.info('Loading Reader Model and Tokenizer')
     construct_map = dict(
         dpr=construct_dpr,
     )
-    reader = construct_map[options.method](options)
+    reader = construct_map[options.reader](options)
 
     evaluator = ReaderEvaluator(reader)
 
     max_topk_passages = max(options.topk_em)
     examples = []
     for _, item in data.items():
+        topk_contexts = sorted(item['contexts'], reverse=True, key=lambda context: float(context[options.retriever]))[: max_topk_passages]
+        texts = list(map(lambda context: Text(text=context['text'].split('\n', 1)[1].replace('""', '"'),
+                                              title=context['text'].split('\n', 1)[0].replace('"', ''),
+                                              score=float(context[options.retriever])),
+                         topk_contexts))
         examples.append(
             RetrievalExample(
-                query=Query(text=item["question"]),
-                texts=list(map(lambda context: Text(text=context["text"].split('\n', 1)[1].replace('""', '"'),
-                                                    title=context["text"].split('\n', 1)[0].replace('"', '')),
-                               item["contexts"]))[: max_topk_passages],
-                ground_truth_answers=item["answers"],
+                query=Query(text=item['question']),
+                texts=texts,
+                ground_truth_answers=item['answers'],
             )
         )
     dpr_predictions = [] if args.output_file is not None else None
@@ -142,9 +159,11 @@ def main():
 
     logging.info('Reader completed')
 
-    for k in options.topk_em:
-        em = np.mean(np.array(ems[k])) * 100.
-        logging.info(f'Top{k}\tExact Match Accuracy: {em}')
+    for setting in reader.reader_settings:
+        logging.info(f'Setting: {str(setting)}')
+        for k in options.topk_em:
+            em = np.mean(np.array(ems[str(setting)][k])) * 100.
+            logging.info(f'Top{k}\tExact Match Accuracy: {em}')
 
     if args.output_file is not None:
         with open(args.output_file, 'w', encoding='utf-8', newline='\n') as f:

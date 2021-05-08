@@ -57,7 +57,7 @@ class TestSearch(unittest.TestCase):
         identity_reranker = IdentityReranker()
         self.assertTrue(isinstance(identity_reranker, Reranker))
 
-        output = identity_reranker.rerank(query, texts)
+        output = identity_reranker.rescore(query, texts)
 
         # Check that reranked output is indeed the same as the input
         for i in range(0, len(hits)):
