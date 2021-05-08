@@ -1,4 +1,5 @@
 from typing import List, Union, Optional, Mapping, Any
+from copy import deepcopy
 import abc
 
 from pyserini.search import JSimpleSearcherResult
@@ -21,6 +22,7 @@ class Query:
     id : Optional[str]
         The query id.
     """
+
     def __init__(self, text: str, id: Optional[str] = None):
         self.text = text
         self.id = id
@@ -63,8 +65,14 @@ class Reranker:
     A reranker takes a list texts and returns a list of texts non-destructively
     (i.e., does not alter the original input list of texts).
     """
-    @abc.abstractmethod
+
     def rerank(self, query: Query, texts: List[Text]) -> List[Text]:
+        """Sorts a list of texts
+        """
+        return sorted(self.rescore(query, texts), key=lambda x: x.score, reverse=True)
+
+    @abc.abstractmethod
+    def rescore(self, query: Query, texts: List[Text]) -> List[Text]:
         """Reranks a list of texts with respect to a query.
 
          Parameters
