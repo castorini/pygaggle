@@ -1,7 +1,7 @@
 coloredlogs==14.0
 dataclasses;python_version<"3.7"
 numpy>=1.18
-pydantic==1.5
+pydantic==1.6.2
 pyserini==0.10.1.0
 scikit-learn>=0.22
 scipy>=1.4
