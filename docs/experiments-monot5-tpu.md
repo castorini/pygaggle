@@ -225,7 +225,7 @@ python pygaggle/data/convert_monot5_output_to_msmarco_run.py --t5_output ${DATA_
 
 Now we can evaluate the reranked results using the official MS MARCO evaluation script.
 ```
-python tools/scripts/msmarco/msmarco_passage_eval.py ${DATA_DIR}/qrels.dev.small.tsv ${DATA_DIR}/run.monot5_${MODEL_NAME}.dev.tsv
+python tools/scripts/msmarco/msmarco_passage_eval.py ${DATA_DIR}/qrels.msmarco-passage.dev-subset.txt ${DATA_DIR}/run.monot5_${MODEL_NAME}.dev.tsv
 ```
 
 In the case of monoT5-3B, the output should be:
