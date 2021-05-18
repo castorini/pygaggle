@@ -71,7 +71,7 @@ Let's start.
 cd ${DATA_DIR}
 wget https://storage.googleapis.com/duobert_git/run.bm25.dev.small.tsv
 wget https://www.dropbox.com/s/hq6xjhswiz60siu/queries.dev.small.tsv
-wget https://www.dropbox.com/s/5t6e2225rt6ikym/qrels.dev.small.tsv
+wget https://www.dropbox.com/s/ie27l0mzcjb5fbc/qrels.dev.small.tsv?dl=1
 wget https://www.dropbox.com/s/m1n2wf80l1lb9j1/collection.tar.gz
 tar -xvf collection.tar.gz
 rm collection.tar.gz
