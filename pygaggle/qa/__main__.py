@@ -54,7 +54,7 @@ if __name__ == '__main__':
     print("Init QA models")
     reader = DprReader(args.reader.model, device=args.reader.device)
     if args.retriever.model:
-        retriever = SimpleDenseSearcher(args.retriever.index, DPRQueryEncoder(args.retriever.model))
+        retriever = SimpleDenseSearcher(args.retriever.index, DprQueryEncoder(args.retriever.model))
     else:
         retriever = SimpleSearcher.from_prebuilt_index(args.retriever.corpus)
     corpus = SimpleSearcher.from_prebuilt_index(args.retriever.corpus)
