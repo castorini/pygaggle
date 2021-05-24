@@ -3,7 +3,7 @@ import argparse
 from pygaggle.qa.obqa import OpenBookQA
 from pygaggle.qa.dpr_reader import DprReader
 from pyserini.search import SimpleSearcher
-from pyserini.dsearch import SimpleDenseSearcher, DPRQueryEncoder
+from pyserini.dsearch import SimpleDenseSearcher, DprQueryEncoder
 
 
 def define_reader_args(parser):
