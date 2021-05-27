@@ -229,7 +229,7 @@ class DuoRerankerEvaluator:
             for ct, example in tqdm(enumerate(examples), total=len(examples), disable=not self.use_tqdm):
                 mono_out = example.documents
                 mono_texts.append(list(enumerate(mono_out))[:self.mono_hits])
-                scores.append(np.array([x.score for x in mono_out]))
+                scores.append(np.array([float(x.score) for x in mono_out]))
         for ct, texts in tqdm(enumerate(mono_texts), total=len(mono_texts), disable=not self.use_tqdm):
             duo_in = list(map(lambda x: x[1], texts))
             duo_scores = [x.score for x in self.duo_reranker.rescore(examples[ct].query, duo_in)]
