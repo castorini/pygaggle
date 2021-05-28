@@ -210,8 +210,10 @@ class DuoRerankerEvaluator:
         self.use_tqdm = use_tqdm
         self.writer = writer
         os.makedirs(mono_cache_dir, exist_ok = True)
-        self.mono_cache_writer = MsMarcoWriter(mono_cache_dir / ("mono_cache_" + str(mono_hits) + "hits.tsv"))
+        self.mono_cache_writer = None
         self.skip_mono = skip_mono
+        if not self.skip_mono:
+            self.mono_cache_writer = MsMarcoWriter(mono_cache_dir / ("mono_cache.tsv"))
 
     def evaluate(self,
                  examples: List[RelevanceExample]) -> List[MetricAccumulator]:
