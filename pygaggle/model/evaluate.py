@@ -13,7 +13,7 @@ import regex as re
 from pygaggle.data.kaggle import RelevanceExample
 from pygaggle.data.retrieval import RetrievalExample
 from pygaggle.rerank.base import Reranker
-from pygaggle.reader.base import Reader
+from pygaggle.qa.base import Reader
 from pygaggle.model.writer import (Writer, MsMarcoWriter)
 from pygaggle.data.segmentation import SegmentProcessor
 
@@ -284,14 +284,14 @@ class ReaderEvaluator:
         topk_em: List[int] = [50],
         dpr_predictions: Optional[Dict[int, List[Dict[str, str]]]] = None,
     ):
-        ems = {str(setting): {k: [] for k in topk_em} for setting in self.reader.reader_settings}
+        ems = {str(setting): {k: [] for k in topk_em} for setting in self.reader.span_selection_rules}
         for example in tqdm(examples):
-            answers = self.reader.predict(example.query, example.texts, topk_em)
+            answers = self.reader.predict(example.question, example.contexts, topk_em)
             ground_truth_answers = example.ground_truth_answers
 
-            topk_prediction = {str(setting): {} for setting in self.reader.reader_settings}
+            topk_prediction = {str(setting): {} for setting in self.reader.span_selection_rules}
 
-            for setting in self.reader.reader_settings:
+            for setting in self.reader.span_selection_rules:
                 for k in topk_em:
                     best_answer = answers[str(setting)][k][0].text
                     em_hit = max([ReaderEvaluator.exact_match_score(best_answer, ga) for ga in ground_truth_answers])
@@ -301,7 +301,7 @@ class ReaderEvaluator:
 
             if dpr_predictions is not None:
                 dpr_predictions.append({
-                    'question': example.query.text,
+                    'question': example.question.text,
                     'answers': ground_truth_answers,
                     'prediction': topk_prediction,
                 })
