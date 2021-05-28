@@ -1,6 +1,7 @@
 from typing import Optional, List, Tuple
 from pathlib import Path
 import logging
+import os
 
 from pydantic import BaseModel, validator
 from transformers import (AutoModel,
@@ -156,6 +157,14 @@ def main():
                      default=50,
                      help='Top k candidates from mono for duo reranking'),
                  opt('--output-file', type=Path, default='.'),
+                 opt('--mono-cache-write-path',
+                     type=Path,
+                     default='.',
+                     help='Path to write the mono run file cache'),
+                 opt('--mono-cache-load-path', 
+                     type=Path, 
+                     default='.',
+                     help='Path to the mono run file cache that will be loaded'),
                  opt('--overwrite-output', action='store_true'),
                  opt('--split',
                      type=str,
@@ -175,8 +184,9 @@ def main():
     args = apb.parser.parse_args()
     options = PassageRankingEvaluationOptions(**vars(args))
     logging.info("Preprocessing Queries & Passages:")
+    skip_mono = os.path.isfile(args.mono_cache_load_path)
     ds = MsMarcoDataset.from_folder(str(options.dataset), split=options.split,
-                                    is_duo=options.is_duo)
+                                    is_duo=options.is_duo, run_path=args.mono_cache_load_path)
     examples = ds.to_relevance_examples(str(options.index_dir),
                                         is_duo=options.is_duo)
     logging.info("Loading Ranker & Tokenizer:")
@@ -193,7 +203,9 @@ def main():
                                          duo_reranker=reranker[1],
                                          metric_names=options.metrics,
                                          mono_hits=options.mono_hits,
-                                         writer=writer)
+                                         writer=writer,
+                                         mono_cache_write_path=args.mono_cache_write_path,
+                                         skip_mono=skip_mono)
     else:
         evaluator = RerankerEvaluator(reranker, options.metrics, writer=writer)
     width = max(map(len, args.metrics)) + 1

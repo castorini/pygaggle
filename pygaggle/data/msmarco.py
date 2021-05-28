@@ -1,5 +1,6 @@
 import os
 from collections import OrderedDict, defaultdict
+from pathlib import Path
 from typing import List, Set, DefaultDict
 import logging
 from itertools import permutations
@@ -79,11 +80,13 @@ class MsMarcoDataset(BaseModel):
     def from_folder(cls,
                     folder: str,
                     split: str = 'dev',
-                    is_duo: bool = False) -> 'MsMarcoDataset':
+                    is_duo: bool = False,
+                    run_path: Path = '.') -> 'MsMarcoDataset':
         run_mono = "mono." if is_duo else ""
         query_path = os.path.join(folder, f"queries.{split}.small.tsv")
         qrels_path = os.path.join(folder, f"qrels.{split}.small.tsv")
-        run_path = os.path.join(folder, f"run.{run_mono}{split}.small.tsv")
+        if not os.path.isfile(run_path):
+            run_path = os.path.join(folder, f"run.{run_mono}{split}.small.tsv")
         return cls(examples=cls.load_queries(query_path,
                                              cls.load_qrels(qrels_path),
                                              cls.load_run(run_path)))
