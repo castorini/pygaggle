@@ -87,7 +87,6 @@ class MsMarcoDataset(BaseModel):
         qrels_path = os.path.join(folder, f"qrels.{split}.small.tsv")
         if not os.path.isfile(run_path):
             run_path = os.path.join(folder, f"run.{run_mono}{split}.small.tsv")
-        print(run_path)
         return cls(examples=cls.load_queries(query_path,
                                              cls.load_qrels(qrels_path),
                                              cls.load_run(run_path)))

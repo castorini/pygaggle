@@ -14,7 +14,7 @@ from pygaggle.data.kaggle import RelevanceExample
 from pygaggle.data.retrieval import RetrievalExample
 from pygaggle.rerank.base import Reranker
 from pygaggle.qa.base import Reader
-from pygaggle.model.writer import (Writer, MsMarcoWriter)
+from pygaggle.model.writer import Writer, MsMarcoWriter
 from pygaggle.data.segmentation import SegmentProcessor
 
 __all__ = ['RerankerEvaluator', 'DuoRerankerEvaluator', 'metric_names']
@@ -201,7 +201,7 @@ class DuoRerankerEvaluator:
                  mono_hits: int = 50,
                  use_tqdm: bool = True,
                  writer: Optional[Writer] = None,
-                 mono_cache_dir: Optional[Path] = None,
+                 mono_cache_write_path: Optional[Path] = None,
                  skip_mono: bool = False):
         self.mono_reranker = mono_reranker
         self.duo_reranker = duo_reranker
@@ -209,11 +209,10 @@ class DuoRerankerEvaluator:
         self.metrics = [METRIC_MAP[name] for name in metric_names]
         self.use_tqdm = use_tqdm
         self.writer = writer
-        os.makedirs(mono_cache_dir, exist_ok = True)
         self.mono_cache_writer = None
         self.skip_mono = skip_mono
         if not self.skip_mono:
-            self.mono_cache_writer = MsMarcoWriter(mono_cache_dir / ("mono_cache.tsv"))
+            self.mono_cache_writer = MsMarcoWriter(mono_cache_write_path)
 
     def evaluate(self,
                  examples: List[RelevanceExample]) -> List[MetricAccumulator]:
