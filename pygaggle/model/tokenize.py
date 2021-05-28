@@ -162,7 +162,7 @@ class SimpleBatchTokenizer(BatchTokenizer):
 
 class SpacyWordTokenizer:
     nlp = English()
-    tokenizer = nlp.Defaults.create_tokenizer(nlp)
+    tokenizer = nlp.tokenizer
 
     @lru_cache(maxsize=1024)
     def __call__(self, text: str) -> List[str]:
@@ -171,7 +171,7 @@ class SpacyWordTokenizer:
 
 class SpacySenticizer:
     nlp = English()
-    nlp.add_pipe(nlp.create_pipe('sentencizer'))
+    nlp.add_pipe('sentencizer')
 
     def __init__(self, max_paragraph_length: int = None):
         self.max_paragraph_length = max_paragraph_length
