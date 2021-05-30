@@ -1,4 +1,4 @@
-# Neural Pointwise Ranking Baselines on [MS MARCO Passage Retrieval](https://github.com/microsoft/MSMARCO-Passage-Ranking) - with GPU
+# Experiments on [MS MARCO Passage Retrieval](https://github.com/microsoft/MSMARCO-Passage-Ranking) using monoT5 - Entire Dev Set - mesh with GPUs
 
 This page contains instructions for running monoT5 on the MS MARCO *passage* ranking task with GPUs on Compute Canada Servers.
 
