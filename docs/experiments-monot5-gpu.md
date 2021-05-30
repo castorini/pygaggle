@@ -42,23 +42,7 @@ export DATA_DIR=data/msmarco_passage
 mkdir ${DATA_DIR}
 ```
 
-We provide specific data prep instructions for the train and dev set.
-
-### Train Set
-
-First, download the MS MARCO train triples:
-```
-cd ${DATA_DIR}
-wget https://storage.googleapis.com/duobert_git/triples.train.small.tar.gz
-tar -xvf triples.train.small.tar.gz
-rm triples.train.small.tar.gz
-cd ../../
-```
-
-Then convert the train triples file to the monoT5 input format:
-```
-python pygaggle/data/create_msmarco_t5_training_pairs.py --triples_train ${DATA_DIR}/triples.train.small.tsv --output_to_t5 ${DATA_DIR}/query_doc_pairs.train.tsv
-```
+We provide specific data prep instructions for the dev set.
 
 ### Dev Set
 
