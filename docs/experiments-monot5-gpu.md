@@ -56,7 +56,11 @@ In short, the files are:
 - `run.dev.small.tsv`: Approximately 6,980,000 pairs of dev set queries and retrieved passages using Anserini's BM25.
 - `collection.tar.gz`: All passages (8,841,823) in the MS MARCO passage corpus. In this tsv file, the first column is the passage id, and the second is the passage text.
 
+If you are on `Cedar`, these files can be found through at `/project/rrg-jimmylin/shared_files/gcloud/msmarco/data`
+
 A more detailed description of the data is available [here](https://github.com/castorini/duobert#data-and-trained-models).
+
+If you are not on `Cedar`, you can follow the instructions to download the dev set.
 
 Let's start.
 ```
@@ -113,6 +117,16 @@ export MODEL_NAME=<base or large or 3B>
 export MODEL_DIR=models/monot5/${MODEL_NAME}
 ```
 The checkpoint and the operative config file for each versions of the model are downloaded to `MODEL_DIR`
+
+If you are using `Cedar`, the model checkpoints can be found in this dir `/project/rrg-jimmylin/shared_files/gcloud/msmarco/monot5/`
+
+The operative config files can be found through these links:
+
+monoT5-base: [link](https://console.cloud.google.com/storage/browser/_details/t5-data/pretrained_models/base/operative_config.gin)
+
+monoT5-large: [link](https://console.cloud.google.com/storage/browser/_details/t5-data/pretrained_models/large/operative_config.gin)
+
+monoT5-3B: [link](https://console.cloud.google.com/storage/browser/_details/t5-data/pretrained_models/3B/operative_config.gin)
 
 Create a bash script to request gpus on Compute Canada and run the experiment
 ```
@@ -172,6 +186,8 @@ python pygaggle/data/convert_monot5_output_to_msmarco_run.py --t5_output ${DATA_
                                                 --t5_output_ids ${DATA_DIR}/query_doc_pair_ids.dev.small.tsv \
                                                 --mono_run ${DATA_DIR}/run.monot5_${MODEL_NAME}.dev.tsv
 ```
+
+A sample of the monoT5 outputs and the score files can be found in `/project/rrg-jimmylin/shared_files/gcloud/msmarco/monot5/data/` if you are on `Cedar`.
 
 Now we can evaluate the reranked results using the official MS MARCO evaluation script.
 ```
