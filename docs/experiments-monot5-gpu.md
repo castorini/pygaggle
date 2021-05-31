@@ -20,7 +20,7 @@ conda create --y --name pygaggle python=3.6
 conda activate pygaggle
 conda install -c conda-forge httptools jsonnet --yes
 pip install tensorflow-gpu==2.3.0
-pip tensorflow-text==2.3.0
+pip install tensorflow-text==2.3.0
 pip t5[gcp]
 git clone https://github.com/castorini/mesh.git
 pip install --editable mesh
@@ -202,6 +202,5 @@ MRR @10: 0.3798596329649345
 QueriesRanked: 6980
 #####################
 ```
-
 
 
