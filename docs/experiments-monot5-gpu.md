@@ -20,6 +20,8 @@ conda create --y --name pygaggle python=3.6
 conda activate pygaggle
 conda install -c conda-forge httptools jsonnet --yes
 pip install tensorflow-gpu==2.3.0
+conda install -c anaconda cudatoolkit==10.1
+conda install -c anaconda cudnn
 pip install tensorflow-text==2.3.0
 pip install t5[gcp]
 git clone https://github.com/castorini/mesh.git
@@ -27,6 +29,12 @@ pip install --editable mesh
 ```
 If Compute Canada Server return `package version not found` when pip installing, enter `export PYTHONPATH=` in the command line to resolve this error.
 
+Also, after setting up the enviroment, go to python interface and import tensorflow to check if cuda can be loaded correctly
+```
+python
+>>> import tensorflow as tf
+```
+If cuda loaded correctly, output should look something like this: `2021-06-02 09:53:53.794441: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcudart.so.10.1`
 ## Data Prep
 
 Since we will use some scripts form PyGaggle to process data and evaluate results, we first install it from source.
@@ -158,7 +166,7 @@ for ITER in {000..008}; do
     --gin_param="infer_checkpoint_step = 1100000" \
     --gin_param="utils.run.sequence_length = {'inputs': 512, 'targets': 2}" \
     --gin_param="Bitransformer.decode.max_decode_length = 2" \
-    --gin_param="input_filename = '{DATA_DIR}//query_doc_pairs.dev.small.txt${ITER}'" \
+    --gin_param="input_filename = '${DATA_DIR}/query_doc_pairs.dev.small.txt${ITER}'" \
     --gin_param="output_filename = '${DATA_DIR}/query_doc_pair_scores.dev.small.txt${ITER}'" \
     --gin_param="utils.run.batch_size=('tokens_per_batch', 65536)" \
     --gin_param="Bitransformer.decode.beam_size = 1" \
