@@ -159,7 +159,7 @@ for ITER in {000..008}; do
     --gin_param="utils.run.sequence_length = {'inputs': 512, 'targets': 2}" \
     --gin_param="Bitransformer.decode.max_decode_length = 2" \
     --gin_param="input_filename = '{DATA_DIR}//query_doc_pairs.dev.small.txt${ITER}'" \
-    --gin_param="output_filename = '{DATA_DIR}/query_doc_pair_scores.dev.small.txt${ITER}'" \
+    --gin_param="output_filename = '${DATA_DIR}/query_doc_pair_scores.dev.small.txt${ITER}'" \
     --gin_param="utils.run.batch_size=('tokens_per_batch', 65536)" \
     --gin_param="Bitransformer.decode.beam_size = 1" \
     --gin_param="Bitransformer.decode.temperature = 0.0" \
@@ -218,4 +218,3 @@ MRR @10: 0.3798596329649345
 QueriesRanked: 6980
 #####################
 ```
-
