@@ -18,16 +18,17 @@ If you haven't installed Anaconda on Compute Canada, please follow this guide [h
 conda init
 conda create --y --name pygaggle python=3.6
 conda activate pygaggle
+export PYTHONPATH=
 conda install -c conda-forge httptools jsonnet --yes
 pip install tensorflow-gpu==2.3.0
-conda install -c anaconda cudatoolkit==10.1
+conda install -c anaconda cudatoolkit=10.1
 conda install -c anaconda cudnn
 pip install tensorflow-text==2.3.0
-pip install t5[gcp]
+git clone https://github.com/google-research/text-to-text-transfer-transformer.git
+cd text-to-text-transfer-transformer && git checkout ca1c0627f338927ac753159cb7a1f6caaf2ae19b && pip install --editable . && cd ..
 git clone https://github.com/castorini/mesh.git
 pip install --editable mesh
 ```
-If Compute Canada Server return `package version not found` when pip installing, enter `export PYTHONPATH=` in the command line to resolve this error.
 
 Also, after setting up the enviroment, go to python interface and import tensorflow to check if cuda can be loaded correctly
 ```
@@ -41,7 +42,6 @@ Since we will use some scripts form PyGaggle to process data and evaluate result
 ```
 git clone --recursive https://github.com/castorini/pygaggle.git
 cd pygaggle
-pip install .
 ```
 
 We store all the files in the `data/msmarco_passage` directory.
