@@ -161,7 +161,7 @@ for ITER in {000..008}; do
     --gin_file="${MODEL_DIR}/operative_config.gin" \
     --gin_file="infer.gin" \
     --gin_file="beam_search.gin" \
-    --gin_param="utils.run.mesh_shape = 'model:1,batch:4'" \ # use 'model:2,batch:2' for 3B model
+    --gin_param="utils.run.mesh_shape = 'model:1,batch:4'" \ 
     --gin_param="utils.run.mesh_devices = ['gpu:0','gpu:1','gpu:2','gpu:3']" \
     --gin_param="infer_checkpoint_step = 1100000" \
     --gin_param="utils.run.sequence_length = {'inputs': 512, 'targets': 2}" \
