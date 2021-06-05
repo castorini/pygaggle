@@ -225,7 +225,7 @@ shuf ss_train.txt > ss_train_shuf.txt
 
 ```bash
 export MODEL_NAME=3B
-export GS_FOLDER=gs://pongo-bucket/xueguang/vert5-repl/ss-train
+export GS_FOLDER=<gs folder to save model>
 export MODEL_INIT_CKPT=1010000
 echo "model_checkpoint_path: \"model.ckpt-${MODEL_INIT_CKPT}\"" > checkpoint
 gsutil cp checkpoint ${GS_FOLDER}
@@ -259,7 +259,7 @@ shuf lp_train.txt > lp_train_shuf.txt
 
 ```bash
 export MODEL_NAME=3B
-export GS_FOLDER=gs://pongo-bucket/xueguang/vert5-repl/lp-train
+export GS_FOLDER=<gs folder to save model>
 export MODEL_INIT_CKPT=1000000
 echo "model_checkpoint_path: \"model.ckpt-${MODEL_INIT_CKPT}\"" > checkpoint
 gsutil cp checkpoint ${GS_FOLDER}
