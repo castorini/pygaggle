@@ -118,8 +118,8 @@ t5_mesh_transformer \
   --tpu="${TPU_NAME}" \
   --gcp_project=${PROJECT_NAME} \
   --tpu_zone="europe-west4-a" \
-  --model_dir="gs://pongo-bucket/scifact/experiments/6" \
-  --gin_file="gs://t5-data/pretrained_models/3B/operative_config.gin" \
+  --model_dir="gs://pongo-bucket/xueguang/vert5-repl/ss-train" \
+  --gin_file="operative_config.gin" \
   --gin_file="infer.gin" \
   --gin_file="beam_search.gin" \
   --gin_param="utils.tpu_mesh_shape.tpu_topology = '2x2'" \
@@ -159,7 +159,7 @@ t5_mesh_transformer \
   --tpu="${TPU_NAME}" \
   --gcp_project=${PROJECT_NAME} \
   --tpu_zone="europe-west4-a" \
-  --model_dir="gs://pongo-bucket/scifact/experiments/9" \
+  --model_dir="gs://pongo-bucket/xueguang/vert5-repl/lp-train" \
   --gin_file="gs://t5-data/pretrained_models/3B/operative_config.gin" \
   --gin_file="infer.gin" \
   --gin_file="beam_search.gin" \
@@ -208,13 +208,14 @@ We can expect to see the following results for the full pipeline evaluation of t
 
 |          | sentence_selection | sentence_label | abstract_label_only | abstract_rationalized |
 |---|---|---|---|---|
-|precision |          0.644172  |   0.604294     |        0.650718        |       0.617225 |
-|recall    |          0.573770  |   0.538251     |        0.650718        |       0.617225 |
-|f1         |         0.606936  |   0.569364     |        0.650718        |       0.617225 |
+|precision |          0.659164  |   0.633441     |        0.671717        |       0.641414 |
+|recall    |          0.560109  |   0.538251     |        0.636364        |       0.607656 |
+|f1         |         0.605613  |   0.581979     |        0.653563        |       0.624079 |
 
 
 ## Train
-
+### Sentence Selection Training
+Generate Sentence Selection training data
 ```bash
 python prepare_ss_train_input.py --corpus corpus.jsonl \
                                  --claims claims_train.jsonl \
@@ -223,6 +224,7 @@ python prepare_ss_train_input.py --corpus corpus.jsonl \
 shuf ss_train.txt > ss_train_shuf.txt
 ```
 
+Train
 ```bash
 export MODEL_NAME=3B
 export GS_FOLDER=<gs folder to save model>
@@ -250,6 +252,9 @@ t5_mesh_transformer  \
   --gin_param="run.save_checkpoints_steps = 200" \
   --gin_param="utils.run.batch_size=('tokens_per_batch', 65536)"
 ```
+
+### Label Prediction Training
+Generate Label Prediction training data
 ```bash
 python prepare_lp_train_input.py --corpus corpus.jsonl \
                                  --claims claims_train.jsonl \
@@ -257,6 +262,7 @@ python prepare_lp_train_input.py --corpus corpus.jsonl \
 shuf lp_train.txt > lp_train_shuf.txt
 ```
 
+Train
 ```bash
 export MODEL_NAME=3B
 export GS_FOLDER=<gs folder to save model>
@@ -284,6 +290,12 @@ t5_mesh_transformer  \
   --gin_param="run.save_checkpoints_steps = 200" \
   --gin_param="utils.run.batch_size=('tokens_per_batch', 65536)"
 ```
+
+### Checkpoints:
+- sentence selection: `gs://pongo-bucket/xueguang/vert5-repl/ss-train`
+- label prediction: `gs://pongo-bucket/xueguang/vert5-repl/lp-train`
+- sentence selection (with dev): `gs://pongo-bucket/xueguang/vert5erini/train/monot5-3B-LP-balanced-dev`
+- label prediction (with dev): `gs://pongo-bucket/xueguang/vert5erini/train/monot5-3B-SS-balanced-dev`
 
 ## Replication Log
 
