@@ -201,9 +201,6 @@ python evaluate/pipeline.py --gold claims_dev.jsonl \
                         --corpus corpus.jsonl \
                         --prediction full_pipeline_eval.jsonl
 ```
-
-## Result
-
 We can expect to see the following results for the full pipeline evaluation of the development set:
 
 |          | sentence_selection | sentence_label | abstract_label_only | abstract_rationalized |
@@ -211,6 +208,56 @@ We can expect to see the following results for the full pipeline evaluation of t
 |precision |          0.644172  |   0.604294     |        0.650718        |       0.617225 |
 |recall    |          0.573770  |   0.538251     |        0.650718        |       0.617225 |
 |f1         |         0.606936  |   0.569364     |        0.650718        |       0.617225 |
+
+### Evaluate Each Step
+3. Evaluate abstract retrieval
+```
+python evaluate/abstract_retrieval.py --dataset claims_dev.jsonl \
+                                      --abstract-retrieval ar_dev.jsonl
+```
+We can expect to see the following results for the retrieval stage of the pipeline
+```
+Hit one: 0.9567
+Hit all: 0.9367
+```
+
+4. Evaluate sentence selection
+```
+python evaluate/rationale_selection.py --corpus corpus.jsonl \
+                                       --dataset claims_dev.jsonl \
+                                       --rationale-selection ss_dev.jsonl
+```
+We can expect to see the following results for the sentence selection stage of the pipeline
+```
+{'precision': 0.6404833836858006, 'recall': 0.5792349726775956, 'f1': 0.6083213773314203}
+```
+
+5. Evaluate label prediction
+```
+python evaluate/label_prediction.py --corpus corpus.jsonl \
+                                    --dataset claims_dev.jsonl \
+                                    --label-prediction lp_dev.jsonl
+```
+We can expect to see the following results for the label prediction stage of the pipeline
+```
+Accuracy           0.6385
+Macro F1:          0.5002
+Macro F1 w/o NEI:  0.7502
+                   [C      N      S     ]
+F1:                [0.735  0.     0.7654]
+Precision:         [0.6232 0.     0.6596]
+Recall:            [0.8958 0.     0.9118]
+Confusion Matrix:
+[[43  1  4]
+ [19  0 44]
+ [ 7  2 93]]
+```
+
+### Evaluate With Oracle Setting
+To evaluate with Oracle setting, just replace the input of each inference step by oracle files from SciFact.
+
+E.g. If you want to evaluate Sentence Selection in oracle setting, when you run `prepare_ss_input.py`, just replace the `ar_dev.jsonl` by oracle retrieval file that identical to SciFact.
+
 
 ## Replication Log
 
