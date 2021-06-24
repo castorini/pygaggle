@@ -29,7 +29,30 @@ export DATA_DIR=data/msmarco_passage
 mkdir ${DATA_DIR}
 ```
 
-We provide specific data prep instructions for evaluating on the dev set.
+We provide specific data prep instructions for the train and dev set.
+
+### Train Set
+
+First, download the MS MARCO train triples:
+```
+cd ${DATA_DIR}
+wget https://storage.googleapis.com/duobert_git/triples.train.small.tar.gz
+tar -xvf triples.train.small.tar.gz
+rm triples.train.small.tar.gz
+cd ../../
+```
+
+Then convert the train triples file to the duoT5 input format:
+```
+python pygaggle/data/create_msmarco_duot5_train --triples_train ${DATA_DIR}/triples.train.small.tsv --output_to_t5 ${DATA_DIR}/query_docs_triples.train.tsv
+```
+
+Next, copy the duoT5 input file to Google Storage. TPU training will read data directly from `gs`.
+```
+gsutil cp ${DATA_DIR}/query_docs_triples.train.tsv ${GS_FOLDER}/
+```
+
+This file is made available in our [bucket](https://console.cloud.google.com/storage/browser/castorini/duot5/data).
 
 ### Dev Set
 
@@ -156,7 +179,7 @@ git clone https://github.com/castorini/mesh.git
 pip install --editable mesh
 ```
 
-## Rerank with monoT5
+## Rerank with duoT5
 
 Let's first define the model type and checkpoint.
 
