@@ -133,22 +133,22 @@ class QueryDocumentBatchTokenizer(TokenizerEncodeMixin):
 class T5BatchTokenizer(AppendEosTokenizerMixin, QueryDocumentBatchTokenizer):
     def __init__(self, *args, **kwargs):
         kwargs['pattern'] = 'Query: {query} Document: {document} Relevant:'
-        kwargs['return_attention_mask'] = True
-        kwargs['padding'] = 'longest'
-        kwargs["truncation"] = True
-        kwargs['return_tensors'] = 'pt'
-        kwargs['max_length'] = 512
+        kwargs['return_attention_mask'] = True if 'return_attention_mask' not in kwargs
+        kwargs['padding'] = 'longest' if 'padding' not in kwargs
+        kwargs['truncation'] = True if 'truncation' not in kwargs
+        kwargs['return_tensors'] = 'pt' if 'return_tensors' not in kwargs
+        kwargs['max_length'] = 512 if 'max_length' not in kwargs
         super().__init__(*args, **kwargs)
 
 
 class T5DuoBatchTokenizer(AppendEosTokenizerMixin, QueryDocumentBatchTokenizer):
     def __init__(self, *args, **kwargs):
         kwargs['pattern'] = 'Query: {query} Document0: {document0} Document1: {document1} Relevant:'
-        kwargs['return_attention_mask'] = True
-        kwargs['padding'] = 'longest'
-        kwargs["truncation"] = True
-        kwargs['return_tensors'] = 'pt'
-        kwargs['max_length'] = 512
+        kwargs['return_attention_mask'] = True if 'return_attention_mask' not in kwargs
+        kwargs['padding'] = 'longest' if 'padding' not in kwargs
+        kwargs['truncation'] = True if 'truncation' not in kwargs
+        kwargs['return_tensors'] = 'pt' if 'return_tensors' not in kwargs
+        kwargs['max_length'] = 512 if 'max_length' not in kwargs
         super().__init__(*args, **kwargs)
 
 
