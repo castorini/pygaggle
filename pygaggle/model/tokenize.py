@@ -133,30 +133,43 @@ class QueryDocumentBatchTokenizer(TokenizerEncodeMixin):
 class T5BatchTokenizer(AppendEosTokenizerMixin, QueryDocumentBatchTokenizer):
     def __init__(self, *args, **kwargs):
         kwargs['pattern'] = 'Query: {query} Document: {document} Relevant:'
-        kwargs['return_attention_mask'] = True if 'return_attention_mask' not in kwargs
-        kwargs['padding'] = 'longest' if 'padding' not in kwargs
-        kwargs['truncation'] = True if 'truncation' not in kwargs
-        kwargs['return_tensors'] = 'pt' if 'return_tensors' not in kwargs
-        kwargs['max_length'] = 512 if 'max_length' not in kwargs
+        if 'return_attention_mask' not in kwargs:
+            kwargs['return_attention_mask'] = True
+        if 'padding' not in kwargs:
+            kwargs['padding'] = 'longest'
+        if 'truncation' not in kwargs:
+            kwargs['truncation'] = True
+        if 'return_tensors' not in kwargs:
+            kwargs['return_tensors'] = 'pt'
+        if 'max_length' not in kwargs:
+            kwargs['max_length'] = 512
         super().__init__(*args, **kwargs)
 
 
 class T5DuoBatchTokenizer(AppendEosTokenizerMixin, QueryDocumentBatchTokenizer):
     def __init__(self, *args, **kwargs):
         kwargs['pattern'] = 'Query: {query} Document0: {document0} Document1: {document1} Relevant:'
-        kwargs['return_attention_mask'] = True if 'return_attention_mask' not in kwargs
-        kwargs['padding'] = 'longest' if 'padding' not in kwargs
-        kwargs['truncation'] = True if 'truncation' not in kwargs
-        kwargs['return_tensors'] = 'pt' if 'return_tensors' not in kwargs
-        kwargs['max_length'] = 512 if 'max_length' not in kwargs
+        if 'return_attention_mask' not in kwargs:
+            kwargs['return_attention_mask'] = True
+        if 'padding' not in kwargs:
+            kwargs['padding'] = 'longest'
+        if 'truncation' not in kwargs:
+            kwargs['truncation'] = True
+        if 'return_tensors' not in kwargs:
+            kwargs['return_tensors'] = 'pt'
+        if 'max_length' not in kwargs:
+            kwargs['max_length'] = 512
         super().__init__(*args, **kwargs)
 
 
 class SimpleBatchTokenizer(BatchTokenizer):
     def __init__(self, *args, **kwargs):
-        kwargs['return_attention_mask'] = True
-        kwargs['padding'] = 'max_length'
-        kwargs['truncation'] = True
+        if 'return_attention_mask' not in kwargs:
+            kwargs['return_attention_mask'] = True
+        if 'padding' not in kwargs:
+            kwargs['padding'] = 'longest'
+        if 'truncation' not in kwargs:
+            kwargs['truncation'] = True
         super().__init__(*args, **kwargs)
 
 
