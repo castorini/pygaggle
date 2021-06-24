@@ -24,6 +24,6 @@ for data, selection in tqdm(list(zip(dataset, rationale_selection))):
     for doc_id, indices in selection['evidence'].items():
         evidence = ' '.join(["sentence{}: ".format(idx+1) + corpus[int(doc_id)]['abstract'][i].strip() for idx, i in enumerate(indices)])
         format3_dev_ids.write("{}\t{}\n".format(claim_id, doc_id))
-        format3_dev.write("query: {} {} relevant:\n".format(claim, evidence))
+        format3_dev.write("hypothesis: {} {}:\n".format(claim, evidence))
 format3_dev_ids.close()
 format3_dev.close()
