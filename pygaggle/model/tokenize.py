@@ -83,18 +83,6 @@ class BatchTokenizer(TokenizerEncodeMixin):
             yield TokenizerOutputBatch(input_ids, inputs)
 
 
-class AppendEosTokenizerMixin:
-    tokenizer: PreTrainedTokenizer = None
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def encode(self, strings: List[str]) -> TokenizerReturnType:
-        assert self.tokenizer, 'mixin used improperly'
-        return super().encode(
-            [f'{x} {self.tokenizer.eos_token}' for x in strings])
-
-
 class QueryDocumentBatchTokenizer(TokenizerEncodeMixin):
     def __init__(self,
                  tokenizer: PreTrainedTokenizer,
@@ -130,7 +118,7 @@ class QueryDocumentBatchTokenizer(TokenizerEncodeMixin):
             yield DuoQueryDocumentBatch(query, docs, outputs)
 
 
-class T5BatchTokenizer(AppendEosTokenizerMixin, QueryDocumentBatchTokenizer):
+class T5BatchTokenizer(QueryDocumentBatchTokenizer):
     def __init__(self, *args, **kwargs):
         kwargs['pattern'] = 'Query: {query} Document: {document} Relevant:'
         if 'return_attention_mask' not in kwargs:
@@ -146,7 +134,7 @@ class T5BatchTokenizer(AppendEosTokenizerMixin, QueryDocumentBatchTokenizer):
         super().__init__(*args, **kwargs)
 
 
-class T5DuoBatchTokenizer(AppendEosTokenizerMixin, QueryDocumentBatchTokenizer):
+class T5DuoBatchTokenizer(QueryDocumentBatchTokenizer):
     def __init__(self, *args, **kwargs):
         kwargs['pattern'] = 'Query: {query} Document0: {document0} Document1: {document1} Relevant:'
         if 'return_attention_mask' not in kwargs:
