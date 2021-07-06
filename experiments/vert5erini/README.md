@@ -77,7 +77,7 @@ t5_mesh_transformer \
   --tpu="${TPU_NAME}" \
   --gcp_project="${PROJECT_NAME}" \
   --tpu_zone="europe-west4-a" \
-  --model_dir="gs://castorini/med-monot5/experiments/3B" \
+  --model_dir="gs://castorini/monot5/experiments/3B" \
   --gin_file="gs://t5-data/pretrained_models/3B/operative_config.gin" \
   --gin_file="infer.gin" \
   --gin_file="beam_search.gin" \
@@ -118,8 +118,8 @@ t5_mesh_transformer \
   --tpu="${TPU_NAME}" \
   --gcp_project=${PROJECT_NAME} \
   --tpu_zone="europe-west4-a" \
-  --model_dir="gs://pongo-bucket/scifact/experiments/6" \
-  --gin_file="gs://t5-data/pretrained_models/3B/operative_config.gin" \
+  --model_dir="gs://pongo-bucket/xueguang/vert5-repl/ss-train" \
+  --gin_file="operative_config.gin" \
   --gin_file="infer.gin" \
   --gin_file="beam_search.gin" \
   --gin_param="utils.tpu_mesh_shape.tpu_topology = '2x2'" \
@@ -159,7 +159,7 @@ t5_mesh_transformer \
   --tpu="${TPU_NAME}" \
   --gcp_project=${PROJECT_NAME} \
   --tpu_zone="europe-west4-a" \
-  --model_dir="gs://pongo-bucket/scifact/experiments/9" \
+  --model_dir="gs://pongo-bucket/xueguang/vert5-repl/lp-train" \
   --gin_file="gs://t5-data/pretrained_models/3B/operative_config.gin" \
   --gin_file="infer.gin" \
   --gin_file="beam_search.gin" \
@@ -205,9 +205,94 @@ We can expect to see the following results for the full pipeline evaluation of t
 
 |          | sentence_selection | sentence_label | abstract_label_only | abstract_rationalized |
 |---|---|---|---|---|
-|precision |          0.644172  |   0.604294     |        0.650718        |       0.617225 |
-|recall    |          0.573770  |   0.538251     |        0.650718        |       0.617225 |
-|f1         |         0.606936  |   0.569364     |        0.650718        |       0.617225 |
+|precision |          0.659164  |   0.633441     |        0.671717        |       0.641414 |
+|recall    |          0.560109  |   0.538251     |        0.636364        |       0.607656 |
+|f1         |         0.605613  |   0.581979     |        0.653563        |       0.624079 |
+
+
+## Train
+### Sentence Selection Training
+Generate Sentence Selection training data
+```bash
+python prepare_ss_train_input.py --corpus corpus.jsonl \
+                                 --claims claims_train.jsonl \
+                                 --t5_input ss_train.txt \
+                                 --balanced
+shuf ss_train.txt > ss_train_shuf.txt
+```
+
+Train
+```bash
+export MODEL_NAME=3B
+export GS_FOLDER=<gs folder to save model>
+export MODEL_INIT_CKPT=1010000
+echo "model_checkpoint_path: \"model.ckpt-${MODEL_INIT_CKPT}\"" > checkpoint
+gsutil cp checkpoint ${GS_FOLDER}
+gsutil cp gs://neuralresearcher_data/doc2query/experiments/363/model.ckpt-${MODEL_INIT_CKPT}* ${GS_FOLDER}
+gsutil cp ss_train_shuf.txt ${GS_FOLDER}/ss_train_shuf.txt
+
+t5_mesh_transformer  \
+  --tpu="${TPU_NAME}" \
+  --gcp_project="${PROJECT_NAME}" \
+  --tpu_zone="europe-west4-a" \
+  --model_dir="${GS_FOLDER}" \
+  --gin_param="init_checkpoint = 'gs://neuralresearcher_data/doc2query/experiments/363/model.ckpt-${MODEL_INIT_CKPT}'" \
+  --gin_file="dataset.gin" \
+  --gin_file="models/bi_v1.gin" \
+  --gin_file="operative_config.gin" \
+  --gin_param="utils.tpu_mesh_shape.model_parallelism = 8" \
+  --gin_param="utils.tpu_mesh_shape.tpu_topology = '2x2'" \
+  --gin_param="utils.run.train_dataset_fn = @t5.models.mesh_transformer.tsv_dataset_fn" \
+  --gin_param="tsv_dataset_fn.filename = '${GS_FOLDER}/ss_train_shuf.txt'" \
+  --gin_file="learning_rate_schedules/constant_0_001.gin" \
+  --gin_param="run.train_steps = 1012500" \
+  --gin_param="run.save_checkpoints_steps = 200" \
+  --gin_param="utils.run.batch_size=('tokens_per_batch', 65536)"
+```
+
+### Label Prediction Training
+Generate Label Prediction training data
+```bash
+python prepare_lp_train_input.py --corpus corpus.jsonl \
+                                 --claims claims_train.jsonl \
+                                 --t5_input lp_train.txt
+shuf lp_train.txt > lp_train_shuf.txt
+```
+
+Train
+```bash
+export MODEL_NAME=3B
+export GS_FOLDER=<gs folder to save model>
+export MODEL_INIT_CKPT=1000000
+echo "model_checkpoint_path: \"model.ckpt-${MODEL_INIT_CKPT}\"" > checkpoint
+gsutil cp checkpoint ${GS_FOLDER}
+gsutil cp gs://t5-data/pretrained_models/${MODEL_NAME}/model.ckpt-${MODEL_INIT_CKPT}* ${GS_FOLDER}
+gsutil cp lp_train_shuf.txt ${GS_FOLDER}/lp_train_shuf.txt
+
+t5_mesh_transformer  \
+  --tpu="${TPU_NAME}" \
+  --gcp_project="${PROJECT_NAME}" \
+  --tpu_zone="europe-west4-a" \
+  --model_dir="${GS_FOLDER}" \
+  --gin_param="init_checkpoint = 'gs://t5-data/pretrained_models/${MODEL_NAME}/model.ckpt-${MODEL_INIT_CKPT}'" \
+  --gin_file="dataset.gin" \
+  --gin_file="models/bi_v1.gin" \
+  --gin_file="operative_config.gin" \
+  --gin_param="utils.tpu_mesh_shape.model_parallelism = 8" \
+  --gin_param="utils.tpu_mesh_shape.tpu_topology = '2x2'" \
+  --gin_param="utils.run.train_dataset_fn = @t5.models.mesh_transformer.tsv_dataset_fn" \
+  --gin_param="tsv_dataset_fn.filename = '${GS_FOLDER}/lp_train_shuf.txt'" \
+  --gin_file="learning_rate_schedules/constant_0_001.gin" \
+  --gin_param="run.train_steps = 1000600" \
+  --gin_param="run.save_checkpoints_steps = 200" \
+  --gin_param="utils.run.batch_size=('tokens_per_batch', 65536)"
+```
+
+### Checkpoints:
+- sentence selection: `gs://pongo-bucket/xueguang/vert5-repl/ss-train`
+- label prediction: `gs://pongo-bucket/xueguang/vert5-repl/lp-train`
+- sentence selection (with dev): `gs://pongo-bucket/xueguang/vert5erini/train/monot5-3B-LP-balanced-dev`
+- label prediction (with dev): `gs://pongo-bucket/xueguang/vert5erini/train/monot5-3B-SS-balanced-dev`
 
 ### Evaluate Each Step
 3. Evaluate abstract retrieval

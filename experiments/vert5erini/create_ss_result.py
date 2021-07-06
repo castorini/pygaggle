@@ -7,6 +7,7 @@ parser.add_argument("--results", type=str, required=True)
 parser.add_argument("--claims", type=str, required=True)
 parser.add_argument("--t5_output_ids", type=str, required=True)
 parser.add_argument("--t5_output", type=str, required=True)
+parser.add_argument("--thres", type=float, required=True)
 args = parser.parse_args()
 
 claim_sent_ids_f = open(args.t5_output_ids, "r")
@@ -22,7 +23,7 @@ for i in tqdm(range(len(ids))):
     abstract_id, sent_idx = sent_info[1].split("#")
     abstract_id = int(abstract_id)
     sent_idx = int(sent_idx)
-    label = float(scores[i].split()[1]) > -0.001
+    label = float(scores[i].split()[1]) > -1*args.thres
     if str(claim_id) not in result:
         result[str(claim_id)] = {}
     if label:
