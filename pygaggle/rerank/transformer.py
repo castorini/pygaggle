@@ -28,7 +28,7 @@ __all__ = ['MonoT5',
            'UnsupervisedTransformerReranker',
            'MonoBERT',
            'QuestionAnsweringTransformerReranker',
-           'CrossEncoderReranker']
+           'SentenceTransformersReranker']
 
 
 class MonoT5(Reranker):
@@ -251,14 +251,14 @@ class QuestionAnsweringTransformerReranker(Reranker):
         return texts
 
 
-class CrossEncoderReranker(Reranker):
+class SentenceTransformersReranker(Reranker):
     def __init__(self,
                  pretrained_model_name_or_path='cross-encoder/ms-marco-MiniLM-L-2-v2',
                  max_length=512,
                  device=None,
-                 use_amp=None):
+                 use_amp=False):
         device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
-        self.use_amp = use_amp or (device == 'cuda')
+        self.use_amp = use_amp
         self.model = CrossEncoder(
             pretrained_model_name_or_path, max_length=max_length, device=device
         )
