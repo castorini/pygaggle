@@ -9,6 +9,7 @@ from transformers import (AutoTokenizer,
                           PreTrainedTokenizer,
                           T5ForConditionalGeneration)
 import torch
+from sentence_transformers import CrossEncoder
 from .base import Reranker, Query, Text
 from .similarity import SimilarityMatrixProvider
 from pygaggle.model import (BatchTokenizer,
@@ -26,7 +27,8 @@ __all__ = ['MonoT5',
            'DuoT5',
            'UnsupervisedTransformerReranker',
            'MonoBERT',
-           'QuestionAnsweringTransformerReranker']
+           'QuestionAnsweringTransformerReranker',
+           'SentenceTransformersReranker']
 
 
 class MonoT5(Reranker):
@@ -247,3 +249,30 @@ class QuestionAnsweringTransformerReranker(Reranker):
             text.score = max(smax_val.item(), emax_val.item())
 
         return texts
+
+
+class SentenceTransformersReranker(Reranker):
+    def __init__(self,
+                 pretrained_model_name_or_path='cross-encoder/ms-marco-MiniLM-L-2-v2',
+                 max_length=512,
+                 device=None,
+                 use_amp=False):
+        device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
+        self.use_amp = use_amp
+        self.model = CrossEncoder(
+            pretrained_model_name_or_path, max_length=max_length, device=device
+        )
+
+    def rescore(self, query: Query, texts: List[Text]) -> List[Text]:
+        texts = deepcopy(texts)
+        with torch.cuda.amp.autocast(enabled=self.use_amp):
+            scores = self.model.predict(
+                [(query.text, text.text) for text in texts],
+                show_progress_bar=False,
+            )
+
+        for (text, score) in zip(texts, scores):
+            text.score = score.item()
+
+        return texts
+        
