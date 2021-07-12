@@ -275,3 +275,4 @@ class SentenceTransformersReranker(Reranker):
             text.score = score.item()
 
         return texts
+        
