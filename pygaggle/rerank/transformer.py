@@ -35,7 +35,7 @@ class MonoT5(Reranker):
     def __init__(self,
                  model: T5ForConditionalGeneration = None,
                  tokenizer: QueryDocumentBatchTokenizer = None,
-                 use_amp=False):
+                 use_amp = False):
         self.model = model or self.get_model()
         self.tokenizer = tokenizer or self.get_tokenizer()
         self.device = next(self.model.parameters(), None).device
@@ -84,7 +84,7 @@ class DuoT5(Reranker):
     def __init__(self,
                  model: T5ForConditionalGeneration = None,
                  tokenizer: QueryDocumentBatchTokenizer = None,
-                 use_amp=False):
+                 use_amp = False):
         self.model = model or self.get_model()
         self.tokenizer = tokenizer or self.get_tokenizer()
         self.device = next(self.model.parameters(), None).device
@@ -186,7 +186,7 @@ class MonoBERT(Reranker):
     def __init__(self,
                  model: PreTrainedModel = None,
                  tokenizer: PreTrainedTokenizer = None,
-                 use_amp=False):
+                 use_amp = False):
         self.model = model or self.get_model()
         self.tokenizer = tokenizer or self.get_tokenizer()
         self.device = next(self.model.parameters(), None).device
