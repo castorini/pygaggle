@@ -34,10 +34,12 @@ __all__ = ['MonoT5',
 class MonoT5(Reranker):
     def __init__(self,
                  model: T5ForConditionalGeneration = None,
-                 tokenizer: QueryDocumentBatchTokenizer = None):
+                 tokenizer: QueryDocumentBatchTokenizer = None,
+                 use_amp = False):
         self.model = model or self.get_model()
         self.tokenizer = tokenizer or self.get_tokenizer()
         self.device = next(self.model.parameters(), None).device
+        self.use_amp = use_amp
 
     @staticmethod
     def get_model(pretrained_model_name_or_path: str = 'castorini/monot5-base-msmarco',
@@ -59,18 +61,19 @@ class MonoT5(Reranker):
         texts = deepcopy(texts)
         batch_input = QueryDocumentBatch(query=query, documents=texts)
         for batch in self.tokenizer.traverse_query_document(batch_input):
-            input_ids = batch.output['input_ids'].to(self.device)
-            attn_mask = batch.output['attention_mask'].to(self.device)
-            _, batch_scores = greedy_decode(self.model,
-                                            input_ids,
-                                            length=1,
-                                            attention_mask=attn_mask,
-                                            return_last_logits=True)
+            with torch.cuda.amp.autocast(enabled=self.use_amp):
+                input_ids = batch.output['input_ids'].to(self.device)
+                attn_mask = batch.output['attention_mask'].to(self.device)
+                _, batch_scores = greedy_decode(self.model,
+                                                input_ids,
+                                                length=1,
+                                                attention_mask=attn_mask,
+                                                return_last_logits=True)
 
-            # 6136 and 1176 are the indexes of the tokens false and true in T5.
-            batch_scores = batch_scores[:, [6136, 1176]]
-            batch_scores = torch.nn.functional.log_softmax(batch_scores, dim=1)
-            batch_log_probs = batch_scores[:, 1].tolist()
+                # 6136 and 1176 are the indexes of the tokens false and true in T5.
+                batch_scores = batch_scores[:, [6136, 1176]]
+                batch_scores = torch.nn.functional.log_softmax(batch_scores, dim=1)
+                batch_log_probs = batch_scores[:, 1].tolist()
             for doc, score in zip(batch.documents, batch_log_probs):
                 doc.score = score
 
@@ -80,10 +83,12 @@ class MonoT5(Reranker):
 class DuoT5(Reranker):
     def __init__(self,
                  model: T5ForConditionalGeneration = None,
-                 tokenizer: QueryDocumentBatchTokenizer = None):
+                 tokenizer: QueryDocumentBatchTokenizer = None,
+                 use_amp = False):
         self.model = model or self.get_model()
         self.tokenizer = tokenizer or self.get_tokenizer()
         self.device = next(self.model.parameters(), None).device
+        self.use_amp = use_amp
 
     @staticmethod
     def get_model(pretrained_model_name_or_path: str = 'castorini/duot5-base-msmarco',
@@ -107,18 +112,19 @@ class DuoT5(Reranker):
         scores = defaultdict(float)
         batch_input = DuoQueryDocumentBatch(query=query, doc_pairs=doc_pairs)
         for batch in self.tokenizer.traverse_duo_query_document(batch_input):
-            input_ids = batch.output['input_ids'].to(self.device)
-            attn_mask = batch.output['attention_mask'].to(self.device)
-            _, batch_scores = greedy_decode(self.model,
-                                            input_ids,
-                                            length=1,
-                                            attention_mask=attn_mask,
-                                            return_last_logits=True)
+            with torch.cuda.amp.autocast(enabled=self.use_amp):
+                input_ids = batch.output['input_ids'].to(self.device)
+                attn_mask = batch.output['attention_mask'].to(self.device)
+                _, batch_scores = greedy_decode(self.model,
+                                                input_ids,
+                                                length=1,
+                                                attention_mask=attn_mask,
+                                                return_last_logits=True)
 
-            # 6136 and 1176 are the indexes of the tokens false and true in T5.
-            batch_scores = batch_scores[:, [6136, 1176]]
-            batch_scores = torch.nn.functional.softmax(batch_scores, dim=1)
-            batch_probs = batch_scores[:, 1].tolist()
+                # 6136 and 1176 are the indexes of the tokens false and true in T5.
+                batch_scores = batch_scores[:, [6136, 1176]]
+                batch_scores = torch.nn.functional.softmax(batch_scores, dim=1)
+                batch_probs = batch_scores[:, 1].tolist()
             for doc, score in zip(batch.doc_pairs, batch_probs):
                 scores[doc[0].metadata['docid']] += score
                 scores[doc[1].metadata['docid']] += (1 - score)
@@ -179,10 +185,12 @@ class UnsupervisedTransformerReranker(Reranker):
 class MonoBERT(Reranker):
     def __init__(self,
                  model: PreTrainedModel = None,
-                 tokenizer: PreTrainedTokenizer = None):
+                 tokenizer: PreTrainedTokenizer = None,
+                 use_amp = False):
         self.model = model or self.get_model()
         self.tokenizer = tokenizer or self.get_tokenizer()
         self.device = next(self.model.parameters(), None).device
+        self.use_amp = use_amp
 
     @staticmethod
     def get_model(pretrained_model_name_or_path: str = 'castorini/monobert-large-msmarco',
@@ -207,14 +215,15 @@ class MonoBERT(Reranker):
                                              truncation=True,
                                              return_token_type_ids=True,
                                              return_tensors='pt')
-            input_ids = ret['input_ids'].to(self.device)
-            tt_ids = ret['token_type_ids'].to(self.device)
-            output, = self.model(input_ids, token_type_ids=tt_ids, return_dict=False)
-            if output.size(1) > 1:
-                text.score = torch.nn.functional.log_softmax(
-                    output, 1)[0, -1].item()
-            else:
-                text.score = output.item()
+            with torch.cuda.amp.autocast(enabled=self.use_amp):
+                input_ids = ret['input_ids'].to(self.device)
+                tt_ids = ret['token_type_ids'].to(self.device)
+                output, = self.model(input_ids, token_type_ids=tt_ids, return_dict=False)
+                if output.size(1) > 1:
+                    text.score = torch.nn.functional.log_softmax(
+                        output, 1)[0, -1].item()
+                else:
+                    text.score = output.item()
 
         return texts
 
