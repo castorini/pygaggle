@@ -133,6 +133,7 @@ def construct_qa_transformer(options: KaggleEvaluationOptions) -> Reranker:
                     use_fast=False)
     return QuestionAnsweringTransformerReranker(model, tokenizer)
 
+  
 def construct_minilm(options: KaggleEvaluationOptions) -> Reranker:
     if options.model != None:
         return SentenceTransformersReranker(options.model, use_amp=True)
