@@ -176,7 +176,7 @@ class SpacySenticizer:
 
     def __init__(self, max_paragraph_length: int = None):
         self.max_paragraph_length = max_paragraph_length
-
+           
     @lru_cache(maxsize=1024)
     def __call__(self, document: str) -> List[str]:
         return [s.text for s in self.nlp(
