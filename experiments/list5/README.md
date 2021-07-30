@@ -1,5 +1,10 @@
 # LisT5: FEVER Pipeline with T5
 
+This page describes replication for the LisT5 pipeline for fact verification, outlined in the following paper:
+* Kelvin Jiang, Ronak Pradeep, Jimmy Lin. [Exploring Listwise Evidence Reasoning with T5 for Fact Verification.](https://aclanthology.org/2021.acl-short.51.pdf) _ACL 2021_.
+
+Some initial setup:
+
 ```bash
 mkdir data/list5
 mkdir runs/list5
