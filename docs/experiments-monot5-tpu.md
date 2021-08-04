@@ -42,7 +42,7 @@ cd ../../
 
 Then convert the train triples file to the monoT5 input format:
 ```
-python pygaggle/data/create_msmarco_t5_training_pairs.py --triples_train ${DATA_DIR}/triples.train.small.tsv --output_to_t5 ${DATA_DIR}/query_doc_pairs.train.tsv
+python pygaggle/data/create_msmarco_monot5_train.py --triples_train ${DATA_DIR}/triples.train.small.tsv --output_to_t5 ${DATA_DIR}/query_doc_pairs.train.tsv
 ```
 
 Next, copy the monoT5 input file to Google Storage. TPU training will read data directly from `gs`.
