@@ -52,7 +52,7 @@ class TRECCovidDataset(BaseModel):
                 run[qid].append((doc_title, int(rank)))
         sorted_run = OrderedDict()
         for qid, doc_titles_ranks in run.items():
-            sorted(doc_titles_ranks, key=lambda x: x[1])
+            doc_titles_ranks.sort(key=lambda x: x[1])
             doc_titles = [doc_titles for doc_titles, _ in doc_titles_ranks]
             sorted_run[qid] = doc_titles
         return sorted_run

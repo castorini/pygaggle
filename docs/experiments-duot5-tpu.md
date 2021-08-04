@@ -44,7 +44,7 @@ cd ../../
 
 Then convert the train triples file to the duoT5 input format:
 ```
-python pygaggle/data/create_msmarco_duot5_train --triples_train ${DATA_DIR}/triples.train.small.tsv --output_to_t5 ${DATA_DIR}/query_docs_triples.train.tsv
+python pygaggle/data/create_msmarco_duot5_train.py --triples_train ${DATA_DIR}/triples.train.small.tsv --output_to_t5 ${DATA_DIR}/query_docs_triples.train.tsv
 ```
 
 Next, copy the duoT5 input file to Google Storage. TPU training will read data directly from `gs`.

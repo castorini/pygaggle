@@ -64,7 +64,7 @@ def load_run(path, top_k=50):
     print('Sorting candidate docs by rank...')
     sorted_run = collections.OrderedDict()
     for query_id, doc_titles_ranks in tqdm(run.items()):
-        sorted(doc_titles_ranks, key=lambda x: x[1])
+        doc_titles_ranks.sort(key=lambda x: x[1])
         doc_titles = [doc_titles for doc_titles, _ in doc_titles_ranks][:top_k]
         sorted_run[query_id] = doc_titles
 
