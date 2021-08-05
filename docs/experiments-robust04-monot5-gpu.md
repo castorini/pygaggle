@@ -17,61 +17,6 @@ MonoT5 is a pointwise reranker. This means that each document is scored independ
 
 Note that we do not train monoT5 on Robust04. Hence, the results are **zero-shot**.
 
-## Start a VM with GPU on Google Cloud
-
-After the VM is created, we can `ssh` to the machine.  
-
-## Setup environment on VM
-
-Install the required tools, including [Miniconda](https://docs.conda.io/en/latest/miniconda.html):
-```
-sudo apt-get update
-sudo apt-get install git gcc screen --yes
-curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-bash ./Miniconda3-latest-Linux-x86_64.sh
-source ~/.bashrc
-```
-
-Then create a Python virtual environment for the experiments:
-```
-conda init
-conda create --y --name venv36 python=3.6
-conda activate venv36
-```
-
-Install dependencies ([Anserini](https://github.com/castorini/anserini.git) and [Pygaggle](https://github.com/castorini/pygaggle.git)):
-
-Anserini:
-
-First, install Maven and then Anserini.
-If all goes well, you should be able to see anserini-X.Y.Z-SNAPSHOT-fatjar.jar in `target/`:
-```
-sudo apt-get install maven -qq
-git clone --recurse-submodules https://github.com/castorini/anserini.git
-cd anserini
-cd tools/eval && tar xvfz trec_eval.9.0.4.tar.gz && cd trec_eval.9.0.4 && make && cd ../../..
-cd tools/eval/ndeval && make && cd ../../..
-mvn clean package appassembler:assemble -DskipTests -Dmaven.javadoc.skip=true
-```
-
-Pygaggle:
-```
-git clone --recursive https://github.com/castorini/pygaggle.git
-cd pygaggle
-pip install .
-cd tools/eval && tar xvfz trec_eval.9.0.4.tar.gz && cd trec_eval.9.0.4 && make && cd ../../..
-```
-
-Certify that your GPU is set up and running accordingly:
-```
-nvidia-smi
-```
-
-Certify that Java is installed:
-```
-java -version
-javac -version
-```
 
 ## Data Prep
 We store all the files in the `data/robust04` directory:
@@ -152,8 +97,9 @@ map                   	all	0.3489
 ndcg_cut_20           	all	0.5578
 ```
 
+Note: These results are slightly higher than the ones obtained with TPUs, probably because we used a more recent version of spacy ('3.0.6' instead of '2.2.4').
+
 If you were able to replicate these results, please submit a PR adding to the replication log.
 Please mention in your PR if you note any differences.
-
 
 ## Replication Log
