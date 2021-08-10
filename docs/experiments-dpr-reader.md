@@ -2,6 +2,8 @@
 
 This page contains instructions for running the Dense Passage Retrieval tools.
 
+Note: If you're using Compute Canada clusters for replicating this experiment, then first do `export PYTHONPATH=` to which will clear the python path. 
+
 First, clone the PyGaggle repository recursively.
 
 ```
