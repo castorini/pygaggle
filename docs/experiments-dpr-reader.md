@@ -2,6 +2,13 @@
 
 This page contains instructions for running the Dense Passage Retrieval tools.
 
+Note: If you're using Compute Canada clusters for replicating this experiment, then do 
+
+```
+export PYTHONPATH=
+export PIP_CONFIG_FILE=
+``` 
+
 First, clone the PyGaggle repository recursively.
 
 ```
@@ -20,10 +27,7 @@ Then install PyGaggle by the following command.
 ```
 pip install -r requirements.txt
 ```
-Note: On Compute Canada, you may have to install tensorflow separately by the following command.
-```
-pip install tensorflow_gpu 
-```
+Note: To run the commands below on a Compute Canada cluster, make sure you're on a compute node as login node won't have enough memory to support these operations and you may get segmentation faults trying to run these. If GPU resources are not allocated, then commands can be run with the flag `--device cpu`
 
 ## Models
 
@@ -211,3 +215,4 @@ Please mention in your PR if you find any difference!
 ## Replication Log
 
 + Results replicated by [@MXueguang](https://github.com/MXueguang) on 2021-04-11 (commit[`1c1fb64`](1c1fb644ec7bca65a507ed2cc3a1ada21a2a5976)) (RTX 2080)
++ Results replicated by [@mayankanand007](https://github.com/mayankanand007) on 2021-08-16 (commit[`dda194f`](dda194f4546af0db62c317bbaf5ccd58edae0591))
