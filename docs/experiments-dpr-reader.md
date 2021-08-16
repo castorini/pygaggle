@@ -215,3 +215,4 @@ Please mention in your PR if you find any difference!
 ## Replication Log
 
 + Results replicated by [@MXueguang](https://github.com/MXueguang) on 2021-04-11 (commit[`1c1fb64`](1c1fb644ec7bca65a507ed2cc3a1ada21a2a5976)) (RTX 2080)
++ Results replicated by [@mayankanand007](https://github.com/mayankanand007) on 2021-08-16 (commit[`dda194f`](dda194f4546af0db62c317bbaf5ccd58edae0591))
