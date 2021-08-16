@@ -2,7 +2,12 @@
 
 This page contains instructions for running the Dense Passage Retrieval tools.
 
-Note: If you're using Compute Canada clusters for replicating this experiment, then first do `export PYTHONPATH=` to which will clear the python path. 
+Note: If you're using Compute Canada clusters for replicating this experiment, then do 
+
+```
+export PYTHONPATH=
+export PIP_CONFIG_FILE=
+``` 
 
 First, clone the PyGaggle repository recursively.
 
@@ -22,10 +27,7 @@ Then install PyGaggle by the following command.
 ```
 pip install -r requirements.txt
 ```
-Note: On Compute Canada, you may have to install tensorflow separately by the following command.
-```
-pip install tensorflow_gpu 
-```
+Note: To run the commands below on a Compute Canada cluster, make sure you're on a compute node as login node won't have enough memory to support these operations and you may get segmentation faults trying to run these. If GPU resources are not allocated, then commands can be run with the flag `--device cpu`
 
 ## Models
 
