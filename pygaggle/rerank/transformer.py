@@ -32,17 +32,17 @@ __all__ = ['MonoT5',
            'SentenceTransformersReranker']
 
 prediction_tokens = {
-        'castorini/monot5-base-msmarco':          ['false', 'true'],
-        'castorini/monot5-base-msmarco-10k':      ['false', 'true'],
-        'castorini/monot5-large-msmarco':         ['false', 'true'],
-        'castorini/monot5-large-msmarco-10k':     ['false', 'true'],
-        'castorini/monot5-base-med-msmarco':      ['false', 'true'],
-        'castorini/monot5-3b-med-msmarco':        ['false', 'true'],
-        'unicamp-dl/ptt5-base-msmarco-pt-10k':     ['não'  , 'sim'],
-        'unicamp-dl/ptt5-base-msmarco-pt-100k':    ['não'  , 'sim'],
-        'unicamp-dl/ptt5-base-msmarco-en-pt-10k':  ['não'  , 'sim'],
-        'unicamp-dl/mt5-base-multi-msmarco':       ['no'   , 'yes'],
-        'unicamp-dl/mt5-base-en-pt-msmarco':       ['no'   , 'yes']
+        'castorini/monot5-base-msmarco':          ['▁false', '▁true'],
+        'castorini/monot5-base-msmarco-10k':      ['▁false', '▁true'],
+        'castorini/monot5-large-msmarco':         ['▁false', '▁true'],
+        'castorini/monot5-large-msmarco-10k':     ['▁false', '▁true'],
+        'castorini/monot5-base-med-msmarco':      ['▁false', '▁true'],
+        'castorini/monot5-3b-med-msmarco':        ['▁false', '▁true'],
+        'unicamp-dl/ptt5-base-msmarco-pt-10k':     ['▁não'  , '▁sim'],
+        'unicamp-dl/ptt5-base-msmarco-pt-100k':    ['▁não'  , '▁sim'],
+        'unicamp-dl/ptt5-base-msmarco-en-pt-10k':  ['▁não'  , '▁sim'],
+        'unicamp-dl/mt5-base-multi-msmarco':       ['▁no'   , '▁yes'],
+        'unicamp-dl/mt5-base-en-pt-msmarco':       ['▁no'   , '▁yes']
         }
 
 
@@ -83,26 +83,14 @@ class MonoT5(Reranker):
         if not token_false:
             if pretrained_model_name_or_path in prediction_tokens:
                 token_false, token_true = prediction_tokens[pretrained_model_name_or_path]
-                token_false = tokenizer.tokenizer.get_vocab()['▁' + token_false]
-                token_true  = tokenizer.tokenizer.get_vocab()['▁' + token_true]
+                token_false = tokenizer.tokenizer.get_vocab()[token_false]
+                token_true  = tokenizer.tokenizer.get_vocab()[token_true]
                 return (token_false, token_true)
             else:
                 raise Exception("We don't know the indexes for the non-relevant/relevant tokens for\
                         the checkpoint {pretrained_model_name_or_path} and you did not provide any.")
 
-
-
     def rescore(self, query: Query, texts: List[Text]) -> List[Text]:
-        '''
-        if not self.token_false:
-            if self.pretrained_model_name_or_path in prediction_tokens:
-                token_false, token_true = prediction_tokens[self.pretrained_model_name_or_path]
-                self.token_false = self.tokenizer.tokenizer.get_vocab()['▁' + token_false]
-                self.token_true  = self.tokenizer.tokenizer.get_vocab()['▁' + token_true]
-            else:
-                raise Exception("We don't know the indexes for the non-relevant/relevant tokens for\
-                        the checkpoint {pretrained_model_name_or_path} and you did not provide any.")
-        '''
         texts = deepcopy(texts)
         batch_input = QueryDocumentBatch(query=query, documents=texts)
         for batch in self.tokenizer.traverse_query_document(batch_input):
