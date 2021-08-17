@@ -78,19 +78,19 @@ class MonoT5(Reranker):
     @staticmethod
     def get_prediction_tokens(pretrained_model_name_or_path: str,
             tokenizer, token_false, token_true):
-        if not token_false:
+        if not (token_false and token_true):
             if pretrained_model_name_or_path in prediction_tokens:
                 token_false, token_true = prediction_tokens[pretrained_model_name_or_path]
                 token_false_id = tokenizer.tokenizer.get_vocab()[token_false]
                 token_true_id  = tokenizer.tokenizer.get_vocab()[token_true]
-                return (token_false_id, token_true_id)
+                return token_false_id, token_true_id
             else:
                 raise Exception("We don't know the indexes for the non-relevant/relevant tokens for\
                         the checkpoint {pretrained_model_name_or_path} and you did not provide any.")
         else:
             token_false_id = tokenizer.tokenizer.get_vocab()[token_false]
             token_true_id  = tokenizer.tokenizer.get_vocab()[token_true]
-            return (token_false_id, token_true_id)
+            return token_false_id, token_true_id
 
 
     def rescore(self, query: Query, texts: List[Text]) -> List[Text]:
