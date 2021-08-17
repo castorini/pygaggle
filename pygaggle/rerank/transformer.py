@@ -54,13 +54,11 @@ class MonoT5(Reranker):
                  token_true  = None):
         self.model = self.get_model(pretrained_model_name_or_path)
         self.tokenizer = self.get_tokenizer(pretrained_model_name_or_path)
-        self.token_false, self.token_true = token_false or self.get_prediction_tokens(
+        self.token_false_id, self.token_true_id = self.get_prediction_tokens(
                 pretrained_model_name_or_path, self.tokenizer, token_false, token_true)
         self.pretrained_model_name_or_path = pretrained_model_name_or_path
         self.device = next(self.model.parameters(), None).device
         self.use_amp = use_amp
-        self.token_false = token_false
-        self.token_true  = token_true
 
     @staticmethod
     def get_model(pretrained_model_name_or_path: str,
@@ -83,12 +81,17 @@ class MonoT5(Reranker):
         if not token_false:
             if pretrained_model_name_or_path in prediction_tokens:
                 token_false, token_true = prediction_tokens[pretrained_model_name_or_path]
-                token_false = tokenizer.tokenizer.get_vocab()[token_false]
-                token_true  = tokenizer.tokenizer.get_vocab()[token_true]
-                return (token_false, token_true)
+                token_false_id = tokenizer.tokenizer.get_vocab()[token_false]
+                token_true_id  = tokenizer.tokenizer.get_vocab()[token_true]
+                return (token_false_id, token_true_id)
             else:
                 raise Exception("We don't know the indexes for the non-relevant/relevant tokens for\
                         the checkpoint {pretrained_model_name_or_path} and you did not provide any.")
+        else:
+            token_false_id = tokenizer.tokenizer.get_vocab()[token_false]
+            token_true_id  = tokenizer.tokenizer.get_vocab()[token_true]
+            return (token_false_id, token_true_id)
+
 
     def rescore(self, query: Query, texts: List[Text]) -> List[Text]:
         texts = deepcopy(texts)
@@ -103,7 +106,7 @@ class MonoT5(Reranker):
                                                 attention_mask=attn_mask,
                                                 return_last_logits=True)
 
-                batch_scores = batch_scores[:, [self.token_false, self.token_true]]
+                batch_scores = batch_scores[:, [self.token_false_id, self.token_true_id]]
                 batch_scores = torch.nn.functional.log_softmax(batch_scores, dim=1)
                 batch_log_probs = batch_scores[:, 1].tolist()
             for doc, score in zip(batch.documents, batch_log_probs):
