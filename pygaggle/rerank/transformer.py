@@ -5,6 +5,7 @@ from typing import List
 
 from transformers import (AutoTokenizer,
                           AutoModelForSequenceClassification,
+                          AutoModelForSeq2SeqLM,
                           PreTrainedModel,
                           PreTrainedTokenizer,
                           T5ForConditionalGeneration)
@@ -30,34 +31,78 @@ __all__ = ['MonoT5',
            'QuestionAnsweringTransformerReranker',
            'SentenceTransformersReranker']
 
+prediction_tokens = {
+        'castorini/monot5-base-msmarco':          ['false', 'true'],
+        'castorini/monot5-base-msmarco-10k':      ['false', 'true'],
+        'castorini/monot5-large-msmarco':         ['false', 'true'],
+        'castorini/monot5-large-msmarco-10k':     ['false', 'true'],
+        'castorini/monot5-base-med-msmarco':      ['false', 'true'],
+        'castorini/monot5-3b-med-msmarco':        ['false', 'true'],
+        'unicamp-dl/ptt5-base-msmarco-pt-10k':     ['não'  , 'sim'],
+        'unicamp-dl/ptt5-base-msmarco-pt-100k':    ['não'  , 'sim'],
+        'unicamp-dl/ptt5-base-msmarco-en-pt-10k':  ['não'  , 'sim'],
+        'unicamp-dl/mt5-base-multi-msmarco':       ['no'   , 'yes'],
+        'unicamp-dl/mt5-base-en-pt-msmarco':       ['no'   , 'yes']
+        }
+
 
 class MonoT5(Reranker):
-    def __init__(self,
-                 model: T5ForConditionalGeneration = None,
-                 tokenizer: QueryDocumentBatchTokenizer = None,
-                 use_amp = False):
-        self.model = model or self.get_model()
-        self.tokenizer = tokenizer or self.get_tokenizer()
+    def __init__(self, 
+                 pretrained_model_name_or_path: str  = 'castorini/monot5-base-msmarco',
+                 use_amp = False,
+                 token_false = None,
+                 token_true  = None):
+        self.model = self.get_model(pretrained_model_name_or_path)
+        self.tokenizer = self.get_tokenizer(pretrained_model_name_or_path)
+        self.token_false, self.token_true = token_false or self.get_prediction_tokens(
+                pretrained_model_name_or_path, self.tokenizer, token_false, token_true)
+        self.pretrained_model_name_or_path = pretrained_model_name_or_path
         self.device = next(self.model.parameters(), None).device
         self.use_amp = use_amp
+        self.token_false = token_false
+        self.token_true  = token_true
 
     @staticmethod
-    def get_model(pretrained_model_name_or_path: str = 'castorini/monot5-base-msmarco',
+    def get_model(pretrained_model_name_or_path: str,
                   *args, device: str = None, **kwargs) -> T5ForConditionalGeneration:
         device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
         device = torch.device(device)
-        return T5ForConditionalGeneration.from_pretrained(pretrained_model_name_or_path,
+        return AutoModelForSeq2SeqLM.from_pretrained(pretrained_model_name_or_path,
                                                           *args, **kwargs).to(device).eval()
 
     @staticmethod
-    def get_tokenizer(pretrained_model_name_or_path: str = 't5-base',
+    def get_tokenizer(pretrained_model_name_or_path: str,
                       *args, batch_size: int = 8, **kwargs) -> T5BatchTokenizer:
         return T5BatchTokenizer(
             AutoTokenizer.from_pretrained(pretrained_model_name_or_path, use_fast=False, *args, **kwargs),
             batch_size=batch_size
         )
+    @staticmethod
+    def get_prediction_tokens(pretrained_model_name_or_path: str,
+            tokenizer, token_false, token_true):
+        if not token_false:
+            if pretrained_model_name_or_path in prediction_tokens:
+                token_false, token_true = prediction_tokens[pretrained_model_name_or_path]
+                token_false = tokenizer.tokenizer.get_vocab()['▁' + token_false]
+                token_true  = tokenizer.tokenizer.get_vocab()['▁' + token_true]
+                return (token_false, token_true)
+            else:
+                raise Exception("We don't know the indexes for the non-relevant/relevant tokens for\
+                        the checkpoint {pretrained_model_name_or_path} and you did not provide any.")
+
+
 
     def rescore(self, query: Query, texts: List[Text]) -> List[Text]:
+        '''
+        if not self.token_false:
+            if self.pretrained_model_name_or_path in prediction_tokens:
+                token_false, token_true = prediction_tokens[self.pretrained_model_name_or_path]
+                self.token_false = self.tokenizer.tokenizer.get_vocab()['▁' + token_false]
+                self.token_true  = self.tokenizer.tokenizer.get_vocab()['▁' + token_true]
+            else:
+                raise Exception("We don't know the indexes for the non-relevant/relevant tokens for\
+                        the checkpoint {pretrained_model_name_or_path} and you did not provide any.")
+        '''
         texts = deepcopy(texts)
         batch_input = QueryDocumentBatch(query=query, documents=texts)
         for batch in self.tokenizer.traverse_query_document(batch_input):
@@ -70,8 +115,7 @@ class MonoT5(Reranker):
                                                 attention_mask=attn_mask,
                                                 return_last_logits=True)
 
-                # 6136 and 1176 are the indexes of the tokens false and true in T5.
-                batch_scores = batch_scores[:, [6136, 1176]]
+                batch_scores = batch_scores[:, [self.token_false, self.token_true]]
                 batch_scores = torch.nn.functional.log_softmax(batch_scores, dim=1)
                 batch_log_probs = batch_scores[:, 1].tolist()
             for doc, score in zip(batch.documents, batch_log_probs):
