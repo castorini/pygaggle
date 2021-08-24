@@ -136,7 +136,7 @@ def construct_qa_transformer(options: KaggleEvaluationOptions) -> Reranker:
 
   
 def construct_minilm(options: KaggleEvaluationOptions) -> Reranker:
-    if options.model != None:
+    if options.model:
         return SentenceTransformersReranker(options.model, use_amp=True)
     else:
         return SentenceTransformersReranker(use_amp=True)
