@@ -3,7 +3,8 @@ from pathlib import Path
 import logging
 
 from pydantic import BaseModel, validator
-from transformers import (AutoModel,
+from transformers import (
+                          AutoModel,
                           AutoModelForQuestionAnswering,
                           AutoTokenizer,
                           BertForSequenceClassification,
