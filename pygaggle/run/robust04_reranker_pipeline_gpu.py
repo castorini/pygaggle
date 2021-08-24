@@ -191,3 +191,4 @@ for query_id, doc_ids in tqdm(run.items(), total=len(run)):
 print(f'Wrote {n_segments} segments from {n_docs} docs.')
 print(f'{n_doc_ids_not_found} doc ids not found in the corpus.')
 print('Done!')
+
