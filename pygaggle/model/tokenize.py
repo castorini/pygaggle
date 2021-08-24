@@ -181,3 +181,4 @@ class SpacySenticizer:
     def __call__(self, document: str) -> List[str]:
         return [s.text for s in self.nlp(
             document[:self.max_paragraph_length]).sents]
+            
