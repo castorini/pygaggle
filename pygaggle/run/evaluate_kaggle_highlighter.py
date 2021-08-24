@@ -3,10 +3,12 @@ from pathlib import Path
 import logging
 
 from pydantic import BaseModel, validator
-from transformers import (AutoModel,
+from transformers import (
+                          AutoModel,
                           AutoModelForQuestionAnswering,
                           AutoTokenizer,
-                          BertForSequenceClassification)
+                          BertForSequenceClassification,
+                         )
 import torch
 
 from .args import ArgumentParserBuilder, opt
@@ -16,7 +18,8 @@ from pygaggle.rerank.transformer import (
     QuestionAnsweringTransformerReranker,
     MonoBERT,
     MonoT5,
-    UnsupervisedTransformerReranker
+    UnsupervisedTransformerReranker,
+    SentenceTransformersReranker
     )
 from pygaggle.rerank.random import RandomReranker
 from pygaggle.rerank.similarity import CosineSimilarityMatrixProvider
@@ -28,7 +31,7 @@ from pygaggle.settings import Cord19Settings
 
 
 SETTINGS = Cord19Settings()
-METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer',
+METHOD_CHOICES = ('transformer', 'minilm', 'bm25', 't5', 'seq_class_transformer',
                   'qa_transformer', 'random')
 
 
@@ -131,6 +134,13 @@ def construct_qa_transformer(options: KaggleEvaluationOptions) -> Reranker:
                     use_fast=False)
     return QuestionAnsweringTransformerReranker(model, tokenizer)
 
+  
+def construct_minilm(options: KaggleEvaluationOptions) -> Reranker:
+    if options.model:
+        return SentenceTransformersReranker(options.model, use_amp=True)
+    else:
+        return SentenceTransformersReranker(use_amp=True)
+
 
 def construct_bm25(options: KaggleEvaluationOptions) -> Reranker:
     return Bm25Reranker(index_path=str(options.index_dir))
@@ -168,6 +178,7 @@ def main():
                          t5=construct_t5,
                          seq_class_transformer=construct_seq_class_transformer,
                          qa_transformer=construct_qa_transformer,
+                         minilm=construct_minilm,
                          random=lambda _: RandomReranker())
     reranker = construct_map[options.method](options)
     evaluator = RerankerEvaluator(reranker, options.metrics)
