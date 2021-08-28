@@ -1,6 +1,6 @@
 # Neural Pointwise Ranking Baselines on Robust04 - with GPU
 
-This page contains instructions for running monoT5 on the Robust 04 collection using Google GPUs.
+This page contains instructions for running monoT5 on the Robust 04 collection using GPUs.
 
 To learn more about monoT5, please read "Document Ranking with a Pretrained Sequence-to-Sequence Model" [(Nogueira et al., 2020)](https://www.aclweb.org/anthology/2020.findings-emnlp.63.pdf)
 
