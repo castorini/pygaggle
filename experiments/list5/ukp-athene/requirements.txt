@@ -92,7 +92,7 @@ parso==0.2.1
 pathlib==1.0.1
 pexpect==4.6.0
 pickleshare==0.7.4
-Pillow==5.1.0
+Pillow==8.3.2
 plac==0.9.6
 pluggy==0.6.0
 preshed==1.0.0
