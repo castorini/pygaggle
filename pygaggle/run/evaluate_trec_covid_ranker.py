@@ -32,6 +32,7 @@ SETTINGS = TRECCovidSettings()
 METHOD_CHOICES = ('transformer', 'bm25', 't5', 'seq_class_transformer',
                   'random')
 
+
 class DocumentRankingEvaluationOptions(BaseModel):
     task: str
     dataset: Path
@@ -80,7 +81,7 @@ def construct_t5(options: DocumentRankingEvaluationOptions) -> Reranker:
     device = torch.device(options.device)
     model = T5ForConditionalGeneration.from_pretrained(options.model,
                                                        from_tf=options.from_tf).to(device).eval()
-    tokenizer = AutoTokenizer.from_pretrained(options.model_type)
+    tokenizer = AutoTokenizer.from_pretrained(options.model_type, use_fast=False)
     tokenizer = T5BatchTokenizer(tokenizer, options.batch_size)
     return T5Reranker(model, tokenizer)
 
@@ -91,7 +92,7 @@ def construct_transformer(options:
     model = AutoModel.from_pretrained(options.model,
                                       from_tf=options.from_tf).to(device).eval()
     tokenizer = SimpleBatchTokenizer(AutoTokenizer.from_pretrained(
-        options.tokenizer_name),
+        options.tokenizer_name, use_fast=False),
         options.batch_size)
     provider = CosineSimilarityMatrixProvider()
     return UnsupervisedTransformerReranker(model, tokenizer, provider)
@@ -102,7 +103,7 @@ def construct_seq_class_transformer(options: DocumentRankingEvaluationOptions
     model = AutoModelForSequenceClassification.from_pretrained(options.model, from_tf=options.from_tf)
     device = torch.device(options.device)
     model = model.to(device).eval()
-    tokenizer = AutoTokenizer.from_pretrained(options.tokenizer_name)
+    tokenizer = AutoTokenizer.from_pretrained(options.tokenizer_name, use_fast=False)
     return SequenceClassificationTransformerReranker(model, tokenizer)
 
 
@@ -165,20 +166,20 @@ def main():
                      help='The T5 tokenizer name.'),
                  opt('--tokenizer-name',
                      type=str,
-                     help = 'The name of the tokenizer to pull from huggingface using the AutoTokenizer class. If '
-                            'left empty, this will be set to the model name.'),
+                     help='The name of the tokenizer to pull from huggingface using the AutoTokenizer class. If '
+                     'left empty, this will be set to the model name.'),
                  opt('--seg-size',
                      type=int,
                      default=10,
                      help='The number of sentences in each segment. For example, given a document with sentences'
-                      '[1,2,3,4,5], a seg_size of 3, and a stride of 2, the document will be broken into segments'
-                       '[[1, 2, 3], [3, 4, 5], and [5]].'),
+                     '[1,2,3,4,5], a seg_size of 3, and a stride of 2, the document will be broken into segments'
+                     '[[1, 2, 3], [3, 4, 5], and [5]].'),
                  opt('--seg-stride',
                      type=int,
                      default=5,
                      help='The number of sentences to increment between each segment. For example, given a document'
-                      'with sentences [1,2,3,4,5], a seg_size of 3, and a stride of 2, the document will be broken into'
-                      'segments [[1, 2, 3], [3, 4, 5], and [5]].'),
+                     'with sentences [1,2,3,4,5], a seg_size of 3, and a stride of 2, the document will be broken into'
+                     'segments [[1, 2, 3], [3, 4, 5], and [5]].'),
                  opt('--aggregate-method',
                      type=str,
                      default="max",

@@ -3,7 +3,7 @@
 echo "Updating Anserini index..."
 
 INDEX_NAME=${1:-lucene-index-cord19-paragraph-2020-05-12}
-INDEX_URL=${2:-https://www.dropbox.com/s/s3bylw97cf0t2wq/lucene-index-cord19-paragraph-2020-05-12.tar.gz}
+INDEX_URL=${2:-https://www.dropbox.com/s/z8s0urul6l4zig2/lucene-index-cord19-paragraph-2020-05-12.tar.gz}
 
 wget ${INDEX_URL}
 tar xvfz ${INDEX_NAME}.tar.gz && rm ${INDEX_NAME}.tar.gz

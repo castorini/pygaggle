@@ -1,5 +1,6 @@
 import os
 from collections import OrderedDict, defaultdict
+from pathlib import Path
 from typing import List, Set, DefaultDict
 import logging
 from itertools import permutations
@@ -16,8 +17,8 @@ from pygaggle.data.unicode import convert_to_unicode
 
 __all__ = ['MsMarcoExample', 'MsMarcoDataset']
 
-# MsMarcoExample represents a query along with its ranked and re-ranked
-# candidates.
+
+# MsMarcoExample represents a query along with its ranked and re-ranked candidates.
 class MsMarcoExample(BaseModel):
     qid: str
     text: str
@@ -41,7 +42,7 @@ class MsMarcoDataset(BaseModel):
         return qrels
 
     # Load a run from the provided path.  The run file contains mappings from
-    # a query id and a doc title to a rank.  load_run returns a dictionary 
+    # a query id and a doc title to a rank.  load_run returns a dictionary
     # mapping query ids to lists of doc titles sorted by ascending rank.
     @classmethod
     def load_run(cls, path: str):
@@ -55,7 +56,7 @@ class MsMarcoDataset(BaseModel):
                 run[qid].append((doc_title, int(rank)))
         sorted_run = OrderedDict()
         for qid, doc_titles_ranks in run.items():
-            sorted(doc_titles_ranks, key=lambda x: x[1])
+            doc_titles_ranks.sort(key=lambda x: x[1])
             doc_titles = [doc_titles for doc_titles, _ in doc_titles_ranks]
             sorted_run[qid] = doc_titles
         return sorted_run
@@ -79,11 +80,13 @@ class MsMarcoDataset(BaseModel):
     def from_folder(cls,
                     folder: str,
                     split: str = 'dev',
-                    is_duo: bool = False) -> 'MsMarcoDataset':
+                    is_duo: bool = False,
+                    run_path: Path = '.') -> 'MsMarcoDataset':
         run_mono = "mono." if is_duo else ""
         query_path = os.path.join(folder, f"queries.{split}.small.tsv")
         qrels_path = os.path.join(folder, f"qrels.{split}.small.tsv")
-        run_path = os.path.join(folder, f"run.{run_mono}{split}.small.tsv")
+        if not os.path.isfile(run_path):
+            run_path = os.path.join(folder, f"run.{run_mono}{split}.small.tsv")
         return cls(examples=cls.load_queries(query_path,
                                              cls.load_qrels(qrels_path),
                                              cls.load_run(run_path)))
@@ -140,7 +143,7 @@ class MsMarcoDataset(BaseModel):
         for k, v in mean_stats.items():
             logging.info(f'{k}: {np.mean(v)}')
         return [RelevanceExample(Query(text=query_text, id=qid),
-                                 list(map(lambda s: Text(s[1], '', dict(docid=s[0])),
+                                 list(map(lambda s: Text(s[1], dict(docid=s[0])),
                                           zip(cands, cands_text))),
                                  rel_cands)
                 for qid, (query_text, cands, cands_text, rel_cands) in example_map.items()]

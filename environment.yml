@@ -7,12 +7,13 @@ dependencies:
     - dataclasses;python_version<"3.7"
     - numpy>=1.18
     - pydantic==1.5
-    - pyserini==0.9.4.0
+    - pyserini==0.10.1.0
     - scikit-learn>=0.22
     - scipy>=1.4
     - spacy==2.2.4
     - tensorboard>=2.1.0
     - tensorflow>=2.2.0rc1
-    - tokenizers==0.7
+    - tokenizers==0.9.4
     - tqdm==4.45.0
-    - transformers==2.10.0
+    - transformers==4.0.0
+    - sentencepiece==0.1.94

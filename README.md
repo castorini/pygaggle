@@ -6,19 +6,11 @@
 PyGaggle provides a gaggle of deep neural architectures for text ranking and question answering.
 It was designed for tight integration with [Pyserini](http://pyserini.io/), but can be easily adapted for other sources as well.
 
-Currently, this repo contains implementations of the rerankers for [CovidQA](https://github.com/castorini/pygaggle/blob/master/data/) on CORD-19, as described in ["Rapidly Bootstrapping a Question Answering Dataset for COVID-19"](https://arxiv.org/abs/2004.11339).
+Currently, this repo contains implementations of the rerankers for MS MARCO Passage Retrieval, MS MARCO Document Retrieval, TREC-COVID and [CovidQA](https://github.com/castorini/pygaggle/blob/master/data/).
 
 ## Installation
 
 0. Install via PyPI `pip install pygaggle`. Requires [Python 3.6+](https://www.python.org/downloads/)
-
-0. Install [PyTorch 1.4+](http://pytorch.org/).
-
-0. Download the index: `sh scripts/update-index.sh`.
-
-0. Make sure you have an installation of Java 11+: `javac --version`.
-
-0. Install [Anserini](https://github.com/castorini/anserini).
 
 ## Additional Instructions
 
@@ -58,7 +50,7 @@ query = Query('who proposed the geocentric theory')
 
 # Option 1: fetch some passages to rerank from MS MARCO with Pyserini
 from pyserini.search import SimpleSearcher
-searcher = SimpleSearcher('/path/to/msmarco/index/')
+searcher = SimpleSearcher.from_prebuilt_index('msmarco-passage')
 hits = searcher.search(query.text)
 
 from pygaggle.rerank.base import hits_to_texts
@@ -75,7 +67,6 @@ for i in range(0, 10):
 
 # Finally, rerank:
 reranked = reranker.rerank(query, texts)
-reranked.sort(key=lambda x: x.score, reverse=True)
 
 # Print out reranked results:
 for i in range(0, 10):
@@ -84,9 +75,20 @@ for i in range(0, 10):
 
 ## Experiments on IR collections
 
-The following documents describe how to use Pygaggle on various IR test collections:
+The following documents describe how to use PyGaggle on various IR test collections:
 
-+ [Experiments on CovidQA](https://github.com/castorini/pygaggle/blob/master/docs/experiments-CovidQA.md)
-+ [Experiments on MS MARCO Document Retrieval](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-document.md)
-+ [Experiments on MS MARCO Passage Retrieval - Dev Subset](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-subset.md)
-+ [Experiments on MS MARCO Passage Retrieval - Entire Dev Set](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-entire.md)
++ [Experiments on CovidQA - with GPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-covidqa.md)
++ [Experiments on MS MARCO Document Retrieval - Dev Subset - with GPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-document.md)
++ [Experiments on MS MARCO Passage Retrieval - Dev Subset - with GPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-subset.md)
++ [Experiments on MS MARCO Passage Retrieval - Entire Dev Set - with GPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-msmarco-passage-entire.md)
++ [Experiments on MS MARCO Passage Retrieval using monoT5 - Entire Dev Set - with TPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-monot5-tpu.md)
++ [Experiments on MS MARCO Passage Retrieval using duoT5 - Entire Dev Set - with TPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-duot5-tpu.md)
++ [Experiments on Robust04 using monoT5 - with TPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-robust04-monot5-tpu.md)
++ [Experiments on Robust04 using monoT5 - with GPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-robust04-monot5-gpu.md)
+
+
+## Experiments on QA collections
+
+The following documents describe how to use PyGaggle for QA:
+
++ [Experiments on Natural Questions using the Dense Passage Retrieval (DPR) Reader - with GPU](https://github.com/castorini/pygaggle/blob/master/docs/experiments-dpr-reader.md)

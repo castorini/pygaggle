@@ -109,7 +109,8 @@ NL Question:
 ```
 python -um pygaggle.run.evaluate_kaggle_highlighter --method t5 \
                                                     --dataset data/kaggle-lit-review-0.2.json \
-                                                    --index-dir indexes/lucene-index-cord19-paragraph-2020-05-12
+                                                    --index-dir indexes/lucene-index-cord19-paragraph-2020-05-12 \
+                                                    --model castorini/monot5-base-msmarco-10k 
 ```
 
 The following output will be visible after it has finished:
@@ -129,7 +130,8 @@ Keyword Query:
 python -um pygaggle.run.evaluate_kaggle_highlighter --method t5 \
                                                      --split kq \
                                                      --dataset data/kaggle-lit-review-0.2.json \
-                                                     --index-dir indexes/lucene-index-cord19-paragraph-2020-05-12
+                                                     --index-dir indexes/lucene-index-cord19-paragraph-2020-05-12 \
+                                                     --model castorini/monot5-base-msmarco-10k
 ```
 
 The following output will be visible after it has finished:
@@ -143,7 +145,7 @@ mrr             0.37988285486956513
 mrr@10          0.3671336788683727
 ```
 
-It takes about 17 minutes to re-rank this subset on CovidQA using a P100.  It is worth noting again that you might need to modify the batch size to best fit the GPU at hand (--batch-size={BATCH_SIZE}).
+It takes about 2 minutes to re-rank this subset on CovidQA using a P100.  It is worth noting again that you might need to modify the batch size to best fit the GPU at hand (--batch-size={BATCH_SIZE}).
 
 If you were able to replicate these results, please submit a PR adding to the replication log!
 
@@ -156,3 +158,4 @@ If you were able to replicate these results, please submit a PR adding to the re
 + Results replicated by [@qguo96](https://github.com/qguo96) on 2020-09-10 (commit[`a1461f5`](https://github.com/castorini/pygaggle/commit/a1461f5e6bd7c2c5fd00d3586d9eef735d978f06)) (Tesla T4 on Colab)
 + Results replicated by [@wiltan-uw](https://github.com/wiltan-uw) on 2020-09-13 (commit[`41513a9`](https://github.com/castorini/pygaggle/commit/41513a9f496bd59523993ce134cc35a7b881e5a1)) (Tesla T4 on Colab)
 + Results replicated by [@jhuang265](https://github.com/jhuang265) on 2020-10-18 (commit[`e815051`](https://github.com/castorini/pygaggle/commit/e815051f2cee1af98b370ee030b66c07a8a287f3)) (Tesla P100 on Colab)
++ Results replicated by [@Dahlia-Chehata](https://github.com/Dahlia-Chehata) on 2021-01-05 (commit[`623285a`](https://github.com/castorini/pygaggle/commit/623285ae5092a9b27bc15a4a3b72bbe25910db49)) (Tesla K80 on Colab)

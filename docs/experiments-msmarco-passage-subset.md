@@ -49,7 +49,7 @@ unzip data/msmarco_ans_small.zip -d data
 As a sanity check, we can evaluate the first-stage retrieved documents using the official MS MARCO evaluation script.
 
 ```
-python tools/eval/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv data/msmarco_ans_small/run.dev.small.tsv
+python tools/scripts/msmarco/msmarco_passage_eval.py data/msmarco_ans_small/qrels.dev.small.tsv data/msmarco_ans_small/run.dev.small.tsv
 ```
 
 The output should be:
@@ -105,7 +105,7 @@ The re-ranked run file `run.monobert.ans_small.dev.tsv` will also be available i
 We can use the official MS MARCO evaluation script to verify the MRR@10:
 
 ```
-python tools/eval/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv runs/run.monobert.ans_small.dev.tsv
+python tools/scripts/msmarco/msmarco_passage_eval.py data/msmarco_ans_small/qrels.dev.small.tsv runs/run.monobert.ans_small.dev.tsv
 ```
 
 You should see the same result. Great, let's move on to monoT5!
@@ -145,7 +145,7 @@ Upon completion, the re-ranked run file `run.monot5.ans_small.dev.tsv` will be a
 We can use the official MS MARCO evaluation script to verify the MRR@10:
 
 ```
-python tools/eval/msmarco_eval.py data/msmarco_ans_small/qrels.dev.small.tsv runs/run.monot5.ans_small.dev.tsv
+python tools/scripts/msmarco/msmarco_passage_eval.py data/msmarco_ans_small/qrels.dev.small.tsv runs/run.monot5.ans_small.dev.tsv
 ```
 
 You should see the same result.
@@ -169,3 +169,12 @@ If you were able to replicate these results, please submit a PR adding to the re
 + Results replicated by [@stephaniewhoo](https://github.com/stephaniewhoo) on 2020-10-25 (commit[`e815051`](https://github.com/castorini/pygaggle/commit/e815051f2cee1af98b370ee030b66c07a8a287f3)) (Tesla V100 on Compute Canada)
 + Results replicated by [@rayyang29](https://github.com/rayyang29) on 2020-11-05 (commit[`19b16d2`](https://github.com/castorini/pygaggle/commit/19b16d28b20bbcead359fc9b4086f33e5c7598f9)) (Tesla T4)
 + Results replicated by [@estella98](https://github.com/estella98) on 2020-11-10 (commit[`5e1e0dd`](https://github.com/castorini/pygaggle/commit/5e1e0dd37c71560e46e8a7f4aa1617b1affd23a7)) (Tesla T4 on Colab) 
++ Results replicated by [@rakeeb123](https://github.com/rakeeb123) on 2020-12-10 (commit[`9a1fe70`](https://github.com/castorini/pygaggle/commit/9a1fe703711011cde69cd78968cb3f00190a3144)) (GeForce 940MX and Tesla V100 on Compute Canada)
++ Results replicated by [@Dahlia-Chehata](https://github.com/Dahlia-Chehata) on 2021-01-01 (commit[`968363e`](https://github.com/castorini/pygaggle/commit/968363ee27bd3ec4d20bdf89eb5cd41e1a6410a5)) (Tesla P100 on Compute Canada)
++ Results replicated by [@KaiSun314](https://github.com/KaiSun314) on 2021-01-08 (commit[`c7fdc4f`](https://github.com/castorini/pygaggle/commit/c7fdc4f46375a05f02d62fdfd549d43cefad3537)) (Nvidia GeForce GTX 1060)
++ Results replicated by [@wongalvis14](https://github.com/wongalvis14) on 2021-02-22 (commit[`7c0ebbe`](https://github.com/castorini/pygaggle/commit/7c0ebbeb20dc867ee68d21c6ac7da84073bdb6f6)) (GeForce RTX 2080 Ti on Hydra)
++ Results replicated by [@saileshnankani](https://github.com/saileshnankani) on 2021-05-05 (commit[`95b3da7`](https://github.com/castorini/pygaggle/commit/95b3da7cf2822f3581a2b1891dd5f54b258a04e4)) (Tesla T4 on Colab)
++ Results replicated by [@andrewyguo](https://github.com/andrewyguo) on 2021-05-05 (commit[`6f0381e`](https://github.com/castorini/pygaggle/commit/6f0381e6a3f6ea5f0d284abb156c549bb4c54578)) (Tesla T4 on Colab)
++ Results replicated by [@larryli1999](https://github.com/larryli1999) on 2021-05-05 (commit[`53b77f4`](https://github.com/castorini/pygaggle/commit/53b77f4219fc990d77e94007b36be6a20678e4d2)) (Tesla T4 on Colab)
++ Results replicated by [@mzzchy](https://github.com/mzzchy) on 2021-08-29 (commit[`6b9c895`](https://github.com/castorini/pygaggle/commit/b5315e9f1f7466e689983e3c4e70134e36d4be49)) (GeForce GTX 1660 Ti)
+
