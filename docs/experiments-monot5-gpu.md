@@ -11,30 +11,20 @@ We rerank the BM25 run files that contain ~1000 passages per query using monoT5.
 monoT5 is a pointwise reranker. This means that each document is scored independently using T5.
 
 ## Environment Setup
-This experiment is proved to work on Tensorflow-2.3.0. Please make sure you have required gcc version accourding to [TensorFlow gpu dependency](https://www.tensorflow.org/install/source#gpu). 
-
-
-```
-module list             # Check if you have coreect version of gcc
-module spider gcc       # Check available gcc
-module load gcc/7.3.0   # Load required gcc
-```
-
 Creat a Python virtual environment for the experiments and install the dependncies
 
 If you haven't installed Anaconda on Compute Canada, please follow this guide [here](https://www.digitalocean.com/community/tutorials/how-to-install-anaconda-on-ubuntu-18-04-quickstart)
 
-Within Anaconda virtual environment, please install packges with `conda install ` first rather than `pip install` to avoid dependcy conflict
 ```
 conda init
 conda create --y --name pygaggle python=3.6
 conda activate pygaggle
 unset PYTHONPATH
 conda install -c conda-forge httptools jsonnet --yes
-conda install -c tensorflow-gpu==2.3.0
+pip install tensorflow-gpu==2.3.0
 conda install -c anaconda cudatoolkit=10.1
 conda install -c anaconda cudnn
-conda install -c tensorflow-text==2.3.0
+pip install tensorflow-text==2.3.0
 git clone https://github.com/google-research/text-to-text-transfer-transformer.git
 cd text-to-text-transfer-transformer && git checkout ca1c0627f338927ac753159cb7a1f6caaf2ae19b && pip install --editable . && cd ..
 git clone https://github.com/castorini/mesh.git
@@ -165,7 +155,6 @@ Create a bash script to request gpus on Compute Canada and run the experiment. Y
 #SBATCH --output=./logs/%j.out
 #SBATCH --error=./logs/%j.err
 
-
 source ~/.bashrc
 conda activate pygaggle
 cd $HOME/scratch/pygaggle/
@@ -245,5 +234,23 @@ MRR @10: 0.3798596329649345
 QueriesRanked: 6980
 #####################
 ```
+## Trouble Shooting
+
+### GLIBC not found: 
+
+- Tensorflow on GPU reqires sepcific version of gcc compile. Please choose correct one according to [TensorFlow gpu dependency](https://www.tensorflow.org/install/source#gpu). 
+
+```
+module list             # Check if you have coreect version of gcc
+module spider gcc       # Check available gcc
+module load gcc/*.*.*   # Load required gcc
+```
+
+### Package not Found:
+
+- If you are using Anaconda to set up virtual environment, please try reinstall the package with `conda install` instead of `pip install`
+
+
+
 ## Replication Log
 + Results replicated by [@mzzchy](https://github.com/mzzchy) on 2021-09-09 (commit[`c3e21a9`](https://github.com/castorini/pygaggle/commit/c3e21a947d105e0ffc049e1210030b52d6cf9851)) (Compute Canada)
