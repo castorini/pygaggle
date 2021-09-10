@@ -65,7 +65,7 @@ In short, the files are:
 - `run.dev.small.tsv`: Approximately 6,980,000 pairs of dev set queries and retrieved passages using Anserini's BM25.
 - `collection.tar.gz`: All passages (8,841,823) in the MS MARCO passage corpus. In this tsv file, the first column is the passage id, and the second is the passage text.
 
-If you are on `Cedar`, these files can be found through at `/projects/rrg-jimmylin/shared_files/gcloud/msmarco/data`
+If you are on `Cedar` (a cluster in UWaterloo), these files can be found through at `/projects/rrg-jimmylin/shared_files/gcloud/msmarco/data`
 
 A more detailed description of the data is available [here](https://github.com/castorini/duobert#data-and-trained-models).
 
