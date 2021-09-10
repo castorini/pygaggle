@@ -14,11 +14,12 @@ monoT5 is a pointwise reranker. This means that each document is scored independ
 Creat a Python virtual environment for the experiments and install the dependncies
 
 If you haven't installed Anaconda on Compute Canada, please follow this guide [here](https://www.digitalocean.com/community/tutorials/how-to-install-anaconda-on-ubuntu-18-04-quickstart)
+
 ```
 conda init
 conda create --y --name pygaggle python=3.6
 conda activate pygaggle
-export PYTHONPATH=
+unset PYTHONPATH
 conda install -c conda-forge httptools jsonnet --yes
 pip install tensorflow-gpu==2.3.0
 conda install -c anaconda cudatoolkit=10.1
@@ -64,7 +65,7 @@ In short, the files are:
 - `run.dev.small.tsv`: Approximately 6,980,000 pairs of dev set queries and retrieved passages using Anserini's BM25.
 - `collection.tar.gz`: All passages (8,841,823) in the MS MARCO passage corpus. In this tsv file, the first column is the passage id, and the second is the passage text.
 
-If you are on `Cedar`, these files can be found through at `/project/rrg-jimmylin/shared_files/gcloud/msmarco/data`
+If you are on `Cedar` (a cluster in UWaterloo), these files can be found through at `/projects/rrg-jimmylin/shared_files/gcloud/msmarco/data`
 
 A more detailed description of the data is available [here](https://github.com/castorini/duobert#data-and-trained-models).
 
@@ -119,24 +120,31 @@ For `query_doc_pairs.dev.small.txt`, we will get 9 files after split. i.e. (`que
 Note that it is possible that running reranking might still result in OOM issues in which case reduce the number of lines to smaller than `800000`.
 
 ## Rerank with monoT5
-Let's first define the model type and checkpoint.
-```
-export MODEL_NAME=<base or large or 3B>
-export MODEL_DIR=models/monot5/${MODEL_NAME}
-```
-The checkpoint and the operative config file for each versions of the model are downloaded to `MODEL_DIR`
+Let's first define the model type.
 
-If you are using `Cedar`, the model checkpoints can be found in this dir `/project/rrg-jimmylin/shared_files/gcloud/msmarco/monot5/`
+monoT5 experiments have 3 model types: base, large, and 3B. To execute the experiments, we need to download model files and config files for each type to `$MODEL_DIR/<base, large, 3B>`.
 
-The operative config files can be found through these links:
+If you are using `Cedar`, the model checkpoints can be found in this dir `/projects/rrg-jimmylin/shared_files/gcloud/msmarco/monot5/`
 
+The operative config file and model files are also available on google cloud platform. Please use `gsutil cp` to download it. 
+
+If you haven't installed google cloud sdk. please follow this [guide](https://cloud.google.com/sdk/docs/install) here
+
+### Operative config
 monoT5-base: [link](https://console.cloud.google.com/storage/browser/_details/t5-data/pretrained_models/base/operative_config.gin)
 
 monoT5-large: [link](https://console.cloud.google.com/storage/browser/_details/t5-data/pretrained_models/large/operative_config.gin)
 
 monoT5-3B: [link](https://console.cloud.google.com/storage/browser/_details/t5-data/pretrained_models/3B/operative_config.gin)
 
-Create a bash script to request gpus on Compute Canada and run the experiment
+### Model files
+monoT5-base: [link](https://console.cloud.google.com/storage/browser/castorini/monot5/experiments/base?pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22))&authuser=0&project=neuralresearcher&prefix=&forceOnObjectsSortingFiltering=false)
+
+monoT5-large: [link](https://console.cloud.google.com/storage/browser/castorini/monot5/experiments/large;tab=objects?pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22))&authuser=0&project=neuralresearcher&prefix=&forceOnObjectsSortingFiltering=false)
+
+monoT5-3B: [link](https://console.cloud.google.com/storage/browser/castorini/monot5/experiments/3B?pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22))&authuser=0&project=neuralresearcher&prefix=&forceOnObjectsSortingFiltering=false)
+
+Create a bash script to request gpus on Compute Canada and run the experiment. You are recommended to use linux editor `vim` to avoid invalid character. 
 ```
 #!/bin/sh
 #SBATCH --mem=0
@@ -147,11 +155,11 @@ Create a bash script to request gpus on Compute Canada and run the experiment
 #SBATCH --output=./logs/%j.out
 #SBATCH --error=./logs/%j.err
 
-
 source ~/.bashrc
 conda activate pygaggle
 cd $HOME/scratch/pygaggle/
 
+export MODEL_DIR=models/monot5/<base, large, 3B>
 export CUDA_AVAILABLE_DEVICES=0,1,2,3
 
 for ITER in {000..008}; do
@@ -226,3 +234,23 @@ MRR @10: 0.3798596329649345
 QueriesRanked: 6980
 #####################
 ```
+## Trouble Shooting
+
+### GLIBC not found: 
+
+- Tensorflow on GPU reqires sepcific version of gcc compile. Please choose correct one according to [TensorFlow gpu dependency](https://www.tensorflow.org/install/source#gpu). 
+
+```
+module list             # Check if you have coreect version of gcc
+module spider gcc       # Check available gcc
+module load gcc/*.*.*   # Load required gcc
+```
+
+### Package not Found:
+
+- If you are using Anaconda to set up virtual environment, please try reinstall the package with `conda install` instead of `pip install`
+
+
+
+## Replication Log
++ Results replicated by [@mzzchy](https://github.com/mzzchy) on 2021-09-09 (commit[`c3e21a9`](https://github.com/castorini/pygaggle/commit/c3e21a947d105e0ffc049e1210030b52d6cf9851)) (Compute Canada)
