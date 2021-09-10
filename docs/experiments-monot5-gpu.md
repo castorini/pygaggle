@@ -122,13 +122,13 @@ Note that it is possible that running reranking might still result in OOM issues
 ## Rerank with monoT5
 Let's first define the model type.
 
-monoT5 experiments have 3 model type: base, large, 3B. To execute the experiments, we need to download model files and config files for each type to `$MODEL_DIR/<base, large, 3B>`.
+monoT5 experiments have 3 model types: base, large, and 3B. To execute the experiments, we need to download model files and config files for each type to `$MODEL_DIR/<base, large, 3B>`.
 
 If you are using `Cedar`, the model checkpoints can be found in this dir `/projects/rrg-jimmylin/shared_files/gcloud/msmarco/monot5/`
 
 The operative config file and model files are also available on google cloud platform. Please use `gsutil cp` to download it. 
 
-If you haven't installed google skd. please follow  this [guide](https://cloud.google.com/sdk/docs/install) here
+If you haven't installed google cloud sdk. please follow this [guide](https://cloud.google.com/sdk/docs/install) here
 
 ### Operative config
 monoT5-base: [link](https://console.cloud.google.com/storage/browser/_details/t5-data/pretrained_models/base/operative_config.gin)
