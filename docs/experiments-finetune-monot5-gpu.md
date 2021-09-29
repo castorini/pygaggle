@@ -6,7 +6,7 @@ Note that there is also a separate [MS MARCO *document* ranking task](https://gi
 After finetuning the model, we provide a reranking script and steps to reproduce similar results as in the [MonoT5 paper](https://arxiv.org/pdf/2003.06713.pdf).
 
 Note 1: Run the following instructions at root of this repo.
-Note 2: Make sure that you have access to a GPU
+Note 2: Make sure that you have access to a GPU with at least 14GB RAM.
 Note 3: Installation must have been done from source and make sure the [anserini-eval](https://github.com/castorini/anserini-eval) submodule is pulled. 
 To do this, first clone the repository recursively.
 
@@ -24,7 +24,7 @@ pip install --upgrade pygaggle/
 
 + monoT5-base: Document Ranking with a Pretrained Sequence-to-Sequence Model [(Nogueira et al., 2020)](https://arxiv.org/pdf/2003.06713.pdf)
 
-## MonoT5 fine tuning
+## MonoT5 finetuning
 ### Data Prep
 
 We're first going to download and extract the triples.small from MS MARCO.
@@ -44,10 +44,10 @@ nohup python -um pygaggle.run.finetune_monot5 --triples_path triples/triples.tra
                                               --output_model_path monoT5_model/ &
 tail -f nohup
 ```
-Here, we consider one epoch to be 6.4e6 of lines of the triples.train.small.tsv, which corresponds to 12.8e6 training examples (positives + negatives) and 100k steps using batch of 128. The number of epochs defaults to 1. Adding the "--epoch" argument with an integer will include `n * 6.4e6` lines to the training set.
+Here, we consider one epoch to be 6.4e5 of lines of the triples.train.small.tsv, which corresponds to 12.8e5 training examples (positives + negatives) and 10k steps using batch of 128. The number of epochs defaults to 10 (100k steps). Adding the "--epoch" argument with an integer will include `n * 6.4e5` lines to the training set.
 If you don't wish to save checkpoints every N step, simply omit the --save_every_n_steps argument.
 
-With a Nvidia V100 it takes almost 3 days to train the model on 1 epoch.
+With a Nvidia V100 it takes around 2~3 days to train the model on 10 epoch.
 ## Re-Ranking on MS MARCO dev set
 ### Data Prep
 Let's download and extract the collection and dev set from MS MARCO:
@@ -55,14 +55,13 @@ Let's download and extract the collection and dev set from MS MARCO:
 mkdir runs
 wget https://msmarco.blob.core.windows.net/msmarcoranking/collectionandqueries.tar.gz -P devset
 tar -zxf devset/collectionandqueries.tar.gz -C devset/
-cd ..
 ```
 And download the official MS MARCO evaluation script.
 ```
 wget https://github.com/microsoft/MSMARCO-Passage-Ranking/blob/master/ms_marco_eval.py
 ```
 ### Re-Rank
-Prior to running this, we suggest looking at our first-stage [BM25 ranking instructions](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-passage.md) to generate the BM25 run and making sure the results are the same. Place it under `runs/` directory.
+Prior to running this, we suggest looking at our first-stage [BM25 ranking instructions](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-passage.md) to generate the BM25 run in MS MARCO format and making sure the results are the same. Place it under `runs/` directory.
 ```
 #####################
 MRR @10: 0.18741227770955546
@@ -76,9 +75,10 @@ nohup python -um pygaggle.run.monot5_reranker --model_name_or_path monoT5_model/
                                               --corpus devset/collection.tsv \
                                               --queries devset/queries.dev.small.tsv \
                                               --output_run runs/run.monot5-dev &
+tail -f nohup
 ```
-Your corpus can either be in .tsv or .jsonl format.
-If you check the runs directory now, there are two newly re-ranked runs: one in MS MARCO format and another in TREC.
+Your corpus can either be in .tsv or .jsonl format. The reranking should take about half a day on a V100.
+If you check the `runs/` directory after it's done, there are two newly re-ranked runs: one in MS MARCO format and another in TREC.
 To measure MRR@10 on the dev set, type:
 ```
 python ms_marco_eval.py devset/qrels.dev.small.tsv runs/run.monot5-dev-marco.txt
@@ -86,12 +86,12 @@ python ms_marco_eval.py devset/qrels.dev.small.tsv runs/run.monot5-dev-marco.txt
 This should yield around:
 ```
 #####################
-MRR @10: 0.3774835129849456
+MRR @10: 0.3761892823031791
 QueriesRanked: 6980
 #####################
 ```
 
-You can also try modifying the [finetune_monot5.py]() script training parameters to your liking.
+You can also try modifying the [finetune_monot5.py](https://github.com/castorini/pygaggle/blob/master/pygaggle/run/finetune_monot5.py) script training parameters to your liking.
 
 If you were able to replicate these results, please submit a PR adding to the replication log!
 

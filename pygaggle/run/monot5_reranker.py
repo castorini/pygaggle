@@ -1,8 +1,6 @@
-import torch
 import argparse
 import pandas as pd
 from tqdm import tqdm
-from transformers import T5Tokenizer, MT5ForConditionalGeneration
 from pygaggle.rerank.transformer import MonoT5
 from pygaggle.rerank.base import Query, Text
 import jsonlines
@@ -62,7 +60,7 @@ def main():
         texts = [Text(corpus[doc_id], {'docid': doc_id}, 0) for doc_id in run[query_id]]
         reranked = model.rerank(query, texts)
         for rank, document in enumerate(reranked):
-            trec.write(f'{query_id}\tQ0\t{document.metadata["docid"]}\t{rank+1}\t{document.score}\t{document.model_name_or_path}\n')
+            trec.write(f'{query_id}\tQ0\t{document.metadata["docid"]}\t{rank+1}\t{document.score}\t{args.model_name_or_path}\n')
             marco.write(f'{query_id}\t{document.metadata["docid"]}\t{rank+1}\n')
     trec.close()
     marco.close()

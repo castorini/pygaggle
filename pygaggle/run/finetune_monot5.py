@@ -37,13 +37,13 @@ class MonoT5Dataset(Dataset):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--base_model", default='castorini/monot5-base-msmarco-10k', type=str, required=False,
+    parser.add_argument("--base_model", default='t5-base', type=str, required=False,
                         help="Base model to fine tune.")
     parser.add_argument("--triples_path", default=None, type=str, required=True,
                         help="Triples.tsv path")
     parser.add_argument("--save_every_n_steps", default=0, type=int, required=False,
                         help="Save every N steps. (recommended 10000)")
-    parser.add_argument("--epochs", default=1, type=int, required=False,
+    parser.add_argument("--epochs", default=10, type=int, required=False,
                         help="Number of epochs to train")
     parser.add_argument("--output_model_path", default=None, type=str, required=True,
                         help="Path for trained model and checkpoints.")
@@ -58,7 +58,7 @@ def main():
     train_samples = []
     with open(args.triples_path, 'r', encoding="utf-8") as fIn:
         for num, line in enumerate(fIn):
-            if num > 6.4e6 * args.epochs:
+            if num > 6.4e5 * args.epochs:
                 break
             query, positive, negative = line.split("\t")
             train_samples.append((query, positive, 'true'))
@@ -86,27 +86,19 @@ def main():
     train_args = Seq2SeqTrainingArguments(
         output_dir=args.output_model_path,
         do_train=True,
-        # do_eval=True,
-        # evaluation_strategy="epoch",
         save_strategy=strategy,
         save_steps =steps, 
         logging_steps=100,
-        # optimization args, the trainer uses the Adam optimizer
-        # and has a linear warmup for the learning rate
         per_device_train_batch_size=8,
-        # per_device_eval_batch_size=32,
         gradient_accumulation_steps=16,
         learning_rate=3e-4,
         weight_decay=5e-5,
         num_train_epochs=1,
         warmup_steps=1000,
-        
         adafactor=True,
-
         seed=1,
         disable_tqdm=False,
         load_best_model_at_end=False,
-
         predict_with_generate=True,
         dataloader_pin_memory=False,
     )
@@ -115,7 +107,6 @@ def main():
         model=model,
         args=train_args,
         train_dataset=dataset_train,
-        # eval_dataset=dataset_val,
         tokenizer=tokenizer,
         data_collator=smart_batching_collate_text_only,
     )
@@ -125,3 +116,5 @@ def main():
     trainer.save_model(args.output_model_path)
     trainer.save_state()
 
+if __name__ == "__main__":
+    main()
