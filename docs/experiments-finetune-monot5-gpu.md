@@ -47,7 +47,7 @@ tail -f nohup
 Here, we consider one epoch to be 6.4e5 of lines of the triples.train.small.tsv, which corresponds to 12.8e5 training examples (positives + negatives) and 10k steps using batch of 128. The number of epochs defaults to 10 (100k steps). Adding the "--epoch" argument with an integer will include `n * 6.4e5` lines to the training set.
 If you don't wish to save checkpoints every N step, simply omit the --save_every_n_steps argument.
 
-With a Nvidia V100 it takes around 2~3 days to train the model on 10 epoch.
+With an Nvidia V100, it takes around 2~3 days to train the model for 10 epochs.
 ## Re-Ranking on MS MARCO dev set
 ### Data Prep
 Let's download and extract the collection and dev set from MS MARCO:
