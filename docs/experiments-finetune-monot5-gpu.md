@@ -42,7 +42,7 @@ To train the MonoT5 model, run the following command:
 nohup python -um pygaggle.run.finetune_monot5 --triples_path triples/triples.train.small.tsv \
                                               --save_every_n_steps 10000 \
                                               --output_model_path monoT5_model/ &
-tail -f nohup
+tail -f nohup.out
 ```
 Here, we consider one epoch to be 6.4e5 of lines of the triples.train.small.tsv, which corresponds to 12.8e5 training examples (positives + negatives) and 10k steps using batch of 128. The number of epochs defaults to 10 (100k steps). Adding the "--epoch" argument with an integer will include `n * 6.4e5` lines to the training set.
 If you don't wish to save checkpoints every N step, simply omit the --save_every_n_steps argument.
