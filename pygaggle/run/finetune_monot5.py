@@ -41,12 +41,20 @@ def main():
                         help="Base model to fine tune.")
     parser.add_argument("--triples_path", default=None, type=str, required=True,
                         help="Triples.tsv path")
-    parser.add_argument("--save_every_n_steps", default=0, type=int, required=False,
-                        help="Save every N steps. (recommended 10000)")
-    parser.add_argument("--epochs", default=10, type=int, required=False,
-                        help="Number of epochs to train")
     parser.add_argument("--output_model_path", default=None, type=str, required=True,
                         help="Path for trained model and checkpoints.")
+    parser.add_argument("--save_every_n_steps", default=0, type=int, required=False,
+                        help="Save every N steps. (recommended 10000)")
+    parser.add_argument("--logging_steps", default=100, type=int, required=False,
+                        help="Logging steps parameter.")
+    parser.add_argument("--per_device_train_batch_size", default=8, type=int, required=False,
+                        help="Per device batch size parameter.")
+    parser.add_argument("--gradient_accumulation_steps", default=16, type=int, required=False,
+                        help="Gradient accumulation parameter.")
+    parser.add_argument("--learning_rate", default=3e-4, type=float, required=False,
+                        help="Learning rate parameter.")
+    parser.add_argument("--epochs", default=10, type=int, required=False,
+                        help="Number of epochs to train")
 
     device = torch.device('cuda')
     torch.manual_seed(123)
@@ -88,10 +96,10 @@ def main():
         do_train=True,
         save_strategy=strategy,
         save_steps =steps, 
-        logging_steps=100,
-        per_device_train_batch_size=8,
-        gradient_accumulation_steps=16,
-        learning_rate=3e-4,
+        logging_steps=args.logging_steps,
+        per_device_train_batch_size=args.per_device_train_batch_size,
+        gradient_accumulation_steps=args.gradient_accumulation_steps,
+        learning_rate=args.learning_rate,
         weight_decay=5e-5,
         num_train_epochs=1,
         warmup_steps=1000,

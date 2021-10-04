@@ -70,7 +70,7 @@ QueriesRanked: 6980
 ```
 Let's now rerank the BM25 run using the previous trained model:
 ```
-nohup python -um pygaggle.run.monot5_reranker --model_name_or_path monoT5_model/ \
+nohup python -um pygaggle.run.evaluate_monot5_reranker --model_name_or_path monoT5_model/ \
                                               --initial_run runs/run.msmarco-bm25-dev-passage.txt \
                                               --corpus devset/collection.tsv \
                                               --queries devset/queries.dev.small.tsv \
