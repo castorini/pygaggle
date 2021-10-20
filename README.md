@@ -77,7 +77,8 @@ for i in range(0, 10):
 There are many checkpoints for monoBERT and monoT5 in our Hugging Face model page:
 https://huggingface.co/castorini
 
-In the example below, we show how to use a different checkpoint (i.e., `castorini/monot5-base-msmarco-10k`) for monoT5:
+The `MonoT5()` class uses `castorini/monot5-base-msmarco` by default.
+In the example below, we show how to use a different checkpoint (i.e., `castorini/monot5-base-msmarco-10k`):
 ```
 from transformers import T5ForConditionalGeneration
 model = T5ForConditionalGeneration.from_pretrained('castorini/monot5-base-msmarco-10k')
