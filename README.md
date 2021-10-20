@@ -73,6 +73,17 @@ for i in range(0, 10):
     print(f'{i+1:2} {reranked[i].metadata["docid"]:15} {reranked[i].score:.5f} {reranked[i].text}')
 ```
 
+## Reranking with a different checkpoint
+There are many checkpoints for monoBERT and monoT5 in our Hugging Face model page:
+https://huggingface.co/castorini
+
+In the example below, we show how to use a different checkpoint (i.e., `castorini/monot5-base-msmarco-10k`) for monoT5:
+```
+from transformers import T5ForConditionalGeneration
+model = T5ForConditionalGeneration.from_pretrained('castorini/monot5-base-msmarco-10k')
+reranker = MonoT5(model=model)
+```
+
 ## Experiments on IR collections
 
 The following documents describe how to use PyGaggle on various IR test collections:
