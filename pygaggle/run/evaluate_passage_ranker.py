@@ -84,7 +84,7 @@ def construct_t5(options: PassageRankingEvaluationOptions) -> Reranker:
                              from_tf=options.from_tf,
                              device=options.device)
     tokenizer = MonoT5.get_tokenizer(options.model_type, batch_size=options.batch_size)
-    return MonoT5(model, tokenizer)
+    return MonoT5(model = model, tokenizer = tokenizer)
 
 
 def construct_duo_t5(options: PassageRankingEvaluationOptions) -> Tuple[Reranker, Reranker]:
