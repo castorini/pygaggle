@@ -14,5 +14,3 @@ transformers==4.6.1
 sentencepiece==0.1.95
 sentence_transformers==2.0.0
 torch>=1.8.1
-faiss-gpu
-faiss-cpu
