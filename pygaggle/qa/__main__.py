@@ -1,5 +1,6 @@
 import sys
 import argparse
+from pygaggle.qa.cbqa import ClosedBookQA
 from pygaggle.qa.obqa import OpenBookQA
 from pygaggle.qa.dpr_reader import DprReader
 from pyserini.search import SimpleSearcher
@@ -16,6 +17,8 @@ def define_retriever_args(parser):
     parser.add_argument('--index', type=str, required=True, help="Pyserini index name or path")
     parser.add_argument('--corpus', type=str, required=True, help="Pyserini sparse index name or path, serve as corpus")
 
+def define_type_args(parser):
+    parser.add_argument('qatype', type=str, choices=["openbook", "closedbook"], help="Open-book or closed-book question answering.")
 
 def parse_args(parser, commands):
     # Divide argv by commands
@@ -43,6 +46,9 @@ if __name__ == '__main__':
 
     commands = parser.add_subparsers(title='sub-commands')
 
+    type_parser = commands.add_parser('type')
+    define_type_args(type_parser)
+
     dense_parser = commands.add_parser('reader')
     define_reader_args(dense_parser)
 
@@ -52,20 +58,28 @@ if __name__ == '__main__':
     args = parse_args(parser, commands)
 
     print("Init QA models")
-    reader = DprReader(args.reader.model, device=args.reader.device)
-    if args.retriever.model:
-        retriever = SimpleDenseSearcher(args.retriever.index, DprQueryEncoder(args.retriever.model))
+    if args.type.qatype == 'openbook':
+        reader = DprReader(args.reader.model, device=args.reader.device)
+        if args.retriever.model:
+            retriever = SimpleDenseSearcher(args.retriever.index, DprQueryEncoder(args.retriever.model))
+        else:
+            retriever = SimpleSearcher.from_prebuilt_index(args.retriever.corpus)
+        corpus = SimpleSearcher.from_prebuilt_index(args.retriever.corpus)
+        obqa = OpenBookQA(reader, retriever, corpus)
+        # run a warm up question
+        obqa.predict('what is lobster roll')
+        while True:
+            question = input('Please enter a question: ')
+            answer = obqa.predict(question)
+            answer_text = answer["answer"]
+            answer_context = answer["context"]["text"]
+            print(f"ANSWER:\t {answer_text}")
+            print(f"CONTEXT:\t {answer_context}")
     else:
-        retriever = SimpleSearcher.from_prebuilt_index(args.retriever.corpus)
-    corpus = SimpleSearcher.from_prebuilt_index(args.retriever.corpus)
-    obqa = OpenBookQA(reader, retriever, corpus)
-
-    # run a warm up question
-    obqa.predict('what is lobster roll')
-    while True:
-        question = input('Please enter a question: ')
-        answer = obqa.predict(question)
-        answer_text = answer["answer"]
-        answer_context = answer["context"]["text"]
-        print(f"ANSWER:\t {answer_text}")
-        print(f"CONTEXT:\t {answer_context}")
+        cbqa = ClosedBookQA()
+        # run a warm up question
+        cbqa.predict('what is lobster roll')
+        while True:
+            question = input('Please enter a question: ')
+            answer = cbqa.predict(question)
+            print(f"ANSWER:\t {answer}")
