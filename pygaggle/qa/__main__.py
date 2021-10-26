@@ -17,8 +17,15 @@ def define_retriever_args(parser):
     parser.add_argument('--index', type=str, required=True, help="Pyserini index name or path")
     parser.add_argument('--corpus', type=str, required=True, help="Pyserini sparse index name or path, serve as corpus")
 
+
 def define_type_args(parser):
     parser.add_argument('qatype', type=str, choices=["openbook", "closedbook"], help="Open-book or closed-book question answering.")
+
+
+def define_cbqa_args(parser):
+    parser.add_argument('--model', type=str, required=True, help="CBQA model name or path")
+    parser.add_argument('--device', type=str, required=False, default='cuda:0', help="Device to run inference on")
+
 
 def parse_args(parser, commands):
     # Divide argv by commands
@@ -55,6 +62,9 @@ if __name__ == '__main__':
     sparse_parser = commands.add_parser('retriever')
     define_retriever_args(sparse_parser)
 
+    cbqa_parser = commands.add_parser('cbqa')
+    define_cbqa_args(cbqa_parser)
+
     args = parse_args(parser, commands)
 
     print("Init QA models")
@@ -76,7 +86,7 @@ if __name__ == '__main__':
             print(f"ANSWER:\t {answer_text}")
             print(f"CONTEXT:\t {answer_context}")
     else:
-        cbqa = ClosedBookQA()
+        cbqa = ClosedBookQA(args.cbqa.model, args.cbqa.device) if args.cbqa else ClosedBookQA()
         # run a warm up question
         cbqa.predict('what is lobster roll')
         while True:
