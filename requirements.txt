@@ -2,7 +2,7 @@ coloredlogs==14.0
 dataclasses;python_version<"3.7"
 numpy>=1.18
 pydantic==1.7.4
-pyserini==0.12.0
+pyserini>=0.13.0
 scikit-learn==0.24.2
 scipy==1.5.4
 spacy==3.0.6
@@ -13,4 +13,4 @@ tqdm==4.56.0
 transformers==4.6.1
 sentencepiece==0.1.95
 sentence_transformers==2.0.0
-torch==1.8.1
+torch>=1.8.1
