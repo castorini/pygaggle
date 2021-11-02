@@ -83,8 +83,8 @@ if __name__ == '__main__':
             answer = obqa.predict(question)
             answer_text = answer["answer"]
             answer_context = answer["context"]["text"]
-            print(f"ANSWER:\t {answer_text}")
-            print(f"CONTEXT:\t {answer_context}")
+            print(f"Answer:\t {answer_text}")
+            print(f"Context:\t {answer_context}")
     else:
         cbqa = ClosedBookQA(args.cbqa.model, args.cbqa.device) if args.cbqa else ClosedBookQA()
         # run a warm up question
@@ -92,4 +92,4 @@ if __name__ == '__main__':
         while True:
             question = input('Please enter a question: ')
             answer = cbqa.predict(question)
-            print(f"ANSWER:\t {answer}")
+            print(f"Answer:\t {answer}")
