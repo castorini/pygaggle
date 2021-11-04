@@ -48,6 +48,20 @@ The following output will be visible after it has finishes
 Exact Match Accuracy: 34.044321329639885
 ```
 
+### Using t5-3b-ssm-nq
+
+```bash
+python -um pygaggle.run.evaluate_closed_book_question_answering --data nq \
+                                                                --model-name google/t5-3b-ssm-nq \
+                                                                --device cuda:0
+```
+
+The following output will be visible after it has finishes
+
+```
+Exact Match Accuracy: 31.191135734072024
+```
+
 If you were able to replicate these results, please submit a PR adding to the replication log!
 Please mention in your PR if you find any difference!
 
