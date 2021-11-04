@@ -1,4 +1,4 @@
-# PyGaggle: Dense Passage Retrieval (DPR) Baselines
+# PyGaggle: Closed Book Question Answering Baselines
 
 This page contains instructions for running the Closed Book Question Answering.
 
@@ -16,24 +16,36 @@ pip install pygaggle/
 
 ## Models
 
-+ Dense Passage Retrieval for Open-Domain Question Answering [(Karpukhin et al., 2020)](https://arxiv.org/pdf/2004.04906.pdf)
++ How Much Knowledge Can You Pack Into the Parameters of a Language Model? [(Adam Roberts, Colin Raffel, Noam Shazeer, 2020)](https://arxiv.org/pdf/2002.08910.pdf)
 
 ## Natural Questions (NQ)
-We first download the retrieval results from Pyserini:
-```bash
-wget https://www.dropbox.com/s/flby7nmthaqbzxo/run.dpr.nq-test.single.bf.json -P data
-```
 
-Then we run the inference and evaluation:
+### Using t5-large-ssm-nq
+
 ```bash
-python -um pygaggle.run.evaluate_closed_book_question_answering --data data/run.dpr.nq-test.single.bf.json \
+python -um pygaggle.run.evaluate_closed_book_question_answering --data nq \
                                                                 --model-name google/t5-large-ssm-nq \
                                                                 --device cuda:0
 ```
 
-The following output will be visible after it has finished:
+The following output will be visible after it has finishes
+
 ```
-Exact Match Accuracy: 28.89196675900277
+Exact Match Accuracy: 29.861495844875346
+```
+
+### Using t5-xl-ssm-nq
+
+```bash
+python -um pygaggle.run.evaluate_closed_book_question_answering --data nq \
+                                                                --model-name google/t5-xl-ssm-nq \
+                                                                --device cuda:0
+```
+
+The following output will be visible after it has finishes
+
+```
+Exact Match Accuracy: 34.044321329639885
 ```
 
 If you were able to replicate these results, please submit a PR adding to the replication log!
@@ -41,5 +53,3 @@ Please mention in your PR if you find any difference!
 
 
 ## Replication Log
-
-+ Results replicated by [@AlexWang000](https://github.com/AlexWang000) on 2021-11-01 (commit[`3906bae`](b45841a06f0240a0f7f8c8eb0c04700e79ad9ef6)) (RTX 3080)

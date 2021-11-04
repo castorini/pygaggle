@@ -2,9 +2,11 @@ from pathlib import Path
 import logging
 import json
 import numpy as np
+import ast
 
 from pydantic import BaseModel
 from tqdm import tqdm
+from pyserini import search
 
 from .args import ArgumentParserBuilder, opt
 from pygaggle.qa.cbqa import ClosedBookQA
@@ -12,7 +14,7 @@ from pygaggle.model.evaluate import ReaderEvaluator
 
 
 class ClosedBookQuestionAnsweringEvaluationOptions(BaseModel):
-    data: Path
+    data: str
     model_name: str
     device: str
 
@@ -21,8 +23,10 @@ def main():
     apb = ArgumentParserBuilder()
     apb.add_opts(
         opt('--data',
-            type=Path,
-            help='Path to the dataset to run the model on'),
+            type=str,
+            help='Dataset to use, either nq (natural questions) or tqa (trivia QA)',
+            default='nq',
+            choices=['nq', 'tqa']),
         opt('--model-name',
             type=str,
             default='google/t5-large-ssm-nq',
@@ -39,8 +43,10 @@ def main():
     args = apb.parser.parse_args()
     options = ClosedBookQuestionAnsweringEvaluationOptions(**vars(args))
 
-    with open(options.data) as f:
-        data = json.load(f)
+    if options.data == 'nq':
+        data = search.get_topics('nq-test')
+    elif options.data == 'tqa':
+        data = search.get_topics('dpr-trivia-test')
 
     logging.info('Loading CBQA Model and Tokenizer')
 
@@ -48,12 +54,14 @@ def main():
     results = []
     scores = []
     for _, item in tqdm(data.items()):
-        prediction = cbqa.predict(item['question'])
+        answers = ast.literal_eval(item['answers'])
+        question = item['title']
+        prediction = cbqa.predict(question)
         if args.output_file is not None:
-            results.append({"question": item['question'],
-                            "answers": item['answers'],
+            results.append({"question": question,
+                            "answers": answers,
                             'prediction': prediction})
-        scores.append(max([ReaderEvaluator.exact_match_score(prediction, ga) for ga in item['answers']]))
+        scores.append(max([ReaderEvaluator.exact_match_score(prediction, ga) for ga in answers]))
 
     logging.info('CBQA prediction completed')
     em = np.mean(np.array(scores)) * 100.
