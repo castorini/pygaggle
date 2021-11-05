@@ -36,6 +36,7 @@ Exact Match Accuracy: 29.861495844875346
 
 ### Using t5-xl-ssm-nq
 
+Note: This model is slightly over 10GB in size. If you wish to run this on a GPU, please choose one with > 10GB memory.
 ```bash
 python -um pygaggle.run.evaluate_closed_book_question_answering --data nq \
                                                                 --model-name google/t5-xl-ssm-nq \
@@ -50,6 +51,7 @@ Exact Match Accuracy: 34.044321329639885
 
 ### Using t5-3b-ssm-nq
 
+Note: This model is slightly over 10GB in size. If you wish to run this on a GPU, please choose one with > 10GB memory.
 ```bash
 python -um pygaggle.run.evaluate_closed_book_question_answering --data nq \
                                                                 --model-name google/t5-3b-ssm-nq \
