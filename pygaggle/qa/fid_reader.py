@@ -6,6 +6,12 @@ from pygaggle.qa.span_selection import DprSelection
 from typing import List, Optional, Dict
 import transformers 
 
+import torch
+from torch.utils.data import DataLoader, SequentialSampler
+
+from pygaggle.qa.base import Reader, Answer, Question, Context
+import pygaggle.qa.fid.model as fid_model
+
 class FidReader(Reader):
     def __init__(
             self,
@@ -22,11 +28,12 @@ class FidReader(Reader):
         if span_selection_rules is None:
             span_selection_rules = [DprSelection()]
         self.device = device
-        self.model = DPRReader.from_pretrained(model_name).to(self.device).eval()
-        if tokenizer_name:
-            self.tokenizer =  transformers.T5Tokenizer.from_pretrained('t5-base', return_dict=False)
-        else:
-            self.tokenizer = DPRReaderTokenizer.from_pretrained(model_name)
+
+        model_class = fid_model.FiDT5
+        self.model = model_class.from_pretrained(opt.model_path).to(self.device).eval()
+        self.tokenizer =  transformers.T5Tokenizer.from_pretrained('t5-base', return_dict=False)
+        # FiD uses generate to compute spans
+
         self.span_selection_rules = span_selection_rules
         self.num_spans = num_spans
         self.max_answer_length = max_answer_length
@@ -34,6 +41,7 @@ class FidReader(Reader):
         self.batch_size = batch_size
 
     #this is just helper. eventually we need the predict function
+    # expanded upon Collator used by DataLoader
     def build_dataloader(
             self,
             question: Question,
@@ -84,11 +92,11 @@ class FidReader(Reader):
             contexts: List[Context],
             topk_retrievals: Optional[List[int]] = None,
     ) -> Dict[int, List[Answer]]:
-        batches = build_dataloader(question, contexts)
+        batches = self.build_dataloader(question, contexts)
         with torch.no_grad():
-            for i, batch in enumerate(dataloader):
+            for i, batch in enumerate(batches):
                 (context_ids, context_mask) = batch
-                outputs = model.generate(
+                outputs = self.model.generate(
                     input_ids=context_ids.cuda(),
                     attention_mask=context_mask.cuda(),
                     max_length=50

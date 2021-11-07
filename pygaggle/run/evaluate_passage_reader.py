@@ -10,11 +10,12 @@ from pydantic import BaseModel
 from .args import ArgumentParserBuilder, opt
 from pygaggle.qa.base import Reader, Question, Context
 from pygaggle.qa.dpr_reader import DprReader
+from pygaggle.qa.fid_reader import FidReader
 from pygaggle.qa.span_selection import DprSelection, GarSelection, DprFusionSelection, GarFusionSelection
 from pygaggle.data.retrieval import RetrievalExample
 from pygaggle.model.evaluate import ReaderEvaluator
 
-READER_CHOICES = ('dpr')
+READER_CHOICES = ('dpr', 'fid')
 
 
 class PassageReadingEvaluationOptions(BaseModel):
@@ -47,6 +48,9 @@ def construct_dpr(options: PassageReadingEvaluationOptions) -> Reader:
                      options.num_spans_per_passage,
                      options.batch_size,
                      options.device)
+
+def construct_fid() -> Reader:
+    return FidReader()
 
 
 def parse_span_selection_rules(settings):
@@ -145,6 +149,7 @@ def main():
     logging.info('Loading Reader Model and Tokenizer')
     construct_map = dict(
         dpr=construct_dpr,
+        fid=construct_fid
     )
     reader = construct_map[options.reader](options)
 
