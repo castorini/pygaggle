@@ -1,6 +1,6 @@
 import sys
 sys.path.insert(1, '/u0/o3liu/FiD')
-import test_reader
+# import test_reader
 from pygaggle.qa.base import Reader, Answer, Question, Context
 from pygaggle.qa.span_selection import DprSelection
 from typing import List, Optional, Dict
@@ -30,7 +30,7 @@ class FidReader(Reader):
         self.device = device
 
         model_class = fid_model.FiDT5
-        self.model = model_class.from_pretrained(opt.model_path).to(self.device).eval()
+        self.model = model_class.from_pretrained('/home/alvis/FiD/pretrained_models/nq_reader_base').to(self.device).eval()
         self.tokenizer =  transformers.T5Tokenizer.from_pretrained('t5-base', return_dict=False)
         # FiD uses generate to compute spans
 
@@ -40,7 +40,6 @@ class FidReader(Reader):
         self.num_spans_per_passage = num_spans_per_passage
         self.batch_size = batch_size
 
-    #this is just helper. eventually we need the predict function
     # expanded upon Collator used by DataLoader
     def build_dataloader(
             self,
@@ -64,23 +63,44 @@ class FidReader(Reader):
             passage_masks = torch.cat(passage_masks, dim=0)
             return passage_ids, passage_masks.bool()
 
-        def append_question(question, context):
-            if contexts is None:
-                return [question]
-            return [question + " " + t for t in context]
-        text_passages = [append_question(question, context) for context in contexts]
-        passage_ids, passage_masks = encode_passages(text_passages,
-                                                     self.tokenizer,
-                                                     self.text_maxlength)
-        batches= []
-        for i in range(0, len(contexts), self.batch_size):
-            batch = contexts[i: i + self.batch_size]
-            text_passages = [append_question(example) for example in batch]
-            passage_ids, passage_masks = encode_passages(text_passages,
-                                                     self.tokenizer,
-                                                     self.text_maxlength)
-            batches.append(passage_ids, passage_masks)
-        return batches
+        # def append_question(question, context):
+        #     if contexts is None:
+        #         return [question]
+        #     return [Question(text=question.text + " " + t) for t in contexts]
+        # text_passages = [append_question(question, context) for context in contexts]
+        for i in range(0, len(contexts)):
+            if contexts[i] is None: # Just following fid, not sure if possible
+                contexts[i] = [question]
+            else:
+                contexts[i].text = question.text + " " + contexts[i].text
+        print(question.text)
+        print(contexts[0].text)
+        print(contexts[1].text)
+
+
+        p = self.tokenizer.batch_encode_plus(
+                [c.text for c in contexts],
+                max_length=50,#self.text_maxlength,
+                pad_to_max_length=True,
+                return_tensors='pt',
+                truncation=True
+            )
+        print(p)
+
+        return (p['input_ids'][None], p['attention_mask'][None].bool())
+        
+        # passage_ids, passage_masks = encode_passages(text_passages,
+        #                                              self.tokenizer,
+        #                                              self.text_maxlength)
+        # batches= []
+        # for i in range(0, len(contexts), self.batch_size):
+        #     batch = contexts[i: i + self.batch_size]
+        #     text_passages = [append_question(example) for example in batch]
+        #     passage_ids, passage_masks = encode_passages(text_passages,
+        #                                              self.tokenizer,
+        #                                              self.text_maxlength)
+        #     batches.append(passage_ids, passage_masks)
+        # return batches
 
             
         
@@ -92,17 +112,31 @@ class FidReader(Reader):
             contexts: List[Context],
             topk_retrievals: Optional[List[int]] = None,
     ) -> Dict[int, List[Answer]]:
-        batches = self.build_dataloader(question, contexts)
+        batch = self.build_dataloader(question, contexts)
         with torch.no_grad():
-            for i, batch in enumerate(batches):
-                (context_ids, context_mask) = batch
-                outputs = self.model.generate(
-                    input_ids=context_ids.cuda(),
-                    attention_mask=context_mask.cuda(),
-                    max_length=50
-                )
-                for k, o in enumerate(outputs):
-                    ans = self.tokenizer.decode(o, skip_special_tokens=True)
+            (context_ids, context_mask) = batch
+            print(context_ids)
+            print(context_mask)
+            outputs = self.model.generate(
+                input_ids=context_ids.to(self.device),
+                attention_mask=context_mask.to(self.device),
+                max_length=50
+            )
+            # print("outputs:")
+            print("outputs:", outputs)
+            for k, o in enumerate(outputs):
+                ans = self.tokenizer.decode(o, skip_special_tokens=True)
+                print(ans)
+            print(ans)
+            # for i, batch in enumerate(batches):
+            #     (context_ids, context_mask) = batch
+            #     outputs = self.model.generate(
+            #         input_ids=context_ids.cuda(),
+            #         attention_mask=context_mask.cuda(),
+            #         max_length=50
+            #     )
+            #     for k, o in enumerate(outputs):
+            #         ans = self.tokenizer.decode(o, skip_special_tokens=True)
 
         
 if __name__ == "__main__":

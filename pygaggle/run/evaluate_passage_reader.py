@@ -49,8 +49,21 @@ def construct_dpr(options: PassageReadingEvaluationOptions) -> Reader:
                      options.batch_size,
                      options.device)
 
-def construct_fid() -> Reader:
-    return FidReader()
+def construct_fid(options: PassageReadingEvaluationOptions) -> Reader:
+    model = options.model_name
+    tokenizer = options.tokenizer_name
+
+    span_selection_rules = [parse_span_selection_rules(setting) for setting in options.settings]
+    return FidReader(model,
+                     tokenizer,
+                     span_selection_rules,
+                     options.num_spans,
+                     options.max_answer_length,
+                     options.num_spans_per_passage,
+                    #  options.text_maxlength,
+                     200,
+                     options.batch_size,
+                     options.device)
 
 
 def parse_span_selection_rules(settings):
