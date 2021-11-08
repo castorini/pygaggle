@@ -46,22 +46,22 @@ class FidReader(Reader):
             question: Question,
             contexts: List[Context], #corresponde to passages in fid
     ):
-        def encode_passages(batch_text_passages, tokenizer, max_length):
-            passage_ids, passage_masks = [], []
-            for k, text_passages in enumerate(batch_text_passages):
-                p = tokenizer.batch_encode_plus(
-                    text_passages,
-                    max_length=max_length,
-                    pad_to_max_length=True,
-                    return_tensors='pt',
-                    truncation=True
-                )
-                passage_ids.append(p['input_ids'][None])
-                passage_masks.append(p['attention_mask'][None])
+        # def encode_passages(batch_text_passages, tokenizer, max_length):
+        #     passage_ids, passage_masks = [], []
+        #     for k, text_passages in enumerate(batch_text_passages):
+        #         p = tokenizer.batch_encode_plus(
+        #             text_passages,
+        #             max_length=max_length,
+        #             pad_to_max_length=True,
+        #             return_tensors='pt',
+        #             truncation=True
+        #         )
+        #         passage_ids.append(p['input_ids'][None])
+        #         passage_masks.append(p['attention_mask'][None])
 
-            passage_ids = torch.cat(passage_ids, dim=0)
-            passage_masks = torch.cat(passage_masks, dim=0)
-            return passage_ids, passage_masks.bool()
+        #     passage_ids = torch.cat(passage_ids, dim=0)
+        #     passage_masks = torch.cat(passage_masks, dim=0)
+        #     return passage_ids, passage_masks.bool()
 
         # def append_question(question, context):
         #     if contexts is None:
@@ -69,23 +69,25 @@ class FidReader(Reader):
         #     return [Question(text=question.text + " " + t) for t in contexts]
         # text_passages = [append_question(question, context) for context in contexts]
         for i in range(0, len(contexts)):
-            if contexts[i] is None: # Just following fid, not sure if possible
-                contexts[i] = [question]
-            else:
-                contexts[i].text = question.text + " " + contexts[i].text
-        print(question.text)
-        print(contexts[0].text)
-        print(contexts[1].text)
+            # if contexts[i] is None: # Just following fid, not sure if possible
+            #     contexts[i] = [question]
+            # else:
+            contexts[i].text = "question: " + question.text + " " + \
+                                "title: " + contexts[i].title + " " + \
+                                "context: " + contexts[i].text
+        # print(question.text)
+        # print(contexts[0].text)
+        # print(contexts[1].text)
 
 
         p = self.tokenizer.batch_encode_plus(
                 [c.text for c in contexts],
-                max_length=50,#self.text_maxlength,
+                max_length=350,#self.text_maxlength,
                 pad_to_max_length=True,
                 return_tensors='pt',
                 truncation=True
             )
-        print(p)
+        # print(p)
 
         return (p['input_ids'][None], p['attention_mask'][None].bool())
         
@@ -113,21 +115,24 @@ class FidReader(Reader):
             topk_retrievals: Optional[List[int]] = None,
     ) -> Dict[int, List[Answer]]:
         batch = self.build_dataloader(question, contexts)
+        answers = {str(rule): {} for rule in self.span_selection_rules}
         with torch.no_grad():
             (context_ids, context_mask) = batch
-            print(context_ids)
-            print(context_mask)
+            # print(context_ids)
+            # print(len(context_ids))
+            # print(context_mask)
             outputs = self.model.generate(
                 input_ids=context_ids.to(self.device),
                 attention_mask=context_mask.to(self.device),
-                max_length=50
+                max_length=350 #from dpr_reader
             )
             # print("outputs:")
-            print("outputs:", outputs)
+            # print("outputs:", outputs)
             for k, o in enumerate(outputs):
                 ans = self.tokenizer.decode(o, skip_special_tokens=True)
                 print(ans)
             print(ans)
+        return answers
             # for i, batch in enumerate(batches):
             #     (context_ids, context_mask) = batch
             #     outputs = self.model.generate(
