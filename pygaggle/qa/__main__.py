@@ -63,3 +63,4 @@ if __name__ == '__main__':
             question = input('Please enter a question: ')
             answer = cbqa.predict(question)
             print(f"Answer:\t {answer}")
+
