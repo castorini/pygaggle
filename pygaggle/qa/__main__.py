@@ -38,19 +38,6 @@ if __name__ == '__main__':
     # check arguments
     arg_check(args, parser)
 
-    # commands = parser.add_subparsers(title='sub-commands')
-
-    # type_parser = commands.add_parser('type')
-    # define_type_args(type_parser)
-
-    # dense_parser = commands.add_parser('reader')
-    # define_reader_args(dense_parser)
-
-    # sparse_parser = commands.add_parser('retriever')
-    # define_retriever_args(sparse_parser)
-
-    # cbqa_parser = commands.add_parser('cbqa')
-    # define_cbqa_args(cbqa_parser)
     print("Init QA models")
     if args.type == 'openbook':
         reader = DprReader(args.reader_model, device=args.reader_device)
