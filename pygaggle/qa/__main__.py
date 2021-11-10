@@ -7,74 +7,58 @@ from pyserini.search import SimpleSearcher
 from pyserini.dsearch import SimpleDenseSearcher, DprQueryEncoder
 
 
-def define_reader_args(parser):
-    parser.add_argument('--model', type=str, required=True, help="Reader model name or path")
-    parser.add_argument('--device', type=str, required=False, default='cuda:0', help="Device to run inference on")
+def arg_check(args, parser):
+    if args.type == 'openbook':
+        requirements = ['retriever_index', 'retriever_corpus', 'reader_model']
+    elif args.type == 'closedbook':
+        requirements = ['cbqa_model']
 
+    for requirement in requirements:
+        if getattr(args, requirement) is None:
+            parser.error(f"--{requirement.replace('_', '-')} required when using {args.type} qa!")
 
-def define_retriever_args(parser):
-    parser.add_argument('--model', type=str, required=False, help="Retriever query encoder name or path")
-    parser.add_argument('--index', type=str, required=True, help="Pyserini index name or path")
-    parser.add_argument('--corpus', type=str, required=True, help="Pyserini sparse index name or path, serve as corpus")
-
-
-def define_type_args(parser):
-    parser.add_argument('qatype', type=str, choices=["openbook", "closedbook"], help="Open-book or closed-book question answering.")
-
-
-def define_cbqa_args(parser):
-    parser.add_argument('--model', type=str, required=True, help="CBQA model name or path")
-    parser.add_argument('--device', type=str, required=False, default='cuda:0', help="Device to run inference on")
-
-
-def parse_args(parser, commands):
-    # Divide argv by commands
-    split_argv = [[]]
-    for c in sys.argv[1:]:
-        if c in commands.choices:
-            split_argv.append([c])
-        else:
-            split_argv[-1].append(c)
-    # Initialize namespace
-    args = argparse.Namespace()
-    for c in commands.choices:
-        setattr(args, c, None)
-    # Parse each command
-    parser.parse_args(split_argv[0], namespace=args)  # Without command
-    for argv in split_argv[1:]:  # Commands
-        n = argparse.Namespace()
-        setattr(args, argv[0], n)
-        parser.parse_args(argv, namespace=n)
-    return args
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Interactive QA')
+    parser.add_argument('--type', type=str, choices=["openbook", "closedbook"], default='openbook', help="Open-book or closed-book question answering.")
 
-    commands = parser.add_subparsers(title='sub-commands')
+    parser.add_argument('--cbqa-model', type=str, required=False, help="CBQA model name or path")
+    parser.add_argument('--cbqa-device', type=str, required=False, default='cuda:0', help="Device to run inference on")
 
-    type_parser = commands.add_parser('type')
-    define_type_args(type_parser)
+    parser.add_argument('--retriever-model', type=str, required=False, help="Retriever query encoder name or path")
+    parser.add_argument('--retriever-index', type=str, required=False, help="Pyserini index name or path")
+    parser.add_argument('--retriever-corpus', type=str, required=False, help="Pyserini sparse index name or path, serve as corpus")
+    # index corpus, deivce
+    parser.add_argument('--reader-model', type=str, required=False, help="Reader model name or path")
+    parser.add_argument('--reader-device', type=str, required=False, default='cuda:0', help="Device to run inference on")
 
-    dense_parser = commands.add_parser('reader')
-    define_reader_args(dense_parser)
+    args = parser.parse_args()
 
-    sparse_parser = commands.add_parser('retriever')
-    define_retriever_args(sparse_parser)
+    # check arguments
+    arg_check(args, parser)
 
-    cbqa_parser = commands.add_parser('cbqa')
-    define_cbqa_args(cbqa_parser)
+    # commands = parser.add_subparsers(title='sub-commands')
 
-    args = parse_args(parser, commands)
+    # type_parser = commands.add_parser('type')
+    # define_type_args(type_parser)
 
+    # dense_parser = commands.add_parser('reader')
+    # define_reader_args(dense_parser)
+
+    # sparse_parser = commands.add_parser('retriever')
+    # define_retriever_args(sparse_parser)
+
+    # cbqa_parser = commands.add_parser('cbqa')
+    # define_cbqa_args(cbqa_parser)
     print("Init QA models")
-    if args.type.qatype == 'openbook':
-        reader = DprReader(args.reader.model, device=args.reader.device)
-        if args.retriever.model:
-            retriever = SimpleDenseSearcher(args.retriever.index, DprQueryEncoder(args.retriever.model))
+    if args.type == 'openbook':
+        reader = DprReader(args.reader_model, device=args.reader_device)
+        if args.retriever_model:
+            retriever = SimpleDenseSearcher(args.retriever_index, DprQueryEncoder(args.retriever_model))
         else:
-            retriever = SimpleSearcher.from_prebuilt_index(args.retriever.corpus)
-        corpus = SimpleSearcher.from_prebuilt_index(args.retriever.corpus)
+            retriever = SimpleSearcher.from_prebuilt_index(args.retriever_corpus)
+        corpus = SimpleSearcher.from_prebuilt_index(args.retriever_corpus)
         obqa = OpenBookQA(reader, retriever, corpus)
         # run a warm up question
         obqa.predict('what is lobster roll')
@@ -86,7 +70,7 @@ if __name__ == '__main__':
             print(f"Answer:\t {answer_text}")
             print(f"Context:\t {answer_context}")
     else:
-        cbqa = ClosedBookQA(args.cbqa.model, args.cbqa.device) if args.cbqa else ClosedBookQA()
+        cbqa = ClosedBookQA(args.cbqa_model, args.cbqa_device)
         # run a warm up question
         cbqa.predict('what is lobster roll')
         while True:
