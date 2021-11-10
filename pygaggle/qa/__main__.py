@@ -18,7 +18,6 @@ def arg_check(args, parser):
             parser.error(f"--{requirement.replace('_', '-')} required when using {args.type} qa!")
 
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Interactive QA')
     parser.add_argument('--type', type=str, choices=["openbook", "closedbook"], default='openbook', help="Open-book or closed-book question answering.")
