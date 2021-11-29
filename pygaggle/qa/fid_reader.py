@@ -131,7 +131,8 @@ class FidReader(Reader):
             for k, o in enumerate(outputs):
                 ans = self.tokenizer.decode(o, skip_special_tokens=True)
                 print(ans)
-            print(ans)
+            # print(ans)
+        return ans
         return answers
             # for i, batch in enumerate(batches):
             #     (context_ids, context_mask) = batch
