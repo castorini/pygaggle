@@ -67,5 +67,38 @@ Exact Match Accuracy: 31.191135734072024
 If you were able to replicate these results, please submit a PR adding to the replication log!
 Please mention in your PR if you find any difference!
 
+### Using t5-xxl-ssm-nq
+
+Note: This model is 41.5G in size. Please choose GPUs that have combined memory > 41.5G.
+```bash
+python -um pygaggle.run.evaluate_closed_book_question_answering --data nq \
+                                                                --model-name google/t5-xxl-ssm-nq \
+                                                                --device multigpu
+```
+
+The following output will be visible after it has finishes
+
+```
+Exact Match Accuracy: 36.70360110803324
+```
+
+### Using t5-11b-ssm-nq
+
+Note: This model is 42.1G in size. Please choose GPUs that have combined memory > 42.1G.
+```bash
+python -um pygaggle.run.evaluate_closed_book_question_answering --data nq \
+                                                                --model-name google/t5-11b-ssm-nq \
+                                                                --device multigpu
+```
+
+The following output will be visible after it has finishes
+
+```
+Exact Match Accuracy: 35.48476454293629
+```
+
+If you were able to replicate these results, please submit a PR adding to the replication log!
+Please mention in your PR if you find any difference!
+
 
 ## Replication Log
