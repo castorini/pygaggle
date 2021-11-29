@@ -202,6 +202,7 @@ def main():
     logging.info('prediction completed')
     em = np.mean(np.array(scores)) * 100.
     logging.info(f'Exact Match Accuracy: {em}')
+    return
 
 
     dpr_predictions = [] if args.output_file is not None else None
