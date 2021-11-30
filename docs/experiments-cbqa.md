@@ -1,6 +1,6 @@
 # PyGaggle: Closed Book Question Answering Baselines
 
-This page contains instructions for running the Closed Book Question Answering.
+This page contains instructions for running Closed Book Question Answering.
 
 First install Pygaggle
 
@@ -28,7 +28,7 @@ python -um pygaggle.run.evaluate_closed_book_question_answering --data nq \
                                                                 --device cuda:0
 ```
 
-The following output will be visible after it has finishes
+The following output will be visible after it finishes
 
 ```
 Exact Match Accuracy: 29.861495844875346
@@ -36,14 +36,14 @@ Exact Match Accuracy: 29.861495844875346
 
 ### Using t5-xl-ssm-nq
 
-Note: This model is slightly over 10GB in size. If you wish to run this on a GPU, please choose one with > 10GB memory.
+Note: This model is slightly over 10GB in size. If you wish to run this on a GPU, please choose one with memory > 10GB.
 ```bash
 python -um pygaggle.run.evaluate_closed_book_question_answering --data nq \
                                                                 --model-name google/t5-xl-ssm-nq \
                                                                 --device cuda:0
 ```
 
-The following output will be visible after it has finishes
+The following output will be visible after it finishes
 
 ```
 Exact Match Accuracy: 34.044321329639885
@@ -51,17 +51,47 @@ Exact Match Accuracy: 34.044321329639885
 
 ### Using t5-3b-ssm-nq
 
-Note: This model is slightly over 10GB in size. If you wish to run this on a GPU, please choose one with > 10GB memory.
+Note: This model is slightly over 10GB in size. If you wish to run this on a GPU, please choose one with memory > 10GB.
 ```bash
 python -um pygaggle.run.evaluate_closed_book_question_answering --data nq \
                                                                 --model-name google/t5-3b-ssm-nq \
                                                                 --device cuda:0
 ```
 
-The following output will be visible after it has finishes
+The following output will be visible after it finishes
 
 ```
 Exact Match Accuracy: 31.191135734072024
+```
+
+### Using t5-xxl-ssm-nq
+
+Note: This model is 41.5G in size. Please choose GPUs that have combined memory > 41.5G.
+```bash
+python -um pygaggle.run.evaluate_closed_book_question_answering --data nq \
+                                                                --model-name google/t5-xxl-ssm-nq \
+                                                                --device multigpu
+```
+
+The following output will be visible after it finishes
+
+```
+Exact Match Accuracy: 36.70360110803324
+```
+
+### Using t5-11b-ssm-nq
+
+Note: This model is 42.1G in size. Please choose GPUs that have combined memory > 42.1G.
+```bash
+python -um pygaggle.run.evaluate_closed_book_question_answering --data nq \
+                                                                --model-name google/t5-11b-ssm-nq \
+                                                                --device multigpu
+```
+
+The following output will be visible after it finishes
+
+```
+Exact Match Accuracy: 35.48476454293629
 ```
 
 If you were able to replicate these results, please submit a PR adding to the replication log!
