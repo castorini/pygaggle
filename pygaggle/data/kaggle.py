@@ -79,15 +79,15 @@ class LitReviewDataset(BaseModel):
             int_rels = np.array(list(map(int, rels)))
             p = int_rels.sum()
             mean_stats['Average spans'].append(p)
-            mean_stats['Random P@1'].append(np.mean(int_rels))
+            mean_stats['Expected P@1 for Random Ordering'].append(np.mean(int_rels))
             n = len(int_rels) - p
             N = len(int_rels)
-            mean_stats['Random R@3'].append(1 - (n * (n - 1) * (n - 2)) / (N * (N - 1) * (N - 2)))
+            mean_stats['Expected R@3 for Random Ordering'].append(1 - (n * (n - 1) * (n - 2)) / (N * (N - 1) * (N - 2)))
             numer = np.array([sp.comb(n, i) / (N - i) for i in range(0, n + 1)]) * p
             denom = np.array([sp.comb(N, i) for i in range(0, n + 1)])
             rr = 1 / np.arange(1, n + 2)
             rmrr = np.sum(numer * rr / denom)
-            mean_stats['Random MRR'].append(rmrr)
+            mean_stats['Expected MRR for Random Ordering'].append(rmrr)
             if not any(rels):
                 logging.warning(f'{doc_id} has no relevant answers')
         for k, v in mean_stats.items():

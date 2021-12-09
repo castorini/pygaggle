@@ -118,20 +118,20 @@ class MsMarcoDataset(BaseModel):
         for ex in self.examples:
             int_rels = np.array(list(map(int, example_map[ex.qid][3])))
             p = int_rels.sum()/(len(ex.candidates) - 1) if is_duo else int_rels.sum()
-            mean_stats['Random P@1'].append(np.mean(int_rels))
+            mean_stats['Expected P@1 for Random Ordering'].append(np.mean(int_rels))
             n = len(ex.candidates) - p
             N = len(ex.candidates)
             if len(ex.candidates) <= 1000:
-                mean_stats['Random R@1000'].append(1 if 1 in int_rels else 0)
+                mean_stats['Expected R@1000 for Random Ordering'].append(1 if 1 in int_rels else 0)
             numer = np.array([sp.comb(n, i) / (N - i) for i in range(0, n + 1) if i != N]) * p
             if n == N:
                 numer = np.append(numer, 0)
             denom = np.array([sp.comb(N, i) for i in range(0, n + 1)])
             rr = 1 / np.arange(1, n + 2)
             rmrr = np.sum(numer * rr / denom)
-            mean_stats['Random MRR'].append(rmrr)
+            mean_stats['Expected MRR for Random Ordering'].append(rmrr)
             rmrr10 = np.sum(numer[:10] * rr[:10] / denom[:10])
-            mean_stats['Random MRR@10'].append(rmrr10)
+            mean_stats['Expected MRR@10 for Random Ordering'].append(rmrr10)
             ex_index = len(ex.candidates)
             for rel_cand in ex.relevant_candidates:
                 if rel_cand in ex.candidates:
