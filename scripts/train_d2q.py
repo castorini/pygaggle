@@ -32,7 +32,7 @@ class TrainerDataset(Dataset):
 
 parser = argparse.ArgumentParser(description='Train docTquery on more datasets')
 parser.add_argument('--pretrained_model_path', default='t5-base', help='pretrained model path')
-parser.add_argument('--tag', defaut='msmarco', help='tag for training data', type=str)
+parser.add_argument('--tag', default='msmarco', help='tag for training data', type=str)
 parser.add_argument('--train_data_path', required=True, help='training data path')
 parser.add_argument('--output_path', required=True, help='output directory path')
 parser.add_argument('--epoch', default=1, type=int)
