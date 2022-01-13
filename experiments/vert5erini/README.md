@@ -345,7 +345,7 @@ E.g. If you want to evaluate Sentence Selection in oracle setting, when you run 
 
 
 ## Replication Log
-
+* Results replicated by [@Elfsong](https://github.com/Elfsong) on 2020-09-08 (commit[`2bb2f0e`](https://github.com/castorini/pygaggle/commit/2bb2f0eb9cc34ac626ffb7648b73b4695468eba7)) (TPU v3-8)
 
 
 
