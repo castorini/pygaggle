@@ -345,7 +345,7 @@ E.g. If you want to evaluate Sentence Selection in oracle setting, when you run 
 
 
 ## Replication Log
-
+* Results replicated by [@Elfsong] on 2020-09-08 (TPU v3-8)
 
 
 
