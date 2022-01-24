@@ -109,11 +109,11 @@ The files are made available in our [bucket](https://console.cloud.google.com/st
 Note that there might be a memory issue if the monoT5 input file is too large for the memory in the instance. We thus split the input file into multiple files.
 
 ```
-split --suffix-length 3 --numeric-suffixes --lines 800000 ${DATA_DIR}/query_doc_pairs.dev.small.txt ${DATA_DIR}/query_doc_pairs.dev.small.txt
+split --suffix-length 3 --numeric-suffixes --lines 1000000 ${DATA_DIR}/query_doc_pairs.dev.small.txt ${DATA_DIR}/query_doc_pairs.dev.small.txt
 ```
 
-For `query_doc_pairs.dev.small.txt`, we will get 9 files after split. i.e. (`query_doc_pairs.dev.small.txt000` to `query_doc_pairs.dev.small.txt008`).
-Note that it is possible that running reranking might still result in OOM issues in which case reduce the number of lines to smaller than `800000`.
+For `query_doc_pairs.dev.small.txt`, we will get 7 files after split. i.e. (`query_doc_pairs.dev.small.txt000` to `query_doc_pairs.dev.small.txt006`).
+Note that it is possible that running reranking might still result in OOM issues in which case reduce the number of lines to smaller than `1000000`.
 
 We copy these input files to Google Storage. TPU inference will read data directly from `gs`.
 ```
