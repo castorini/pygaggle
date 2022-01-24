@@ -179,7 +179,7 @@ export MODEL_DIR=gs://castorini/monot5/experiments/${MODEL_NAME}
 
 Then run following command to start the process in background and monitor the log
 ```
-for ITER in {000..008}; do
+for ITER in {000..006}; do
   echo "Running iter: $ITER" >> out.log_eval_exp
   nohup t5_mesh_transformer \
     --tpu="${TPU_NAME}" \
@@ -249,7 +249,7 @@ QueriesRanked: 6980
 If you were able to replicate any of these results, please submit a PR adding to the replication log, along with the model(s) you replicated. 
 Please mention in your PR if you note any differences.
 
-## Train a monoT5 reranker
+## Training a monoT5 reranker
 
 We use the following environment variables:
 
