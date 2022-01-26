@@ -109,11 +109,11 @@ The files are made available in our [bucket](https://console.cloud.google.com/st
 Note that there might be a memory issue if the monoT5 input file is too large for the memory in the instance. We thus split the input file into multiple files.
 
 ```
-split --suffix-length 3 --numeric-suffixes --lines 800000 ${DATA_DIR}/query_doc_pairs.dev.small.txt ${DATA_DIR}/query_doc_pairs.dev.small.txt
+split --suffix-length 3 --numeric-suffixes --lines 1000000 ${DATA_DIR}/query_doc_pairs.dev.small.txt ${DATA_DIR}/query_doc_pairs.dev.small.txt
 ```
 
-For `query_doc_pairs.dev.small.txt`, we will get 9 files after split. i.e. (`query_doc_pairs.dev.small.txt000` to `query_doc_pairs.dev.small.txt008`).
-Note that it is possible that running reranking might still result in OOM issues in which case reduce the number of lines to smaller than `800000`.
+For `query_doc_pairs.dev.small.txt`, we will get 7 files after split. i.e. (`query_doc_pairs.dev.small.txt000` to `query_doc_pairs.dev.small.txt006`).
+Note that it is possible that running reranking might still result in OOM issues in which case reduce the number of lines to smaller than `1000000`.
 
 We copy these input files to Google Storage. TPU inference will read data directly from `gs`.
 ```
@@ -179,7 +179,7 @@ export MODEL_DIR=gs://castorini/monot5/experiments/${MODEL_NAME}
 
 Then run following command to start the process in background and monitor the log
 ```
-for ITER in {000..008}; do
+for ITER in {000..006}; do
   echo "Running iter: $ITER" >> out.log_eval_exp
   nohup t5_mesh_transformer \
     --tpu="${TPU_NAME}" \
@@ -249,7 +249,7 @@ QueriesRanked: 6980
 If you were able to replicate any of these results, please submit a PR adding to the replication log, along with the model(s) you replicated. 
 Please mention in your PR if you note any differences.
 
-## Train a monoT5 reranker
+## Training a monoT5 reranker
 
 We use the following environment variables:
 
