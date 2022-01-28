@@ -38,17 +38,17 @@ prediction_tokens = {
         'castorini/monot5-large-msmarco-10k':        ['▁false', '▁true'],
         'castorini/monot5-base-med-msmarco':         ['▁false', '▁true'],
         'castorini/monot5-3b-med-msmarco':           ['▁false', '▁true'],
-        'unicamp-dl/mt5-base-en-msmarco',            ['▁no'   , '▁yes'],
-        'unicamp-dl/ptt5-base-pt-msmarco-10k-v2',    ['▁não'  , '▁sim'],
-        'unicamp-dl/ptt5-base-pt-msmarco-100k-v2',   ['▁não'  , '▁sim'],
-        'unicamp-dl/ptt5-base-en-pt-msmarco-100k-v2',['▁não'  , '▁sim'],
-        'unicamp-dl/mt5-base-en-pt-msmarco-v2',      ['▁no'   , '▁yes'],
-        'unicamp-dl/mt5-base-mmarco-v2',             ['▁no'   , '▁yes'],
-        'unicamp-dl/mt5-base-en-pt-msmarco-v1',      ['▁no'   , '▁yes'],
-        'unicamp-dl/mt5-base-mmarco-v1',             ['▁no'   , '▁yes'],
-        'unicamp-dl/ptt5-base-pt-msmarco-10k-v1',    ['▁não'  , '▁sim'],
-        'unicamp-dl/ptt5-base-pt-msmarco-100k-v1',   ['▁não'  , '▁sim'],
-        'unicamp-dl/ptt5-base-en-pt-msmarco-10k-v1', ['▁não'  , '▁sim']
+        'unicamp-dl/mt5-base-en-msmarco':            ['▁no'   , '▁yes'],
+        'unicamp-dl/ptt5-base-pt-msmarco-10k-v2':    ['▁não'  , '▁sim'],
+        'unicamp-dl/ptt5-base-pt-msmarco-100k-v2':   ['▁não'  , '▁sim'],
+        'unicamp-dl/ptt5-base-en-pt-msmarco-100k-v2':['▁não'  , '▁sim'],
+        'unicamp-dl/mt5-base-en-pt-msmarco-v2':      ['▁no'   , '▁yes'],
+        'unicamp-dl/mt5-base-mmarco-v2':             ['▁no'   , '▁yes'],
+        'unicamp-dl/mt5-base-en-pt-msmarco-v1':      ['▁no'   , '▁yes'],
+        'unicamp-dl/mt5-base-mmarco-v1':             ['▁no'   , '▁yes'],
+        'unicamp-dl/ptt5-base-pt-msmarco-10k-v1':    ['▁não'  , '▁sim'],
+        'unicamp-dl/ptt5-base-pt-msmarco-100k-v1':   ['▁não'  , '▁sim'],
+        'unicamp-dl/ptt5-base-en-pt-msmarco-10k-v1': ['▁não'  , '▁sim']
         }
 
 
