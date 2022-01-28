@@ -40,9 +40,11 @@ conda init
 conda create --y --name py36 python=3.6
 conda activate py36
 conda install -c conda-forge httptools jsonnet --yes
+pip install certifi --ignore-installed
 pip install tensorflow==2.3 tensorflow-text==2.3 t5[gcp]==0.6.4 pyserini jsonlines
 git clone https://github.com/castorini/mesh.git
-pip install --editable mesh
+cd mesh
+pip install -e .
 ```
 
 ## Download Dataset
@@ -119,7 +121,7 @@ t5_mesh_transformer \
   --gcp_project=${PROJECT_NAME} \
   --tpu_zone="europe-west4-a" \
   --model_dir="gs://pongo-bucket/xueguang/vert5-repl/ss-train" \
-  --gin_file="operative_config.gin" \
+  --gin_file="gs://t5-data/pretrained_models/3B/operative_config.gin" \
   --gin_file="infer.gin" \
   --gin_file="beam_search.gin" \
   --gin_param="utils.tpu_mesh_shape.tpu_topology = '2x2'" \
@@ -140,6 +142,7 @@ python create_ss_result.py --claims claims_dev.jsonl \
                            --t5_output_ids ss_inference_dev_ids.txt \
                            --t5_output ss_inference_dev_monot5-3b_output.txt-1012500 \
                            --results ss_dev.jsonl
+                           --thres 0.0001
 ```
 
 ## Label Prediction (LP)
@@ -239,7 +242,7 @@ t5_mesh_transformer  \
   --gin_param="init_checkpoint = 'gs://neuralresearcher_data/doc2query/experiments/363/model.ckpt-${MODEL_INIT_CKPT}'" \
   --gin_file="dataset.gin" \
   --gin_file="models/bi_v1.gin" \
-  --gin_file="operative_config.gin" \
+  --gin_file="gs://t5-data/pretrained_models/3B/operative_config.gin" \
   --gin_param="utils.tpu_mesh_shape.model_parallelism = 8" \
   --gin_param="utils.tpu_mesh_shape.tpu_topology = '2x2'" \
   --gin_param="utils.run.train_dataset_fn = @t5.models.mesh_transformer.tsv_dataset_fn" \
@@ -277,7 +280,7 @@ t5_mesh_transformer  \
   --gin_param="init_checkpoint = 'gs://t5-data/pretrained_models/${MODEL_NAME}/model.ckpt-${MODEL_INIT_CKPT}'" \
   --gin_file="dataset.gin" \
   --gin_file="models/bi_v1.gin" \
-  --gin_file="operative_config.gin" \
+  --gin_file="gs://t5-data/pretrained_models/3B/operative_config.gin" \
   --gin_param="utils.tpu_mesh_shape.model_parallelism = 8" \
   --gin_param="utils.tpu_mesh_shape.tpu_topology = '2x2'" \
   --gin_param="utils.run.train_dataset_fn = @t5.models.mesh_transformer.tsv_dataset_fn" \
