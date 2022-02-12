@@ -130,7 +130,6 @@ class FidReader(Reader):
             # print("outputs:", outputs)
             for k, o in enumerate(outputs):
                 ans = self.tokenizer.decode(o, skip_special_tokens=True)
-                print(ans)
             # print(ans)
         return ans
         return answers

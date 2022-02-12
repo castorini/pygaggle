@@ -233,7 +233,6 @@ def main():
                             "answers": example.ground_truth_answers,
                             'prediction': answer})
         score = max([ReaderEvaluator.exact_match_score(answer, ga) for ga in example.ground_truth_answers])
-        print(score)
         scores.append(score)
     
     logging.info('prediction completed')
