@@ -222,23 +222,23 @@ def main():
             )
         )
 
-
     from tqdm import tqdm
     results = []
     scores = []
     for example in tqdm(examples):
         answer = reader.predict(example.question, example.contexts, options.topk_em)
-        if args.output_file is not None:
-            results.append({"question": example.question,
-                            "answers": example.ground_truth_answers,
-                            'prediction': answer})
+        results.append({"question": example.question,
+                        "answers": example.ground_truth_answers,
+                        'prediction': answer})
         score = max([ReaderEvaluator.exact_match_score(answer, ga) for ga in example.ground_truth_answers])
         scores.append(score)
     
     logging.info('prediction completed')
     em = np.mean(np.array(scores)) * 100.
     logging.info(f'Exact Match Accuracy: {em}')
-    return
+
+    with open("reader_output.nq_test.fid_base.json", 'w', encoding='utf-8', newline='\n') as f:
+        json.dump(results, f, indent=4)
 
 
 if __name__ == '__main__':
