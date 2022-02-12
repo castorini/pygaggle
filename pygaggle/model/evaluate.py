@@ -286,24 +286,24 @@ class ReaderEvaluator:
         ems = {str(setting): {k: [] for k in topk_em} for setting in self.reader.span_selection_rules}
         for example in tqdm(examples):
             answers = self.reader.predict(example.question, example.contexts, topk_em)
-            # ground_truth_answers = example.ground_truth_answers
+            ground_truth_answers = example.ground_truth_answers
 
-            # topk_prediction = {str(setting): {} for setting in self.reader.span_selection_rules}
+            topk_prediction = {str(setting): {} for setting in self.reader.span_selection_rules}
 
-            # for setting in self.reader.span_selection_rules:
-            #     for k in topk_em:
-            #         best_answer = answers[str(setting)][k][0].text
-            #         em_hit = max([ReaderEvaluator.exact_match_score(best_answer, ga) for ga in ground_truth_answers])
-            #         ems[str(setting)][k].append(em_hit)
+            for setting in self.reader.span_selection_rules:
+                for k in topk_em:
+                    best_answer = answers[str(setting)][k][0].text
+                    em_hit = max([ReaderEvaluator.exact_match_score(best_answer, ga) for ga in ground_truth_answers])
+                    ems[str(setting)][k].append(em_hit)
 
-            #         topk_prediction[f'{str(setting)}'][f'top{k}'] = best_answer
+                    topk_prediction[f'{str(setting)}'][f'top{k}'] = best_answer
 
-            # if dpr_predictions is not None:
-            #     dpr_predictions.append({
-            #         'question': example.question.text,
-            #         'answers': ground_truth_answers,
-            #         'prediction': topk_prediction,
-            #     })
+            if dpr_predictions is not None:
+                dpr_predictions.append({
+                    'question': example.question.text,
+                    'answers': ground_truth_answers,
+                    'prediction': topk_prediction,
+                })
 
         return ems
 

@@ -1,3 +1,4 @@
+from pygaggle.qa.fid_reader import FidReader
 from typing import List, Optional
 from pathlib import Path
 import logging
@@ -12,9 +13,62 @@ from pygaggle.qa.base import Reader, Question, Context
 from pygaggle.qa.dpr_reader import DprReader
 from pygaggle.qa.span_selection import DprSelection, GarSelection, DprFusionSelection, GarFusionSelection
 from pygaggle.data.retrieval import RetrievalExample
-from pygaggle.model.evaluate import ReaderEvaluator
+from typing import List, Optional, Dict
+from tqdm import tqdm
+import numpy as np
+import string
+import regex as re
 
-READER_CHOICES = ('dpr')
+
+READER_CHOICES = ('dpr', 'fid')
+
+class ReaderEvaluator:
+    """Class for evaluating a reader.
+    Takes in a list of examples (query, texts, ground truth answers),
+    predicts a list of answers using the Reader passed in, and
+    collects the exact match accuracies between the best answer and
+    the ground truth answers given in the example.
+    Exact match scoring used is identical to the DPR repository.
+    """
+
+    def __init__(
+        self,
+        reader: Reader,
+    ):
+        self.reader = reader
+
+    def evaluate(
+        self,
+        examples: List[RetrievalExample],
+        topk_em: List[int] = [50],
+        dpr_predictions: Optional[Dict[int, List[Dict[str, str]]]] = None,
+    ):
+        ems = {str(setting): {k: [] for k in topk_em} for setting in self.reader.span_selection_rules}
+        for example in tqdm(examples):
+            answers = self.reader.predict(example.question, example.contexts, topk_em)
+
+        return ems
+
+    @staticmethod
+    def exact_match_score(prediction, ground_truth):
+        return ReaderEvaluator._normalize_answer(prediction) == ReaderEvaluator._normalize_answer(ground_truth)
+
+    @staticmethod
+    def _normalize_answer(s):
+        def remove_articles(text):
+            return re.sub(r'\b(a|an|the)\b', ' ', text)
+
+        def white_space_fix(text):
+            return ' '.join(text.split())
+
+        def remove_punc(text):
+            exclude = set(string.punctuation)
+            return ''.join(ch for ch in text if ch not in exclude)
+
+        def lower(text):
+            return text.lower()
+
+        return white_space_fix(remove_articles(remove_punc(lower(s))))
 
 
 class PassageReadingEvaluationOptions(BaseModel):
@@ -32,21 +86,22 @@ class PassageReadingEvaluationOptions(BaseModel):
     batch_size: int
     topk_em: List[int]
 
-
-def construct_dpr(options: PassageReadingEvaluationOptions) -> Reader:
+def construct_fid(options: PassageReadingEvaluationOptions) -> Reader:
     model = options.model_name
     tokenizer = options.tokenizer_name
 
     span_selection_rules = [parse_span_selection_rules(setting) for setting in options.settings]
-
-    return DprReader(model,
+    return FidReader(model,
                      tokenizer,
                      span_selection_rules,
                      options.num_spans,
                      options.max_answer_length,
                      options.num_spans_per_passage,
+                    #  options.text_maxlength,
+                     200,
                      options.batch_size,
                      options.device)
+
 
 
 def parse_span_selection_rules(settings):
@@ -59,7 +114,6 @@ def parse_span_selection_rules(settings):
         garfusion=GarFusionSelection,
     )
     return settings_map[settings[0]](*settings[1:])
-
 
 def main():
     apb = ArgumentParserBuilder()
@@ -144,7 +198,8 @@ def main():
 
     logging.info('Loading Reader Model and Tokenizer')
     construct_map = dict(
-        dpr=construct_dpr,
+        # dpr=construct_dpr,
+        fid=construct_fid
     )
     reader = construct_map[options.reader](options)
 
@@ -166,21 +221,25 @@ def main():
                 ground_truth_answers=item['answers'],
             )
         )
-    dpr_predictions = [] if args.output_file is not None else None
 
-    ems = evaluator.evaluate(examples, options.topk_em, dpr_predictions)
 
-    logging.info('Reader completed')
-
-    for setting in reader.span_selection_rules:
-        logging.info(f'Setting: {str(setting)}')
-        for k in options.topk_em:
-            em = np.mean(np.array(ems[str(setting)][k])) * 100.
-            logging.info(f'Top{k}\tExact Match Accuracy: {em}')
-
-    if args.output_file is not None:
-        with open(args.output_file, 'w', encoding='utf-8', newline='\n') as f:
-            json.dump(dpr_predictions, f, indent=4)
+    from tqdm import tqdm
+    results = []
+    scores = []
+    for example in tqdm(examples):
+        answer = reader.predict(example.question, example.contexts, options.topk_em)
+        if args.output_file is not None:
+            results.append({"question": example.question,
+                            "answers": example.ground_truth_answers,
+                            'prediction': answer})
+        score = max([ReaderEvaluator.exact_match_score(answer, ga) for ga in example.ground_truth_answers])
+        print(score)
+        scores.append(score)
+    
+    logging.info('prediction completed')
+    em = np.mean(np.array(scores)) * 100.
+    logging.info(f'Exact Match Accuracy: {em}')
+    return
 
 
 if __name__ == '__main__':
