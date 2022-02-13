@@ -227,7 +227,7 @@ def main():
     scores = []
     for example in tqdm(examples):
         answer = reader.predict(example.question, example.contexts, options.topk_em)
-        results.append({"question": example.question,
+        results.append({"question": example.question.text,
                         "answers": example.ground_truth_answers,
                         'prediction': answer})
         score = max([ReaderEvaluator.exact_match_score(answer, ga) for ga in example.ground_truth_answers])
