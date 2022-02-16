@@ -1,6 +1,3 @@
-import sys
-sys.path.insert(1, '/u0/o3liu/FiD')
-# import test_reader
 from pygaggle.qa.base import Reader, Answer, Question, Context
 from pygaggle.qa.span_selection import DprSelection
 from typing import List, Optional, Dict
@@ -46,39 +43,10 @@ class FidReader(Reader):
             question: Question,
             contexts: List[Context], #corresponde to passages in fid
     ):
-        # def encode_passages(batch_text_passages, tokenizer, max_length):
-        #     passage_ids, passage_masks = [], []
-        #     for k, text_passages in enumerate(batch_text_passages):
-        #         p = tokenizer.batch_encode_plus(
-        #             text_passages,
-        #             max_length=max_length,
-        #             pad_to_max_length=True,
-        #             return_tensors='pt',
-        #             truncation=True
-        #         )
-        #         passage_ids.append(p['input_ids'][None])
-        #         passage_masks.append(p['attention_mask'][None])
-
-        #     passage_ids = torch.cat(passage_ids, dim=0)
-        #     passage_masks = torch.cat(passage_masks, dim=0)
-        #     return passage_ids, passage_masks.bool()
-
-        # def append_question(question, context):
-        #     if contexts is None:
-        #         return [question]
-        #     return [Question(text=question.text + " " + t) for t in contexts]
-        # text_passages = [append_question(question, context) for context in contexts]
         for i in range(0, len(contexts)):
-            # if contexts[i] is None: # Just following fid, not sure if possible
-            #     contexts[i] = [question]
-            # else:
             contexts[i].text = "question: " + question.text + " " + \
                                 "title: " + contexts[i].title + " " + \
                                 "context: " + contexts[i].text
-        # print(question.text)
-        # print(contexts[0].text)
-        # print(contexts[1].text)
-
 
         p = self.tokenizer.batch_encode_plus(
                 [c.text for c in contexts],
@@ -87,25 +55,7 @@ class FidReader(Reader):
                 return_tensors='pt',
                 truncation=True
             )
-        # print(p)
-
-        return (p['input_ids'][None], p['attention_mask'][None].bool())
-        
-        # passage_ids, passage_masks = encode_passages(text_passages,
-        #                                              self.tokenizer,
-        #                                              self.text_maxlength)
-        # batches= []
-        # for i in range(0, len(contexts), self.batch_size):
-        #     batch = contexts[i: i + self.batch_size]
-        #     text_passages = [append_question(example) for example in batch]
-        #     passage_ids, passage_masks = encode_passages(text_passages,
-        #                                              self.tokenizer,
-        #                                              self.text_maxlength)
-        #     batches.append(passage_ids, passage_masks)
-        # return batches
-
-            
-        
+        return (p['input_ids'][None], p['attention_mask'][None].bool())   
 
 
     def predict(
@@ -118,31 +68,11 @@ class FidReader(Reader):
         answers = {str(rule): {} for rule in self.span_selection_rules}
         with torch.no_grad():
             (context_ids, context_mask) = batch
-            # print(context_ids)
-            # print(len(context_ids))
-            # print(context_mask)
             outputs = self.model.generate(
                 input_ids=context_ids.to(self.device),
                 attention_mask=context_mask.to(self.device),
                 max_length=350 #from dpr_reader
             )
-            # print("outputs:")
-            # print("outputs:", outputs)
             for k, o in enumerate(outputs):
                 ans = self.tokenizer.decode(o, skip_special_tokens=True)
-            # print(ans)
         return ans
-        return answers
-            # for i, batch in enumerate(batches):
-            #     (context_ids, context_mask) = batch
-            #     outputs = self.model.generate(
-            #         input_ids=context_ids.cuda(),
-            #         attention_mask=context_mask.cuda(),
-            #         max_length=50
-            #     )
-            #     for k, o in enumerate(outputs):
-            #         ans = self.tokenizer.decode(o, skip_special_tokens=True)
-
-        
-if __name__ == "__main__":
-    print("main function executed")
