@@ -20,8 +20,6 @@ import string
 import regex as re
 
 
-READER_CHOICES = ('dpr', 'fid')
-
 class ReaderEvaluator:
     """Class for evaluating a reader.
     Takes in a list of examples (query, texts, ground truth answers),
@@ -127,8 +125,8 @@ def main():
             help='Retriever score field to rank the input passages to the reader'),
         opt('--reader',
             type=str,
-            required=True,
-            choices=READER_CHOICES),
+            required=True.
+            default='fid'),
         opt('--settings',
             type=str,
             nargs='+',
