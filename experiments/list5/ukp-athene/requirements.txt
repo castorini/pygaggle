@@ -124,7 +124,7 @@ retinasdk==1.0.0
 rope==0.10.7
 rsa==3.4.2
 s3transfer==0.1.13
-sanic==0.6.0
+sanic==20.12.6
 Sanic-Cors==0.9.4
 Sanic-Plugins-Framework==0.5.2.dev20180201
 scikit-learn==0.19.1
