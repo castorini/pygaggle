@@ -145,6 +145,18 @@ def get_scores(predictions, references, annotations, annotation_labels=None):
             'f1_score': 100 * sum(f) / len(f),
             'n_examples': len(annotation_ids),
         }
+
+    # for no overlap (both no answer overlap & no question overlap)
+    annotation_ids = [annotation['id'] for annotation in annotations if ("no_answer_overlap" in annotation['labels']) and ("no_question_overlap" in annotation['labels'])]
+    preds = [predictions_map[idd]['prediction'] for idd in annotation_ids]
+    refs = [references_map[idd]['answers'] for idd in annotation_ids]
+    em = _get_scores(preds, refs, exact_match_score)
+    f = _get_scores(preds, refs, f1_score)
+    results["no_overlap"] = {
+        'exact_match': 100 * sum(em) / len(em),
+        'f1_score': 100 * sum(f) / len(f),
+        'n_examples': len(annotation_ids),
+    }
     return results
 
 
@@ -161,7 +173,7 @@ def _main(predictions_path, references_path, annoations_path):
     references = read_json_arry(references_path)
     annotations = read_annotations(annoations_path)
     scores = get_scores(predictions, references, annotations)
-    for label in ANNOTATIONS:
+    for label in ANNOTATIONS + ["no_overlap"]:
         _print_score(label, scores[label])
 
 
