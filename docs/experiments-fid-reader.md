@@ -28,6 +28,8 @@ pip install -r requirements.txt
 !pip install transformers==4.10.0
 ```
 
+After downloading the model, don't forget to change the model being used in pygaggle/qa/fid_reader.py
+
 Then we run the inference and evaluation in the TOP level directory of Pygaggle:
 ```bash
 $ python -um pygaggle.run.evaluate_fid_ranker --task wikipedia --retriever score --reader fid \
