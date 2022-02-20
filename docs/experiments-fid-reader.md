@@ -28,7 +28,7 @@ pip install -r requirements.txt
 !pip install transformers==4.10.0
 ```
 
-After downloading the model, don't forget to change the model being used in pygaggle/qa/fid_reader.py
+After downloading the model, don't forget to change the model name being used in pygaggle/qa/fid_reader.py
 
 Then we run the inference and evaluation in the TOP level directory of Pygaggle:
 ```bash
@@ -42,6 +42,82 @@ Finally, we can analyze the result file using pygaggle/scripts/evaluate-fid.py.
 ```bash
 $ python scripts/evaluate-fid.py --predictions reader_output.nq_test.fid_base.json \
                                  --dataset_name naturalquestions
+```
+
+With result (with bm25 and tqa & large model):
+
+```bash
+reader_output.bm25_nq_test.fid_large.json
+--------------------------------------------------
+Label       : total
+N examples  :  3610
+Exact Match :  54.930747922437675
+--------------------------------------------------
+Label       : question_overlap
+N examples  :  324
+Exact Match :  77.46913580246914
+--------------------------------------------------
+Label       : no_question_overlap
+N examples  :  672
+Exact Match :  43.601190476190474
+--------------------------------------------------
+Label       : answer_overlap
+N examples  :  2297
+Exact Match :  65.82498911623857
+--------------------------------------------------
+Label       : no_answer_overlap
+N examples  :  1313
+Exact Match :  35.872048743335874
+--------------------------------------------------
+Label       : answer_overlap_only
+N examples  :  315
+Exact Match :  48.888888888888886
+--------------------------------------------------
+Label       : no_overlap
+N examples  :  357
+Exact Match :  38.93557422969187
+```
+
+
+## Trivia QA (TQA)
+End-to-end answer prediction using **Hybrid Retrieval**
+
+Run nvidia-smi to make sure gpu is set up.
+```bash
+pip install pyserini
+export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
+git clone https://github.com/castorini/pygaggle.git 
+cd pygaggle
+pip install --editable .
+pip install -r requirements.txt
+```
+
+## download the tqa dataset (link:)
+
+Now download the model accordingly, and the model name can be found in FiD/get-model.sh. (i.e. tqa_reader_base)
+
+```bash
+git clone https://github.com/facebookresearch/FiD.git
+cd FiD
+bash get-model.sh -m tqa_reader_base
+pip install -r requirements.txt
+!pip install transformers==4.10.0
+```
+
+After downloading the model, don't forget to change the model name being used in pygaggle/qa/fid_reader.py
+
+Then we run the inference and evaluation in the TOP level directory of Pygaggle:
+```bash
+$ python -um pygaggle.run.evaluate_fid_ranker --task wikipedia --retriever score --reader fid \
+            --settings dpr --retrieval-file data/run.encoded.dkrr.test.json --topk-em 100
+```
+This produces an output file where the filename can be defined in the file; by default it's "reader_output.nq_test.fid_base.json". 
+
+Finally, we can analyze the result file using pygaggle/scripts/evaluate-fid.py.
+
+```bash
+$ python scripts/evaluate-fid.py --predictions reader_output.bm25_tqa_test.fid_large.json \
+                                 --dataset_name triviaqa
 ```
 
 With result (with bm25 and tqa & large model):
@@ -77,6 +153,14 @@ Label       : no_overlap
 N examples  :  254
 Exact Match :  54.724409448818896
 ```
+
+
+# GPU and approximate time
+Using Tesla P40 on datasci server, 
+NQ base: 1~2 hours
+NQ large: 4~5 hours
+TQA base: ~5 hours
+TQA large: ~15 hours
 
 If you were able to replicate these results, please submit a PR adding to the replication log! Please mention in your PR if you find any difference!
 
