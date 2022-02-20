@@ -1,0 +1,82 @@
+# PyGaggle: Fusion-in-Decoder (FiD) Baselines
+
+This page contains instructions for running the FiD tools.
+
+It's recommended to run the experiment in virtualenv (with Python-version=3.7).
+
+## Natural Questions (NQ)
+End-to-end answer prediction using **Hybrid Retrieval**
+
+Run nvidia-smi to make sure gpu is set up.
+```bash
+pip install pyserini
+export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
+git clone https://github.com/castorini/pygaggle.git 
+cd pygaggle
+pip install --editable .
+pip install -r requirements.txt
+gsutil cp gs://ron-random/runs/run.encoded.dkrr.test.json data/
+```
+
+Now download the model accordingly, and the model name can be found in FiD/get-model.sh. (i.e. nq_reader_base)
+
+```bash
+git clone https://github.com/facebookresearch/FiD.git
+cd FiD
+bash get-model.sh -m nq_reader_base
+pip install -r requirements.txt
+!pip install transformers==4.10.0
+```
+
+Then we run the inference and evaluation in the TOP level directory of Pygaggle:
+```bash
+$ python -um pygaggle.run.evaluate_fid_ranker --task wikipedia --retriever score --reader fid \
+            --settings dpr --retrieval-file data/run.encoded.dkrr.test.json --topk-em 100
+```
+This produces an output file where the filename can be defined in the file; by default it's "reader_output.nq_test.fid_base.json".
+
+Finally, we can analyze the result file using pygaggle/scripts/evaluate-fid.py.
+
+```bash
+$ python scripts/evaluate-fid.py --predictions reader_output.nq_test.fid_base.json \
+                                 --dataset_name naturalquestions
+```
+
+With result (with bm25 and tqa & large model):
+
+```bash
+reader_output.bm25_tqa_test.fid_large.json
+--------------------------------------------------
+Label       : total
+N examples  :  11313
+Exact Match :  72.94263236984001
+--------------------------------------------------
+Label       : question_overlap
+N examples  :  336
+Exact Match :  93.75
+--------------------------------------------------
+Label       : no_question_overlap
+N examples  :  665
+Exact Match :  67.06766917293233
+--------------------------------------------------
+Label       : answer_overlap
+N examples  :  8112
+Exact Match :  83.01282051282051
+--------------------------------------------------
+Label       : no_answer_overlap
+N examples  :  3201
+Exact Match :  47.422680412371136
+--------------------------------------------------
+Label       : answer_overlap_only
+N examples  :  411
+Exact Match :  74.69586374695864
+--------------------------------------------------
+Label       : no_overlap
+N examples  :  254
+Exact Match :  54.724409448818896
+```
+
+If you were able to replicate these results, please submit a PR adding to the replication log! Please mention in your PR if you find any difference!
+
+
+
