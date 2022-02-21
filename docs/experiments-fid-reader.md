@@ -15,7 +15,6 @@ git clone https://github.com/castorini/pygaggle.git
 cd pygaggle
 pip install --editable .
 pip install -r requirements.txt
-gsutil cp gs://ron-random/runs/run.encoded.dkrr.test.json data/
 ```
 
 Now download the model accordingly, and the model name can be found in FiD/get-model.sh. (i.e. nq_reader_base)
@@ -32,15 +31,15 @@ After downloading the model, don't forget to change the model name being used in
 
 Then we run the inference and evaluation in the TOP level directory of Pygaggle:
 ```bash
-$ python -um pygaggle.run.evaluate_fid_ranker --task wikipedia --retriever score --reader fid \
-            --settings dpr --retrieval-file data/run.encoded.dkrr.test.json --topk-em 100
+$ python -um pygaggle.run.evaluate_fid_ranker --model-name nq_reader_large \
+                                            --retrieval-file data/run.nq-test.dkrr.gar.hybrid.json \
+                                            --output-file data/fid_large.dkrr.gar.hybrid.out
 ```
-This produces an output file where the filename can be defined in the file; by default it's "reader_output.nq_test.fid_base.json".
 
-Finally, we can analyze the result file using pygaggle/scripts/evaluate-fid.py.
+Finally, we can analyze the result file using pygaggle/scripts/evaluate_qa_overlap_em.py.
 
 ```bash
-$ python scripts/evaluate-fid.py --predictions reader_output.nq_test.fid_base.json \
+$ python scripts/evaluate_qa_overlap_em.py --predictions reader_output.nq_test.fid_base.json \
                                  --dataset_name naturalquestions
 ```
 
@@ -111,12 +110,12 @@ Then we run the inference and evaluation in the TOP level directory of Pygaggle:
 $ python -um pygaggle.run.evaluate_fid_ranker --task wikipedia --retriever score --reader fid \
             --settings dpr --retrieval-file data/run.encoded.dkrr.test.json --topk-em 100
 ```
-This produces an output file where the filename can be defined in the file; by default it's "reader_output.nq_test.fid_base.json". 
 
-Finally, we can analyze the result file using pygaggle/scripts/evaluate-fid.py.
+
+Finally, we can analyze the result file using pygaggle/scripts/evaluate_qa_overlap_em.py.
 
 ```bash
-$ python scripts/evaluate-fid.py --predictions reader_output.bm25_tqa_test.fid_large.json \
+$ python scripts/evaluate_qa_overlap_em.py --predictions reader_output.bm25_tqa_test.fid_large.json \
                                  --dataset_name triviaqa
 ```
 
