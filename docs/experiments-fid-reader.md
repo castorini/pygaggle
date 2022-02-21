@@ -31,7 +31,7 @@ After downloading the model, don't forget to change the model name being used in
 
 Then we run the inference and evaluation in the TOP level directory of Pygaggle:
 ```bash
-$ python -um pygaggle.run.evaluate_fid_ranker --model-name nq_reader_large \
+$ python -um pygaggle.run.evaluate_fid_reader --model-name nq_reader_large \
                                             --retrieval-file data/run.nq-test.dkrr.gar.hybrid.json \
                                             --output-file data/fid_large.dkrr.gar.hybrid.out
 ```
@@ -107,7 +107,7 @@ After downloading the model, don't forget to change the model name being used in
 
 Then we run the inference and evaluation in the TOP level directory of Pygaggle:
 ```bash
-$ python -um pygaggle.run.evaluate_fid_ranker --task wikipedia --retriever score --reader fid \
+$ python -um pygaggle.run.evaluate_fid_reader --task wikipedia --retriever score --reader fid \
             --settings dpr --retrieval-file data/run.encoded.dkrr.test.json --topk-em 100
 ```
 
