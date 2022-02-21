@@ -180,3 +180,4 @@ If you were able to replicate these results, please submit a PR adding to the re
 + Results replicated by [@AlexWang000](https://github.com/AlexWang000) on 2021-10-22 (commit[`63f92cf`](https://github.com/castorini/pygaggle/commit/63f92cf6f83a8909f4bf6528b402632d7498b8d6)) (Tesla T4 on Colab)
 + Results replicated by [@manveertamber](https://github.com/manveertamber) on 2021-12-08 (commit[`b3e11c4`](https://github.com/castorini/pygaggle/commit/b3e11c46a6cf17e0e99a8eed7de316eb0117ee19)) (GeForce GTX 1660)
 + Results replicated by [@lingwei-gu](https://github.com/lingwei-gu) on 2022-01-05 (commit [`d671f62`](https://github.com/castorini/pygaggle/commit/d671f62e4a269b5d79068f25267edd6078e568b5)) (Tesla T4 on Colab)
+
