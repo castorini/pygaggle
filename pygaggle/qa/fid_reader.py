@@ -27,7 +27,7 @@ class FidReader(Reader):
         self.device = device
 
         model_class = fid_model.FiDT5
-        self.model = model_class.from_pretrained('/home/alvis/FiD/pretrained_models/nq_reader_base').to(self.device).eval()
+        self.model = model_class.from_pretrained('../FiD/pretrained_models/' + model_name).to(self.device).eval()
         self.tokenizer =  transformers.T5Tokenizer.from_pretrained('t5-base', return_dict=False)
         # FiD uses generate to compute spans
 
