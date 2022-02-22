@@ -61,19 +61,18 @@ if __name__ == '__main__':
         elif args.qa_reader == 'fid':
             reader = FidReader(model_name=args.reader_model, device=args.reader_device)
             if args.retriever_model:
-                retriever = SimpleDenseSearcher(args.retriever_index, DkrrDprQueryEncoder(args.retriever_model))
+                # retriever = SimpleDenseSearcher(args.retriever_index, DkrrDprQueryEncoder(args.retriever_model))
+                retriever = SimpleDenseSearcher.from_prebuilt_index(args.retriever_index, DkrrDprQueryEncoder(args.retriever_model))
             else:
                 retriever = SimpleSearcher.from_prebuilt_index(args.retriever_corpus)
             corpus = SimpleSearcher.from_prebuilt_index(args.retriever_corpus)
             obqa = OpenBookQA(reader, retriever, corpus)
             # run a warm up question
-            obqa.predict('what is lobster roll', 100, args.query)
+            obqa.predict('what is lobster roll', 100, args.query, 'fid')
             while True:
                 question = input('Please enter a question: ')
-                answer = obqa.predict(question, 100, args.query)
-                answer_text = answer["answer"]
-                answer_context = answer["context"]["text"]
-                print(f"Answer:\t {answer_text}")
+                answer = obqa.predict(question, 100, args.query, 'fid')
+                print(f"Answer:\t {answer}")
 
     else:
         cbqa = ClosedBookQA(args.cbqa_model, args.cbqa_device)

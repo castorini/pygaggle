@@ -10,10 +10,12 @@ class OpenBookQA:
         self.retriever = retriever
         self.corpus = corpus
 
-    def predict(self, question, topk=20, query=''):
+    def predict(self, question, topk=20, query='', reader_name='dpr'):
         hits = self.retriever.search(query + question, topk)
         contexts = self._hits_to_contexts(hits)
         answer = self.reader.predict(question, contexts)
+        if reader_name == 'fid':
+            return answer 
         answer = answer[str(self.reader.span_selection_rules[0])][topk][0]
         return self._parse_answer(answer)
 
