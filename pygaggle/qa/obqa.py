@@ -10,8 +10,8 @@ class OpenBookQA:
         self.retriever = retriever
         self.corpus = corpus
 
-    def predict(self, question, topk=20):
-        hits = self.retriever.search(question, topk)
+    def predict(self, question, topk=20, query=''):
+        hits = self.retriever.search(query + question, topk)
         contexts = self._hits_to_contexts(hits)
         answer = self.reader.predict(question, contexts)
         answer = answer[str(self.reader.span_selection_rules[0])][topk][0]
