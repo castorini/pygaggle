@@ -52,7 +52,7 @@ if __name__ == '__main__':
             # run a warm up question
             obqa.predict('what is lobster roll')
             while True:
-                question = input('Please enter a question: ')
+                question = input('Enter a question: ')
                 answer = obqa.predict(question)
                 answer_text = answer["answer"]
                 answer_context = answer["context"]["text"]
@@ -70,7 +70,7 @@ if __name__ == '__main__':
             # run a warm up question
             obqa.predict('what is lobster roll', 100, args.query, 'fid')
             while True:
-                question = input('Please enter a question: ')
+                question = input('Enter a question: ')
                 answer = obqa.predict(question, 100, args.query, 'fid')
                 print(f"Answer:\t {answer}")
 
