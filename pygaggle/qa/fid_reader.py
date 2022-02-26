@@ -64,6 +64,10 @@ class FidReader(Reader):
             contexts: List[Context],
             topk_retrievals: Optional[List[int]] = None,
     ) -> Dict[int, List[Answer]]:
+        if isinstance(question, str):
+            question = Question(question)
+        if topk_retrievals is None:
+            topk_retrievals = [len(contexts)]
         batch = self.build_dataloader(question, contexts)
         answers = {str(rule): {} for rule in self.span_selection_rules}
         with torch.no_grad():
