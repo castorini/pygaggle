@@ -49,16 +49,15 @@ unzip data/msmarco_doc_ans_small.zip -d data
 Let's download the pre-built MS MARCO index :
 
 ```
-wget https://www.dropbox.com/s/awukuo8c0tkl9sc/index-msmarco-doc-20200527-a1ecfa.tar.gz
+wget https://rgw.cs.uwaterloo.ca/JIMMYLIN-bucket0/pyserini-indexes/index-msmarco-doc-20201117-f87c94.tar.gz
 ```
 
-`index-msmarco-doc-20200527-a1ecfa.tar.gz ` should have MD5 checksum of `72b1a0f9a9094a86d15c6f4babf8967a`.
-
+`index-msmarco-doc-20201117-f87c94.tar.gz` should have MD5 checksum of `ac747860e7a37aed37cc30ed3990f273`.
 Then, we can extract it into into `indexes`:
 
 ```
-tar xvfz index-msmarco-doc-20200527-a1ecfa.tar.gz -C indexes
-rm index-msmarco-doc-20200527-a1ecfa.tar.gz
+tar xvfz index-msmarco-doc-20201117-f87c94.tar.gz -C indexes
+rm index-msmarco-doc-20201117-f87c94.tar.gz
 ```
 
 Now, we can begin with re-ranking the set.
@@ -74,7 +73,7 @@ python -um pygaggle.run.evaluate_document_ranker --split dev \
                                                 --dataset data/msmarco_doc_ans_small/fh \
                                                 --model-type t5-base \
                                                 --task msmarco \
-                                                --index-dir indexes/index-msmarco-doc-20200527-a1ecfa \
+                                                --index-dir indexes/index-msmarco-doc-20201117-f87c94 \
                                                 --batch-size 32 \
                                                 --output-file runs/run.monot5.doc_fh.dev.tsv
 ```
