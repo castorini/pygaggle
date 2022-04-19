@@ -54,7 +54,7 @@ prediction_tokens = {
 
 class MonoT5(Reranker):
     def __init__(self, 
-                 pretrained_model_name_or_path: str  = 'castorini/monot5-base-msmarco',
+                 pretrained_model_name_or_path: str  = 'castorini/monot5-base-msmarco-10k',
                  model: T5ForConditionalGeneration = None,
                  tokenizer: QueryDocumentBatchTokenizer = None,
                  use_amp = False,
