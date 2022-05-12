@@ -2,7 +2,7 @@ from typing import List, Union, Optional, Mapping, Any
 from copy import deepcopy
 import abc
 
-from pyserini.search import JSimpleSearcherResult
+from pyserini.search import JLuceneSearcherResult
 
 
 __all__ = ['Query', 'Text', 'Reranker', 'hits_to_texts', 'TextType']
@@ -90,12 +90,12 @@ class Reranker:
         pass
 
 
-def hits_to_texts(hits: List[JSimpleSearcherResult], field='raw') -> List[Text]:
+def hits_to_texts(hits: List[JLuceneSearcherResult], field='raw') -> List[Text]:
     """Converts hits from Pyserini into a list of texts.
 
      Parameters
      ----------
-     hits : List[JSimpleSearcherResult]
+     hits : List[JLuceneSearcherResult]
         The hits.
      field : str
         Field to use.
