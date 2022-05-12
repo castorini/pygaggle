@@ -121,7 +121,7 @@ regex==2017.4.5
 requests==2.18.4
 responses==0.9.0
 retinasdk==1.0.0
-rope==0.10.7
+rope==0.11.0
 rsa==3.4.2
 s3transfer==0.1.13
 sanic==0.6.0
