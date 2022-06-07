@@ -309,12 +309,14 @@ class SentenceTransformersReranker(Reranker):
                  pretrained_model_name_or_path='cross-encoder/ms-marco-MiniLM-L-2-v2',
                  max_length=512,
                  device=None,
-                 use_amp=False):
+                 use_amp=False,
+                 batch_size=32):
         device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
         self.use_amp = use_amp
         self.model = CrossEncoder(
             pretrained_model_name_or_path, max_length=max_length, device=device
         )
+        self.batch_size = batch_size
 
     def rescore(self, query: Query, texts: List[Text]) -> List[Text]:
         texts = deepcopy(texts)
@@ -322,6 +324,7 @@ class SentenceTransformersReranker(Reranker):
             scores = self.model.predict(
                 [(query.text, text.text) for text in texts],
                 show_progress_bar=False,
+                batch_size=self.batch_size,
             )
 
         for (text, score) in zip(texts, scores):
