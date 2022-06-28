@@ -77,7 +77,7 @@ cd ${DATA_DIR}
 wget https://storage.googleapis.com/duobert_git/run.bm25.dev.small.tsv
 wget https://raw.githubusercontent.com/castorini/anserini/master/src/main/resources/topics-and-qrels/topics.msmarco-passage.dev-subset.txt
 wget https://raw.githubusercontent.com/castorini/anserini/master/src/main/resources/topics-and-qrels/qrels.msmarco-passage.dev-subset.txt
-wget https://www.dropbox.com/s/m1n2wf80l1lb9j1/collection.tar.gz
+wget https://msmarco.blob.core.windows.net/msmarcoranking/collection.tar.gz
 tar -xvf collection.tar.gz
 rm collection.tar.gz
 mv run.bm25.dev.small.tsv run.dev.small.tsv
