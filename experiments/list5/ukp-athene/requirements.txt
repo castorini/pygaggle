@@ -69,7 +69,7 @@ Markdown==2.6.11
 # MarkupSafe==1.0
 matplotlib==3.0.0
 mccabe==0.6.1
-mistune==0.8.3
+mistune==2.0.3
 more-itertools==4.2.0
 msgpack-numpy==0.4.1
 msgpack-python==0.5.6
