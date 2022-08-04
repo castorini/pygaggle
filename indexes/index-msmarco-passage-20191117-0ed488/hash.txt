@@ -1,0 +1,403 @@
+Algorithm : SHA256
+Hash      : 90B86F22505E96CBACE07E23F5619769CA912A6C08B71698E84AE7803F4B8D8F
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\segments_1
+
+Algorithm : SHA256
+Hash      : E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\write.lock
+
+Algorithm : SHA256
+Hash      : C3287E16D213D57063E7C44DDCC3DA8FC3AF1408F1E40CFFC927DF8DB743F8B9
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_0.fdt
+
+Algorithm : SHA256
+Hash      : C5B763673DD0A565A7BEC46918BECF628399267F55D2A9D835B3200954F0F2AD
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_0.fdx
+
+Algorithm : SHA256
+Hash      : AE6D733392AC2E66DF4D9DA2B1B8AF1FFFFF255DAE28C8050C3E2EFF214207C8
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_0.fnm
+
+Algorithm : SHA256
+Hash      : 5BCC47F5C7C2D8E6CF7B947AA2A8301636AC946258431740DD73528891128B33
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_0.nvd
+
+Algorithm : SHA256
+Hash      : 4FE93FA69C72082C79706AB07ED8A97BE19B2E6B8D165E00DEDCC810A3D9C1C5
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_0.nvm
+
+Algorithm : SHA256
+Hash      : F918F6A85E85B65C77057041A6D1AB6F77A83FFBD6F9280CCEB0BC1CA7254117
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_0.si
+
+Algorithm : SHA256
+Hash      : F1E87A992760934679620B498DA956A11E0F23B36FF8279768C9F9123D97977F
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_0_Lucene50_0.doc
+
+Algorithm : SHA256
+Hash      : E7D26EA96D741E49C147A8D093E0063F840CE53D54E61D714A9CE8FA483FA49A
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_0_Lucene50_0.tim
+
+Algorithm : SHA256
+Hash      : 3C2533136C211BE9217A04AAA2C099FC71B00F28BCAA7945F1A4E6EEBCFD2F44
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_0_Lucene50_0.tip
+
+Algorithm : SHA256
+Hash      : 27D26BA48D6000DB6C885028CB3905ADBAE49FEDD2A2ED0A3A46619CA17F1374
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_0_Lucene80_0.dvd
+
+Algorithm : SHA256
+Hash      : A7D8CF70B8C905C6D5FC31C50E50C71BD4B4D9BA6B5F9EAC1CAED76556D80AEE
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_0_Lucene80_0.dvm
+
+Algorithm : SHA256
+Hash      : AA118ADCEF977A441D5D13B5948EDDECDF1AE3B4E640B9FFB77B47D6CF883420
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_1.fdt
+
+Algorithm : SHA256
+Hash      : 48D43BAC08E5FA3E2445CDD7856D08F6DE5018EBB0A698418500CB0915154FD2
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_1.fdx
+
+Algorithm : SHA256
+Hash      : 8F062E241D1F15DD772CDFBCBF78678E3CE4406DBD55D9180D2C2AF05EB79371
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_1.fnm
+
+Algorithm : SHA256
+Hash      : 6F402EE7033AB8212FA30ED7EFA819E1246A473CDE593473B7538BEAD32F2E95
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_1.nvd
+
+Algorithm : SHA256
+Hash      : C280CE6F1810B67FDF94933E97B1D9A3A1DB1E470B4CDD6524B345F2289552C2
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_1.nvm
+
+Algorithm : SHA256
+Hash      : 37F772CFCC8443B327F64F865BC0750A3ED8038869BE9B01DEC90B28AD5AF1C1
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_1.si
+
+Algorithm : SHA256
+Hash      : D687DABE4F8E3DEE74DF4ED0BF0CAD5F99D8000DE7FD5F5ABA64D2C9605D08F2
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_1_Lucene50_0.doc
+
+Algorithm : SHA256
+Hash      : BDA8C0A0DBED1AA844BC789881659EE36CE074CFFBAFF3594BE5CE1684FF09B7
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_1_Lucene50_0.tim
+
+Algorithm : SHA256
+Hash      : 232CC1A54B92413DCE438A462CC3D76221C8CA1792AC84F0A7FFAE2534E85272
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_1_Lucene50_0.tip
+
+Algorithm : SHA256
+Hash      : 70B86C4A56C12971DAB31D98E61E47FF93487A8B4EF1B9230C6F576B3FB73572
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_1_Lucene80_0.dvd
+
+Algorithm : SHA256
+Hash      : 73BF2BE7ADD6041C80B457A195DE76F1AF2C7109742CECE2DE2EA47385F5EEDB
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_1_Lucene80_0.dvm
+
+Algorithm : SHA256
+Hash      : 51F7EF147AB07503135FDBA73FB2C17F7CD946B15DE9B6F541323B02FA52F313
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_2.fdt
+
+Algorithm : SHA256
+Hash      : CCCA3A5587D681FBB65CA849A68F8A6F55A4D4D0277B60674F5E17B6A6A7B672
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_2.fdx
+
+Algorithm : SHA256
+Hash      : AD30B5733D0E93945D55AC64C8D799EE9BEA6C63A862E276B9559EEB959367B8
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_2.fnm
+
+Algorithm : SHA256
+Hash      : EBD50517CB748956CBD59293E9B1F0C98F3379EB4788C0C2F1B6B6B1F4D61268
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_2.nvd
+
+Algorithm : SHA256
+Hash      : 99D1CBD8566A054074427EB3ADA147BBBFFFF9419D875BDF8D17F9E8C386E1D1
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_2.nvm
+
+Algorithm : SHA256
+Hash      : 1A191CC4508611BF40EB2E051043A57A4ABB6C6C4E5CA18C1B2C66F4BA33F29A
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_2.si
+
+Algorithm : SHA256
+Hash      : D5122E2C3E94A7D3F3A939FC31A0F438D94762ACDDD799433C4E51203B9FF39F
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_2_Lucene50_0.doc
+
+Algorithm : SHA256
+Hash      : 2E2E848CEE58CE8AE97A5FFBF8D91614A1928EE9E405897A6036C3C9690142A6
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_2_Lucene50_0.tim
+
+Algorithm : SHA256
+Hash      : CB95B6A101B9E8501A0D9656931A6E13058559FFA8559E883F668865538D8E80
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_2_Lucene50_0.tip
+
+Algorithm : SHA256
+Hash      : 7E4C0738B961BEFC630DBCD7866EC424AE6C043603C6DA4B5027F4CD30BDDA06
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_2_Lucene80_0.dvd
+
+Algorithm : SHA256
+Hash      : 3341565E6E7E5721269E22870893244830B5403B5446103D8E32473A4A10C444
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_2_Lucene80_0.dvm
+
+Algorithm : SHA256
+Hash      : 173E8FE2BD747FD19456A7893CF44BA2DCADB69A3DD25C76572B27BC861E7010
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_3.fdt
+
+Algorithm : SHA256
+Hash      : A08241063359D306543A111666B29AA0B751E52DB63918CA77EA425759EE6B5B
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_3.fdx
+
+Algorithm : SHA256
+Hash      : 62B9955A21A9697C021A074429ABE9251CD24AABFA25372E3FEB305A42458CAF
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_3.fnm
+
+Algorithm : SHA256
+Hash      : F6D86AAF1F4A5C311564D6A22DDDB8E889316689CB166A7122B5647C27333F62
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_3.nvd
+
+Algorithm : SHA256
+Hash      : 25D45F3F192D71338060DAD1A44B8F59A565843C28FF93756977B2A0C795A269
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_3.nvm
+
+Algorithm : SHA256
+Hash      : CA054681751C75E09AAF6FB31C3BF493022DD889B9E3E24ECFB76695805E0679
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_3.si
+
+Algorithm : SHA256
+Hash      : 902A8032401E8F0E83DB6422383178816A42A936C6176D310DE93374CD5A6051
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_3_Lucene50_0.doc
+
+Algorithm : SHA256
+Hash      : 5E2D637E3AB4DE60253D4B07AF44CB31D263B90CF9C300D624DC1E78BF247590
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_3_Lucene50_0.tim
+
+Algorithm : SHA256
+Hash      : 1094292DAE7CCA28BDC7552B6D7981162C839A0002A79432D4812D0586F96776
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_3_Lucene50_0.tip
+
+Algorithm : SHA256
+Hash      : F27DE5E31BE613AD310DCE92CFFB4482362B6231D054691A8AE51726997340E2
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_3_Lucene80_0.dvd
+
+Algorithm : SHA256
+Hash      : 42049291197821741E76BF6D53DA2536F54D4FAD3FE58A27AB8CA8962A0166BC
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_3_Lucene80_0.dvm
+
+Algorithm : SHA256
+Hash      : 5B925941D55CCD3261A6C304E700822EA01F0EED03E3EB82C1AA4DD756772598
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_4.fdt
+
+Algorithm : SHA256
+Hash      : 34DDDB330778E69E655EBF5E1B7A80C865F9FF336A17460F524B3E0764050A16
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_4.fdx
+
+Algorithm : SHA256
+Hash      : 53BAC702DB1322E24F40BE3DAC757328B63677316A280A613435A22AF1C00283
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_4.fnm
+
+Algorithm : SHA256
+Hash      : 95F2D8B3D4BF6D474A1C571B9F8FFE5CD6751D8EC9AC68E8E2C8031AC44E36E6
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_4.nvd
+
+Algorithm : SHA256
+Hash      : 7FCAC0B49DD080143C14B39D643CFFCC2E68976A8FFE0B05AF68A76049CA242F
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_4.nvm
+
+Algorithm : SHA256
+Hash      : 3778F8C2B9395B79A6AA82A9E498ABB3EB7C82767DBEF98CF309574C6EF2C6EB
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_4.si
+
+Algorithm : SHA256
+Hash      : DCA691151C9DCDCD8FE5988DCA54156629DE4204E656330C373201F7A01AAC40
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_4_Lucene50_0.doc
+
+Algorithm : SHA256
+Hash      : D7AC076C5211C529608A3AA2E79CB4A674B1D61EE205A4293FDF0711F5414AB1
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_4_Lucene50_0.tim
+
+Algorithm : SHA256
+Hash      : D4A9B5B86CB9FF2E3D9EC835BA0426F617548992FD1965D513F9EB111F8267DC
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_4_Lucene50_0.tip
+
+Algorithm : SHA256
+Hash      : E9526ED6C93DC4BC30B2A2F2DE2F738293BC3C7625BB46F0BB582073EFB59843
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_4_Lucene80_0.dvd
+
+Algorithm : SHA256
+Hash      : 4242DB81FC23E44171E0EA56019CEE56E7693BF066C5B5D170B39BB4E6E6AFD3
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_4_Lucene80_0.dvm
+
+Algorithm : SHA256
+Hash      : 008EDDC4922228EC9601299C5FC7A4F44C8182850A72ADF94E5C0262B96837F0
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_5.fdt
+
+Algorithm : SHA256
+Hash      : 6ADA409C6A442B53BD13BE0C89F093EF3A0427DD237F4745D29786B6926E419F
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_5.fdx
+
+Algorithm : SHA256
+Hash      : 996CB0C2B69DE0A35E3C45231041EF7D19416E7CDC1B364CB1AF4F4B517E90B3
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_5.fnm
+
+Algorithm : SHA256
+Hash      : 87E6CB689630B72942F5D1611D19901BC9337E4C022C994E4668D86836F8F9AC
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_5.nvd
+
+Algorithm : SHA256
+Hash      : 53C2EEE0CF064F0D610E88B188DA6590850DDB1B4558CBB54C9ED38C773844BE
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_5.nvm
+
+Algorithm : SHA256
+Hash      : D2F8A63CDC9335E76A09732857F378268DE054E5FB4B500CC3C710B3835D6DC1
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_5.si
+
+Algorithm : SHA256
+Hash      : 86F7BE9F273767654D0215BFE57290B414F57AD86F3FBC839BFF32D692DE7302
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_5_Lucene50_0.doc
+
+Algorithm : SHA256
+Hash      : E928AB93698B90FD9C0B5D6875609F956250EA4F730E6A5354935E40A5B88C8C
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_5_Lucene50_0.tim
+
+Algorithm : SHA256
+Hash      : F5EDC9B4D698500378D762A906346F1A469B6BCD881B025E1976134D8CAA550C
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_5_Lucene50_0.tip
+
+Algorithm : SHA256
+Hash      : CDD978684C85CDA2E9D6CEA089A54B41C19C4AE6E7990BE5A2BFAAD082BA14CA
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_5_Lucene80_0.dvd
+
+Algorithm : SHA256
+Hash      : C9702A697B14AA1D97D9E327798EC16EA270A7983AE344D380492551E3E1ED85
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_5_Lucene80_0.dvm
+
+Algorithm : SHA256
+Hash      : FB4D29181197AC75604CD0700C028157BEA731641032E26B3E4263849A0AE427
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_6.fdt
+
+Algorithm : SHA256
+Hash      : E2C680E56BA582DE09F498805D472D815749AFD3C42CE90DB9D7DFC10AD94A0A
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_6.fdx
+
+Algorithm : SHA256
+Hash      : C618D5CBA42CB3D843FD40F0089944262F667AF02AC524B2324E8B019A8D9CED
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_6.fnm
+
+Algorithm : SHA256
+Hash      : E30C8A0192926F4DEF6FD0CC741E427F756F2BE7771EF6A5C246779EF7441F38
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_6.nvd
+
+Algorithm : SHA256
+Hash      : A56296450461EACDF30277EFD3B2F9A6F3C932435ADDC39DA513886D0DF83863
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_6.nvm
+
+Algorithm : SHA256
+Hash      : 256A53AA3ACE326598202E054B4252856E36F61F6C3C40086CA9A88F78C30B5F
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_6.si
+
+Algorithm : SHA256
+Hash      : 24ED1B0E53DB16536A7FECA7167722E7D6330B305E0845A96DA9C7DE9A332D23
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_6_Lucene50_0.doc
+
+Algorithm : SHA256
+Hash      : 24C39DD28227E65F575522BF04BCEADB23A5AA1C5C2D071D0DE3FBC98FA8D31C
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_6_Lucene50_0.tim
+
+Algorithm : SHA256
+Hash      : D8F477FC5BCF0BE1835EF9DDD33115596B103A2D6C60BA494D8CF3331B7D1BAE
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_6_Lucene50_0.tip
+
+Algorithm : SHA256
+Hash      : 767223BA14177373E8BE23DCC810336F4073F1F29ACFAEAAC1AD6CAF3F4FD9C3
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_6_Lucene80_0.dvd
+
+Algorithm : SHA256
+Hash      : 913E6AA4DE3BB1D74969293BBA6B1E2384E19C265D0120A49BAF52DBF44D9EB3
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_6_Lucene80_0.dvm
+
+Algorithm : SHA256
+Hash      : EE27BAE82A8C03AEE150552F3185A343B22E9A4F7FA8D50ACB17A37E6A60040A
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_7.fdt
+
+Algorithm : SHA256
+Hash      : D8F7F7485E7B3BC79ACFC6800A055273C1886043DF202CF4A71B888CF3C08A73
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_7.fdx
+
+Algorithm : SHA256
+Hash      : FFDBFC4B91364F3E01D90D413C4E91E26FA03F098DB964B0DD4EF4A4C74A078F
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_7.fnm
+
+Algorithm : SHA256
+Hash      : 72B8C4594C96255E85BF5A1CA5B7DC19D9EB560CF9178FC01FFCAD065D1D43EF
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_7.nvd
+
+Algorithm : SHA256
+Hash      : 1FED24B650D5E3075108363B2788D8D97B1804E60966DF6B4CF625FEA3AEC87E
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_7.nvm
+
+Algorithm : SHA256
+Hash      : AC26E498E349A986F4D29AE313E7ACB37E4D5327AA60DF98F5C97ECE9CD53FCC
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_7.si
+
+Algorithm : SHA256
+Hash      : F10B131AF6CEBFD82704AA1DEF0CF697A68A7A9C15F71C4A063CEFF1A23BB85E
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_7_Lucene50_0.doc
+
+Algorithm : SHA256
+Hash      : 8EF2B698D9CE3521B9BF7EF43230EC5A4F5F3AF5EEC4E52856774A7B8319A2A9
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_7_Lucene50_0.tim
+
+Algorithm : SHA256
+Hash      : 7002146A6BA8614B783FF3B02054BBAD11C35481BCAB584B9E6FCB45CA585552
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_7_Lucene50_0.tip
+
+Algorithm : SHA256
+Hash      : 650C2D1736BFB1EE9769DA69FFB41BAC7FBDA77847D732113B0889E022D39572
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_7_Lucene80_0.dvd
+
+Algorithm : SHA256
+Hash      : AF4A3F0CFF7A710DFB2A688BCB5546B01C5A2394F4BA47DC9DD42964E8A72BC7
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_7_Lucene80_0.dvm
+
+Algorithm : SHA256
+Hash      : 1A92982AC67D026645A3C3AF96206C3BCE262C6110B7162D6EFC290D617C1506
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_8.fdt
+
+Algorithm : SHA256
+Hash      : 53A45C09F9B2BDB8F057DCE92411E07D41FB1008B5FC3F5981A5B163E73483EF
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_8.fdx
+
+Algorithm : SHA256
+Hash      : 691EB5B176182D7BB413D0E25FD03BD3AEE57C0B9BF1691DF1F715E20B8FBFC0
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_8.fnm
+
+Algorithm : SHA256
+Hash      : 796EB70B952160232D52F4B8B518D17EA71485639F29F901D4E7DF4F0A4D0B5C
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_8.nvd
+
+Algorithm : SHA256
+Hash      : 1A948E6EF79E4C4780CC5340E5CC012D9764A69CB9B2F2A69F24BD63E47D520E
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_8.nvm
+
+Algorithm : SHA256
+Hash      : 2E8E92B3E3E76A8D9CDB151BBEC769B8E47D0BD114D41D523DF63A362AD3358B
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_8.si
+
+Algorithm : SHA256
+Hash      : 00EAC02087B216B5DEB478D573CD6C9E738505F28D3EEA0B384769DCE72059A3
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_8_Lucene50_0.doc
+
+Algorithm : SHA256
+Hash      : 4ADA5E9687829601508631C9E70C08D04A066B75FBD2BDA38B610BBD11096A41
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_8_Lucene50_0.tim
+
+Algorithm : SHA256
+Hash      : 14B0A8D392426C7FBF96D6679B72E001C024EFDD0C9A458F2647D9207D7EB829
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_8_Lucene50_0.tip
+
+Algorithm : SHA256
+Hash      : D04E6AD3EDF216A585360881A0CE8A77A5FF073C737BFD625EC9558ECC012FC1
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_8_Lucene80_0.dvd
+
+Algorithm : SHA256
+Hash      : F96E7B2B5EEA117F2CF29F118ABB2DB4B0673903968670B0BF28BBC27083C07C
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\indexes\index-msmarco-passage-20191117-0ed488\_8_Lucene80_0.dvm
