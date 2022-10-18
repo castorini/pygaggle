@@ -101,7 +101,7 @@ prompt-toolkit==1.0.15
 protobuf==3.5.2.post1
 psycopg2==2.7.4
 ptyprocess==0.5.2
-py==1.5.4
+py==1.10.0
 pyasn1==0.4.3
 pycodestyle==2.4.0
 pycorenlp==0.3.0
