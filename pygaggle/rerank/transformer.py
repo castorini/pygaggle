@@ -49,7 +49,8 @@ prediction_tokens = {
         'unicamp-dl/mt5-base-mmarco-v1':             ['▁no'   , '▁yes'],
         'unicamp-dl/ptt5-base-pt-msmarco-10k-v1':    ['▁não'  , '▁sim'],
         'unicamp-dl/ptt5-base-pt-msmarco-100k-v1':   ['▁não'  , '▁sim'],
-        'unicamp-dl/ptt5-base-en-pt-msmarco-10k-v1': ['▁não'  , '▁sim']
+        'unicamp-dl/ptt5-base-en-pt-msmarco-10k-v1': ['▁não'  , '▁sim'],
+        'unicamp-dl/mt5-3B-mmarco-en-pt':            ['▁'  , '▁true']
         }
 
 
