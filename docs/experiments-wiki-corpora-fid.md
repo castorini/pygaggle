@@ -6,7 +6,7 @@ Our own efforts are described in the paper entitled: "Pre-Processing Matters! Im
 
 This guide provides instructions to reproduce some of the commands in our study. Note that you will need to change the parameters to the commands as necessary.
 Our efforts include both retrieval as well as end-to-end answer generation.
-We cover only end-to-end answer generation here; for retrieval, please see [this guide](https://github.com/castorini/pygaggle/blob/master/docs/experiments-dpr-reader.md) in our PyGaggle neural text ranking library.
+We cover only end-to-end answer generation here; for retrieval, please see [this guide](https://github.com/manveertamber/pyserini/blob/master/docs/experiments-wiki-corpora.md) in our Pyserini IR library.
 
 
 It's recommended to run the experiment in virtualenv (with Python-version=3.7).
