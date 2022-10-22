@@ -62,8 +62,9 @@ $ python -um pygaggle.run.evaluate_fid_reader \
 
 ## Results:
 
-```bash
+
 Trivia
+
 | Setting              | Total (Dev) | Total |
 |----------------------|-------------|-------|
 | wiki_our_100w        | 70.4        | 70.4  |
@@ -79,8 +80,9 @@ Trivia
 
 
 NQ
+
 | Setting              | Total (Dev) | Total |
-|------------=---------|-------------|-------|
+|----------------------|-------------|-------|
 | wiki_our_100w        | 50.4        | 51.0  |
 | wiki_our_100w_hybrid |             | 51.4  |
 | wiki_6_3             | 51.0        | 52.4  |
@@ -92,8 +94,6 @@ NQ
 | wiki_TL_8_4          | 54.0        | 55.2  |
 | wiki_TL_8_4_hybrid   |             | 55.8  |
 
-
-```
 
 
 If you were able to replicate these results, please submit a PR adding to the replication log! Please mention in your PR if you find any difference!
