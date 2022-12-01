@@ -51,7 +51,7 @@ def main():
                         help="Per device batch size parameter.")
     parser.add_argument("--gradient_accumulation_steps", default=16, type=int, required=False,
                         help="Gradient accumulation parameter.")
-    parser.add_argument("--learning_rate", default=3e-4, type=float, required=False,
+    parser.add_argument("--learning_rate", default=1e-3, type=float, required=False,
                         help="Learning rate parameter.")
     parser.add_argument("--epochs", default=10, type=int, required=False,
                         help="Number of epochs to train")
@@ -100,9 +100,9 @@ def main():
         per_device_train_batch_size=args.per_device_train_batch_size,
         gradient_accumulation_steps=args.gradient_accumulation_steps,
         learning_rate=args.learning_rate,
-        weight_decay=5e-5,
+        weight_decay=0,
         num_train_epochs=1,
-        warmup_steps=1000,
+        warmup_steps=0,
         adafactor=True,
         seed=1,
         disable_tqdm=False,
