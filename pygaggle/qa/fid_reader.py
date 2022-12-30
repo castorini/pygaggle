@@ -18,7 +18,7 @@ class FidReader(Reader):
             num_spans: int = 1,
             max_answer_length: int = 10,
             num_spans_per_passage: int = 10,
-            text_maxlength: int = 200,
+            text_maxlength: int = 250,
             batch_size: int = 16,
             device: str = 'cuda:0'
     ):
@@ -28,13 +28,14 @@ class FidReader(Reader):
 
         model_class = fid_model.FiDT5
         self.model = model_class.from_pretrained('../FiD/pretrained_models/' + model_name).to(self.device).eval()
-        self.tokenizer =  transformers.T5Tokenizer.from_pretrained('t5-base', return_dict=False)
+        self.tokenizer =  transformers.T5Tokenizer.from_pretrained(tokenizer_name, return_dict=False)
         # FiD uses generate to compute spans
 
         self.span_selection_rules = span_selection_rules
         self.num_spans = num_spans
         self.max_answer_length = max_answer_length
         self.num_spans_per_passage = num_spans_per_passage
+        self.text_maxlength = text_maxlength
         self.batch_size = batch_size
 
     # expanded upon Collator used by DataLoader
@@ -50,7 +51,7 @@ class FidReader(Reader):
 
         p = self.tokenizer.batch_encode_plus(
                 [c.text for c in contexts],
-                max_length=350,#self.text_maxlength,
+                max_length=self.text_maxlength,
                 pad_to_max_length=True,
                 return_tensors='pt',
                 truncation=True
@@ -75,7 +76,7 @@ class FidReader(Reader):
             outputs = self.model.generate(
                 input_ids=context_ids.to(self.device),
                 attention_mask=context_mask.to(self.device),
-                max_length=350 #from dpr_reader
+                max_length=self.text_maxlength #from dpr_reader
             )
             for k, o in enumerate(outputs):
                 ans = self.tokenizer.decode(o, skip_special_tokens=True)
