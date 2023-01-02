@@ -25,6 +25,12 @@ Then install PyGaggle using:
 pip install pygaggle/
 ```
 
+Lastly install `faiss` using:
+
+```
+pip install faiss-cpu
+```
+
 ## Models
 
 + monoBERT-Large: Passage Re-ranking with BERT [(Nogueira et al., 2019)](https://arxiv.org/pdf/1901.04085.pdf)
