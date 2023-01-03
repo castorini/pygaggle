@@ -164,7 +164,7 @@ def main():
             type=int,
             default=250,
             required=False,
-            help='File to output predictions for each example; if not specified, this output will be discarded'),
+            help='maximum number of tokens in text segments (question+passage)'),
         opt('--device',
             type=str,
             default='cuda:0',
