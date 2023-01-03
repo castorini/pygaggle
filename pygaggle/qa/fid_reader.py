@@ -76,7 +76,7 @@ class FidReader(Reader):
             outputs = self.model.generate(
                 input_ids=context_ids.to(self.device),
                 attention_mask=context_mask.to(self.device),
-                max_length=self.text_maxlength #from dpr_reader
+                max_length=350 #from dpr_reader
             )
             for k, o in enumerate(outputs):
                 ans = self.tokenizer.decode(o, skip_special_tokens=True)

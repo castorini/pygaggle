@@ -80,6 +80,7 @@ class PassageReadingEvaluationOptions(BaseModel):
     num_spans: int
     max_answer_length: int
     num_spans_per_passage: int
+    text_maxlength: int
     device: str
     batch_size: int
     topk_em: List[int]
@@ -160,9 +161,9 @@ def main():
             required=True,
             help='File to output predictions for each example; if not specified, this output will be discarded'),
         opt('--text_maxlength',
-            type=Path,
-            default=None,
-            required=True,
+            type=int,
+            default=250,
+            required=False,
             help='File to output predictions for each example; if not specified, this output will be discarded'),
         opt('--device',
             type=str,
