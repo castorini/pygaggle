@@ -10,7 +10,7 @@ Our own efforts are described in the paper entitled:
 > "Pre-Processing Matters! Improved Wikipedia Corpora for Open-Domain Question Answering"
 
 Our efforts include both retrieval as well as end-to-end answer generation.
-We cover only end-to-end answer generation here; for retrieval, please see [this guide](https://github.com/castorini/pyserini/blob/master/docs/experiments-wiki-corpora.md) in our Pyserini IR library, which must be done first. Here we provide instructions to reproduce end-to-end answer generation on the ```wiki-all-6-3``` corpus variant with the NaturalQuestions and TriviaQA datasets.
+We cover only end-to-end answer generation here; for retrieval, please see [this guide](https://github.com/castorini/pyserini/blob/master/docs/experiments-wiki-corpora.md) in our Pyserini IR library, which must be done first. Here we provide instructions to reproduce end-to-end answer generation on the ```wiki-all-6-3-tamber``` corpus variant with the NaturalQuestions and TriviaQA datasets.
 
 ## Setup
 Make sure you have PyGaggle and Pyserini installed.
@@ -32,7 +32,7 @@ pip install -r requirements.txt
 pip install transformers==4.10.0
 ```
 
-We make the FiD-large models available in HuggingFace🤗 for all corpus variants. The links to the models for wiki-all-6-3 are:
+We make the FiD-large models available in HuggingFace🤗 for all corpus variants. The links to the models for wiki-all-6-3-tamber are:
 
 [wiki-all-6-3-fid-large-nq-reader](https://huggingface.co/castorini/wiki-all-6-3-fid-large-nq-reader)  
 [wiki-all-6-3-fid-large-tqa-reader](https://huggingface.co/castorini/wiki-all-6-3-fid-large-tqa-reader)  
