@@ -4,7 +4,7 @@ Fusion-in-Decoder (FiD) is a model described in the following paper:
 
 > Izacard, Gautier, and Édouard Grave. [Leveraging Passage Retrieval with Generative Models for Open Domain Question Answering](https://aclanthology.org/2021.eacl-main.74/). _Proceedings of the 16th Conference of the European Chapter of the Association for Computational Linguistics: Main Volume_. 2021.
 
- We have replicated FiD training with our Wikipedia corpus variants, enabling the reproduction of these results in PyGaggle.
+We have replicated FiD training with our Wikipedia corpus variants, enabling the reproduction of these results in PyGaggle.
 
 Our own efforts are described in the paper entitled: 
 > "Pre-Processing Matters! Improved Wikipedia Corpora for Open-Domain Question Answering"
