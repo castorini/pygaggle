@@ -4,7 +4,7 @@ Fusion-in-Decoder (FiD) is a model described in the following paper:
 
 > Izacard, Gautier, and Édouard Grave. [Leveraging Passage Retrieval with Generative Models for Open Domain Question Answering](https://aclanthology.org/2021.eacl-main.74/). _Proceedings of the 16th Conference of the European Chapter of the Association for Computational Linguistics: Main Volume_. 2021.
 
- We have replicated FiD training with our Wikipedia corpus variants and incorporated the model into PyGaggle.
+ We have replicated FiD training with our Wikipedia corpus variants, enabling the reproduction of these results in PyGaggle.
 
 Our own efforts are described in the paper entitled: 
 > "Pre-Processing Matters! Improved Wikipedia Corpora for Open-Domain Question Answering"
@@ -12,8 +12,9 @@ Our own efforts are described in the paper entitled:
 Our efforts include both retrieval as well as end-to-end answer generation.
 We cover only end-to-end answer generation here; for retrieval, please see [this guide](https://github.com/castorini/pyserini/blob/master/docs/experiments-wiki-corpora.md), which must be done first, in our Pyserini IR library. Here we, provide instructions to reproduce end-to-end answer generation on the ```wiki-all-6-3``` corpus variant with the NaturalQuestions and TriviaQA datasets.
 
-
 ## Setup
+Make sure you have PyGaggle and Pyserini installed.
+
 ```bash
 pip install pyserini
 git clone https://github.com/castorini/pygaggle.git 
@@ -22,13 +23,13 @@ pip install --editable .
 pip install -r requirements.txt
 ```
 
-Now download FiD in the same directory as PyGaggle
+Now clone the FiD repo in the same directory as where PyGaggle was cloned.
 
 ```bash
 git clone https://github.com/facebookresearch/FiD.git
 cd FiD
 pip install -r requirements.txt
-!pip install transformers==4.10.0
+pip install transformers==4.10.0
 ```
 
 We make the FiD-large models available in HuggingFace🤗 for all corpus variants. The links to the models for wiki-all-6-3 are:
