@@ -10,7 +10,7 @@ Our own efforts are described in the paper entitled:
 > "Pre-Processing Matters! Improved Wikipedia Corpora for Open-Domain Question Answering"
 
 Our efforts include both retrieval as well as end-to-end answer generation.
-We cover only end-to-end answer generation here; for retrieval, please see [this guide](https://github.com/castorini/pyserini/blob/master/docs/experiments-wiki-corpora.md), which must be done first, in our Pyserini IR library. Here we, provide instructions to reproduce end-to-end answer generation on the ```wiki-all-6-3``` corpus variant with the NaturalQuestions and TriviaQA datasets.
+We cover only end-to-end answer generation here; for retrieval, please see [this guide](https://github.com/castorini/pyserini/blob/master/docs/experiments-wiki-corpora.md) in our Pyserini IR library, which must be done first. Here we provide instructions to reproduce end-to-end answer generation on the ```wiki-all-6-3``` corpus variant with the NaturalQuestions and TriviaQA datasets.
 
 ## Setup
 Make sure you have PyGaggle and Pyserini installed.
