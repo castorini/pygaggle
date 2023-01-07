@@ -2,12 +2,12 @@
 
 Fusion-in-Decoder (FiD) is a model described in the following paper:
 
-> Izacard, Gautier, and Édouard Grave. [Leveraging Passage Retrieval with Generative Models for Open Domain Question Answering](https://aclanthology.org/2021.eacl-main.74/). _Proceedings of the 16th Conference of the European Chapter of the Association for Computational Linguistics: Main Volume_. 2021.
+> Gautier Izacard, and Édouard Grave. [Leveraging Passage Retrieval with Generative Models for Open Domain Question Answering](https://aclanthology.org/2021.eacl-main.74/). _Proceedings of the 16th Conference of the European Chapter of the Association for Computational Linguistics: Main Volume_. 2021.
 
 We have replicated FiD training with our Wikipedia corpus variants, enabling the reproduction of these results in PyGaggle.
 
-Our own efforts are described in the paper entitled: 
-> "Pre-Processing Matters! Improved Wikipedia Corpora for Open-Domain Question Answering"
+Our own efforts are described in the paper: 
+> Manveer Singh Tamber, Ronak Pradeep, and Jimmy Lin. "Pre-Processing Matters! Improved Wikipedia Corpora for Open-Domain Question Answering". ECIR 2023. 
 
 Our efforts include both retrieval as well as end-to-end answer generation.
 We cover only end-to-end answer generation here; for retrieval, please see [this guide](https://github.com/castorini/pyserini/blob/master/docs/experiments-wiki-corpora.md) in our Pyserini IR library, which must be done first. Here we provide instructions to reproduce end-to-end answer generation on the ```wiki-all-6-3-tamber``` corpus variant with the NaturalQuestions and TriviaQA datasets.
@@ -65,7 +65,6 @@ The expected output by the script at the end is:
 ```
 [INFO] evaluate_fid_reader: Exact Match Accuracy: 55.81717451523546
 ```
-Your output will hopefully mostly match
 
 ### TriviaQA
 ```
@@ -79,7 +78,6 @@ The expected output by the script at the end is:
 ```
 [INFO] evaluate_fid_reader: Exact Match Accuracy: 73.72933792981526
 ```
-Your output will hopefully mostly match
 
 ## Reproduction Log
 
