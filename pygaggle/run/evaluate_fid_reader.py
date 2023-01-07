@@ -80,6 +80,7 @@ class PassageReadingEvaluationOptions(BaseModel):
     num_spans: int
     max_answer_length: int
     num_spans_per_passage: int
+    text_maxlength: int
     device: str
     batch_size: int
     topk_em: List[int]
@@ -95,8 +96,7 @@ def construct_fid(options: PassageReadingEvaluationOptions) -> Reader:
                      options.num_spans,
                      options.max_answer_length,
                      options.num_spans_per_passage,
-                    #  options.text_maxlength,
-                     200,
+                     options.text_maxlength,
                      options.batch_size,
                      options.device)
 
@@ -141,7 +141,7 @@ def main():
             help='Pretrained model for reader'),
         opt('--tokenizer-name',
             type=str,
-            default='facebook/dpr-reader-single-nq-base',
+            default='t5-base',
             help='Pretrained model for tokenizer'),
         opt('--num-spans',
             type=int,
@@ -160,6 +160,11 @@ def main():
             default=None,
             required=True,
             help='File to output predictions for each example; if not specified, this output will be discarded'),
+        opt('--text_maxlength',
+            type=int,
+            default=250,
+            required=False,
+            help='maximum number of tokens in text segments (question+passage)'),
         opt('--device',
             type=str,
             default='cuda:0',
@@ -236,7 +241,7 @@ def main():
     em = np.mean(np.array(scores)) * 100.
     logging.info(f'Exact Match Accuracy: {em}')
 
-    with open("reader_output.nq_test.fid_base.json", 'w', encoding='utf-8', newline='\n') as f:
+    with open(args.output_file, 'w', encoding='utf-8', newline='\n') as f:
         json.dump(results, f, indent=4)
 
 
