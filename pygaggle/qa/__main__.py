@@ -4,9 +4,8 @@ from pygaggle.qa.cbqa import ClosedBookQA
 from pygaggle.qa.obqa import OpenBookQA
 from pygaggle.qa.dpr_reader import DprReader
 from pygaggle.qa.fid_reader import FidReader
-from pyserini.search import SimpleSearcher
-from pyserini.dsearch import SimpleDenseSearcher, DprQueryEncoder, DkrrDprQueryEncoder
-
+from pyserini.search.lucene import LuceneSearcher
+from pyserini.search.faiss import DprQueryEncoder, DkrrDprQueryEncoder, FaissSearcher
 
 def arg_check(args, parser):
     if args.type == 'openbook':
@@ -44,10 +43,10 @@ if __name__ == '__main__':
         if args.qa_reader == 'dpr':
             reader = DprReader(args.reader_model, device=args.reader_device)
             if args.retriever_model:
-                retriever = SimpleDenseSearcher(args.retriever_index, DprQueryEncoder(args.retriever_model))
+                retriever = FaissSearcher(args.retriever_index, DprQueryEncoder(args.retriever_model))
             else:
-                retriever = SimpleSearcher.from_prebuilt_index(args.retriever_corpus)
-            corpus = SimpleSearcher.from_prebuilt_index(args.retriever_corpus)
+                retriever = LuceneSearcher.from_prebuilt_index(args.retriever_corpus)
+            corpus = LuceneSearcher.from_prebuilt_index(args.retriever_corpus)
             obqa = OpenBookQA(reader, retriever, corpus)
             # run a warm up question
             obqa.predict('what is lobster roll')
@@ -61,11 +60,11 @@ if __name__ == '__main__':
         elif args.qa_reader == 'fid':
             reader = FidReader(model_name=args.reader_model, device=args.reader_device)
             if args.retriever_model:
-                # retriever = SimpleDenseSearcher(args.retriever_index, DkrrDprQueryEncoder(args.retriever_model))
-                retriever = SimpleDenseSearcher.from_prebuilt_index(args.retriever_index, DkrrDprQueryEncoder(args.retriever_model))
+                # retriever = FaissSearcher(args.retriever_index, DkrrDprQueryEncoder(args.retriever_model))
+                retriever = FaissSearcher.from_prebuilt_index(args.retriever_index, DkrrDprQueryEncoder(args.retriever_model))
             else:
-                retriever = SimpleSearcher.from_prebuilt_index(args.retriever_corpus)
-            corpus = SimpleSearcher.from_prebuilt_index(args.retriever_corpus)
+                retriever = LuceneSearcher.from_prebuilt_index(args.retriever_corpus)
+            corpus = LuceneSearcher.from_prebuilt_index(args.retriever_corpus)
             obqa = OpenBookQA(reader, retriever, corpus)
             # run a warm up question
             obqa.predict('what is lobster roll', 100, args.query, 'fid')
