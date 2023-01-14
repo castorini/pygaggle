@@ -13,7 +13,7 @@ class FidReader(Reader):
     def __init__(
             self,
             model_name: str,
-            tokenizer_name: str = None,
+            tokenizer_name: str = 't5-base',
             span_selection_rules=None,
             num_spans: int = 1,
             max_answer_length: int = 10,
