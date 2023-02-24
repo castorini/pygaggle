@@ -39,6 +39,7 @@ prediction_tokens = {
         'castorini/monot5-base-med-msmarco':         ['▁false', '▁true'],
         'castorini/monot5-3b-med-msmarco':           ['▁false', '▁true'],
         'castorini/monot5-3b-msmarco-10k':           ['▁false', '▁true'],
+        'unicamp-dl/mt5-13b-mmarco-100k':            ['▁false', '▁true'],
         'unicamp-dl/mt5-base-en-msmarco':            ['▁no'   , '▁yes'],
         'unicamp-dl/ptt5-base-pt-msmarco-10k-v2':    ['▁não'  , '▁sim'],
         'unicamp-dl/ptt5-base-pt-msmarco-100k-v2':   ['▁não'  , '▁sim'],
