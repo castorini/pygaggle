@@ -1,0 +1,25 @@
+Algorithm : SHA256
+Hash      : E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855
+Path      : C:\Users\Vasyl
+            Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\data\msmarco_ans_small\hash.txt
+
+Algorithm : SHA256
+Hash      : CA2FCE7C7473FDEE717652FB15A44F996180ED024F09E94F71A740B6EE541D83
+Path      : C:\Users\Vasyl
+            Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\data\msmarco_ans_small\qrels.dev.small.tsv
+
+Algorithm : SHA256
+Hash      : 24D3F922CBE1F9FE947811B066C7F42984FEA0CA3DFE8E81ECBD1EA60D4D858F
+Path      : C:\Users\Vasyl Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\data\msmarco_ans_small\quer
+            ies.dev.small.tsv
+
+Algorithm : SHA256
+Hash      : D364A6DD654A7A482D60682819A5FB47C03243671A82A87011C5747AAA4230AE
+Path      : C:\Users\Vasyl
+            Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\data\msmarco_ans_small\run.dev.small.tsv
+
+Algorithm : SHA256
+Hash      : BF0A3BAFCE80EA67E33DC158ADEB1C6A92E810A0BF349B1C84D61CE7C78A71BE
+Path      : C:\Users\Vasyl
+            Chomko\PycharmProjects\initial-screening-pygaggle-passge-ranking\data\msmarco_ans_small\scores
+

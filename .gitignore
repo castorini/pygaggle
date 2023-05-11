@@ -15,3 +15,7 @@ scratch
 dist/
 pygaggle.egg-info/
 
+# for building test example
+anserini/
+build/
+
