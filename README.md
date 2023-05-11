@@ -12,7 +12,7 @@ Currently, this repo contains implementations of the rerankers for MS MARCO Pass
 
 0. Clone the repo with `git clone --recursive https://github.com/castorini/pygaggle.git`
 
-0. Make you sure you have an installation of [Python 3.6+](https://www.python.org/downloads/). All `python` commands below refer to this.
+0. Make you sure you have an installation of [Python 3.8+](https://www.python.org/downloads/). All `python` commands below refer to this.
 
 0. For pip, do `pip install -r requirements.txt`
     * If you prefer Anaconda, use `conda env create -f environment.yml && conda activate pygaggle`.
@@ -45,8 +45,8 @@ Either way, continue with a complete reranking example:
 query = Query('who proposed the geocentric theory')
 
 # Option 1: fetch some passages to rerank from MS MARCO with Pyserini
-from pyserini.search import SimpleSearcher
-searcher = SimpleSearcher.from_prebuilt_index('msmarco-passage')
+from pyserini.search import LuceneSearcher
+searcher = LuceneSearcher.from_prebuilt_index('msmarco-passage')
 hits = searcher.search(query.text)
 
 from pygaggle.rerank.base import hits_to_texts

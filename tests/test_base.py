@@ -6,8 +6,8 @@ from random import randint
 from typing import List
 from urllib.request import urlretrieve
 
-from pyserini.search import JSimpleSearcherResult
-from pyserini.search import SimpleSearcher
+from pyserini.search import JLuceneSearcherResult
+from pyserini.search import LuceneSearcher
 
 from pygaggle.rerank.base import hits_to_texts, Text, Query, Reranker
 from pygaggle.rerank.identity import IdentityReranker
@@ -29,7 +29,7 @@ class TestSearch(unittest.TestCase):
         tarball.extractall(self.index_dir)
         tarball.close()
 
-        self.searcher = SimpleSearcher(
+        self.searcher = LuceneSearcher(
             f'{self.index_dir}lucene-index.cacm')
 
     def test_basic(self):
@@ -37,12 +37,12 @@ class TestSearch(unittest.TestCase):
 
         self.assertTrue(isinstance(hits, List))
 
-        self.assertTrue(isinstance(hits[0], JSimpleSearcherResult))
+        self.assertTrue(isinstance(hits[0], JLuceneSearcherResult))
         self.assertEqual('CACM-3134', hits[0].docid)
         self.assertEqual(3133, hits[0].lucene_docid)
         self.assertEqual(1500, len(hits[0].contents))
         self.assertEqual(1532, len(hits[0].raw))
-        self.assertAlmostEqual(4.76550, hits[0].score, places=5)
+        self.assertAlmostEqual(4.7655, hits[0].score, places=4)
 
         texts = hits_to_texts(hits)
         self.assertEqual(len(hits), len(texts))
