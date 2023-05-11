@@ -26,7 +26,7 @@ class SegmentProcessor:
     """
     def __init__(self, max_characters=10000000):
         self.nlp = spacy.blank("en")
-        self.nlp.add_pipe(self.nlp.create_pipe("sentencizer"))
+        self.nlp.add_pipe("sentencizer")
         self.max_characters = max_characters
         self.aggregate_methods = {
             "max": self._max_aggregate,
@@ -49,7 +49,7 @@ class SegmentProcessor:
         segmented_docs, doc_end_indexes, end_idx = [], [0], 0
         for document in documents:
             doc = self.nlp(document.text[:self.max_characters])
-            sentences = [sent.string.strip() for sent in doc.sents]
+            sentences = [sent.text.strip() for sent in doc.sents]
             # If the text is empty (i.e. there are no sentences), the segment_text is solely the title of the document.
             if len(sentences) == 0:
                 segment_text = document.title

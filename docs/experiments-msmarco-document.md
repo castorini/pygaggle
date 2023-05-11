@@ -85,7 +85,7 @@ precision@1 0.2
 recall@3  0.56
 recall@50  0.84
 recall@1000 0.88
-mrr     0.38882
+mrr     0.3888
 mrr@10   0.38271
 ```
 
@@ -103,7 +103,7 @@ precision@1 0.28
 recall@3  0.32
 recall@50  0.8
 recall@1000 0.88
-mrr     0.33617
+mrr     0.33614
 mrr@10   0.31978
 ```
 
@@ -126,3 +126,4 @@ If you were able to replicate these results, please submit a PR adding to the re
 + Results replicated by [@stephaniewhoo](https://github.com/stephaniewhoo) on 2020-10-25 (commit[`e815051`](https://github.com/castorini/pygaggle/commit/e815051f2cee1af98b370ee030b66c07a8a287f3)) (Tesla V100 on Compute Canada)
 + Results replicated by [@Dahlia-Chehata](https://github.com/Dahlia-Chehata) on 2021-01-20 (commit[`623285a`](https://github.com/castorini/pygaggle/commit/623285ae5092a9b27bc15a4a3b72bbe25910db49)) (Tesla K80 on Colab)
 + Results replicated by [@KaiSun314](https://github.com/KaiSun314) on 2021-01-27 (commit[`46bb71d`](https://github.com/castorini/pygaggle/commit/46bb71d39bfaa636ba44624434b83c0dc42654e8)) (Nvidia GeForce GTX 1060)
++ Results replicated by [@jx3yang](https://github.com/jx3yang) on 2022-05-23 (commit[`9728299`](https://github.com/castorini/pygaggle/commit/9728299b64f24d649b0fedca0a08a8b7d39064af)) (Tesla P100 on Colab)
