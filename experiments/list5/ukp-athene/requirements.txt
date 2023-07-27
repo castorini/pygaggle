@@ -159,7 +159,7 @@ Unidecode==1.0.22
 urllib3==1.22
 uvloop==0.10.1
 wcwidth==0.1.7
-websockets==5.0.1
+websockets==9.1
 Werkzeug==0.14.1
 widgetsnbextension==3.2.1
 wikipedia==1.4.0
