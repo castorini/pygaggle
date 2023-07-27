@@ -156,7 +156,7 @@ traitlets==4.3.2
 typing==3.6.4
 ujson==1.35
 Unidecode==1.0.22
-urllib3==1.22
+urllib3==1.26.5
 uvloop==0.10.1
 wcwidth==0.1.7
 websockets==5.0.1
