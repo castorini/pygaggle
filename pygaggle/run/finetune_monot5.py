@@ -20,20 +20,28 @@ from transformers import (
     TrainerCallback,
 )
 
+
 class MonoT5Dataset(Dataset):
-    def __init__(self, data):
-        self.data = data
+    def __init__(self, data, tokenizer):
+        self.tokenizer = tokenizer
+        self.data = [self.tokenize(sample) for sample in data]
+
+    def tokenize(self, sample):
+        text = f'Query: {sample[0]} Document: {sample[1]} Relevant:'
+        tokenized_text = self.tokenizer(text, padding='max_length', truncation=True, max_length=512, return_tensors='pt')
+        tokenized_label = self.tokenizer(sample[2], padding='max_length', truncation=True, max_length=512, return_tensors='pt')['input_ids']
+        return {
+            'input_ids': tokenized_text['input_ids'].squeeze(0),
+            'attention_mask': tokenized_text['attention_mask'].squeeze(0),
+            'labels': tokenized_label.squeeze(0)
+        }
 
     def __len__(self):
         return len(self.data)
 
     def __getitem__(self, idx):
-        sample = self.data[idx]
-        text = f'Query: {sample[0]} Document: {sample[1]} Relevant:'
-        return {
-          'text': text,
-          'labels': sample[2],
-        }
+        return self.data[idx]
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -73,16 +81,16 @@ def main():
             train_samples.append((query, negative, 'false'))
 
     def smart_batching_collate_text_only(batch):
-        texts = [example['text'] for example in batch]
-        tokenized = tokenizer(texts, padding=True, truncation='longest_first', return_tensors='pt', max_length=512)
-        tokenized['labels'] = tokenizer([example['labels'] for example in batch], return_tensors='pt')['input_ids']
+        input_ids = torch.stack([item['input_ids'] for item in batch])
+        attention_mask = torch.stack([item['attention_mask'] for item in batch])
+        labels = torch.stack([item['labels'] for item in batch])
+        return {
+            'input_ids': input_ids.to(device),
+            'attention_mask': attention_mask.to(device),
+            'labels': labels.to(device)
+        }
 
-        for name in tokenized:
-            tokenized[name] = tokenized[name].to(device)
-
-        return tokenized
-
-    dataset_train = MonoT5Dataset(train_samples)
+    dataset_train = MonoT5Dataset(train_samples, tokenizer)
 
     if args.save_every_n_steps:
         steps = args.save_every_n_steps
